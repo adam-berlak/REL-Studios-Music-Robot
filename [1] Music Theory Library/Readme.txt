@@ -1,0 +1,1 @@
+By the end of this project the user should be able to describe an entire piece within a Piece or Song object. 
