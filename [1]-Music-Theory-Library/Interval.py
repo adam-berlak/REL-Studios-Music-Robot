@@ -9,6 +9,16 @@ class Interval:
 		return str(self.getNumeral()) + self.getAccidental()
 	def __eq__(self, p_other):
 		return self.getSemitones() == p_other.getSemitones()
+	def __add__(self, p_other):
+		if (isinstance(p_other, int)):
+			return self.getSemitones() + p_other.getSemitones()
+		if (isinstance(p_other, str)):
+			return self.__str__() + p_other
+	def __radd__(self, p_other):
+		if (isinstance(p_other, int)):
+			return self.getSemitones() + p_other.getSemitones()
+		if (isinstance(p_other, str)):
+			return p_other + self.__str__() 
 		
 	def setSemitones(self, p_semitones):
 		self.semitones = p_semitones

@@ -35,6 +35,21 @@ aug11 = Interval(18, 11, "#")
 
 Intervals = [P1, m2, M2, m3, M3, P4, aug4, P5, m6, M6, m7, M7, P8, m9, M9, m10, M10, P11, aug11, P12, m13, M13, m14, M14, P15]
 
+# Chord_Qualities = {
+    # [P1, M3, P5]: ("maj", "M"),
+    # [P1, M3, P5, M7]: ("maj7", "M7"),
+    # [P1, M3, P5, M7, M9]: ("maj9", "M9"),
+    # [P1, M3, P5, M7, M9, P11]: ("maj11", "M11"),
+    # [P1, M3, P5, M7, M9, P11, M13]: ("maj13", "M13"),
+    # [P1, m3, P5]: ("min", "m"),
+    # [P1, m3, P5, m7]: ("min7", "m7"),
+    # [P1, m3, P5, m7, M9, P11]: ("min9", "m9"),
+    # [P1, m3, P5, m7, M9, P11, m13]: ("min13", "m13"),
+    # [P1, M3, P5, m7]: ("dom7", "7"),
+    # [P1, M3, P5, m7, M9]: ("dom9", "9"),
+    # [P1, M3, P5, m7, M9, P11, M13]: ("dom13", "13"),
+# }
+
 # Heptatonic Scales
 major = [P1, M2, M3, P4, P5, M6, M7]
 minor = [P1, M2, m3, P4, P5, m6, m7]
@@ -45,3 +60,9 @@ harmonicMinor = [P1, M2, m3, P4, P5, m6, M7]
 TONES = {
     "western": ["A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"]
 }
+
+# Resolution Rules
+def circleOfFifths(p_chord):
+	return p_chord + 3
+def circleOfFourths(p_chord):
+	return p_chord + 4
