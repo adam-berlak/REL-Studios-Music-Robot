@@ -1,8 +1,11 @@
 # TODO:
 # Add try-catch statements of invalid inputs
 # Add full support for add-sub for all classes
-# Support #/b notes and assign accidentals correctly
+# Support #/b notes and assign accidentals correctly : Completed
+# Get parallel key of scale
+# Get Negative Harmony of a Chord
 # Print Roman Numerals
+# Fix Numeral Addition
 
 import random
 import sys
@@ -20,7 +23,7 @@ def main():
 	print("The D Dorian Scale is: " + DDorianScale)
 
 	# Build a chord off of a scale degree
-	G7 = DDorianScale[4].buildChord()
+	G7 = DDorianScale[4].buildChord(5)
 	print("The G Dominant Chord is: " + G7)
 
 	# Resolve the chord using a specific rule
@@ -38,6 +41,9 @@ def main():
 	# Transpose a scale up by semitones
 	DMajorScale = CMajorScale + 2
 	print("The D Major Scale is: " + DMajorScale)
+
+	# Print the quality of a chord
+	print(G7[3:5].printQuality(3))
 
 if __name__ == "__main__":
 	main()

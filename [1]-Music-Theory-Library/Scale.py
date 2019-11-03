@@ -12,13 +12,15 @@ class Scale:
 		self.tonic_note = p_tonic_note
 		self.intervals = p_intervals
 		self.degrees = []
-        
 		for i in range(len(p_intervals)):
 			self.degrees.append(_Degree(self.intervals[i], self))
-
+		white_notes = self.getTonicNote()[0] + ("ABCDEFG"*2).split(self.getTonicNote()[0])[1]
+		counter = 0
 		for degree in self.getDegrees():
-			note = (TONES.get(System)*2)[TONES.get(System).index(self.getTonicNote()) + degree.distanceFromClosest(self.getDegree(1))]
-			degree.setNote(note)
+			possible_notes = (TONES.get(System)*2)[([TONES.get(System).index(item) for item in TONES.get(System) if self.getTonicNote() in item][0] + degree.getInterval().getSemitones())]
+			next_note = [item for item in possible_notes if white_notes[counter] in item][0]
+			degree.setNote(next_note)
+			counter = counter + 1
 	def __str__(self):
 		result = "[ "
 		for degree in self.getDegrees():
@@ -30,7 +32,14 @@ class Scale:
 		return self.getDegrees()[p_index - 1]
 	def __add__(self, p_other):
 		if (isinstance(p_other, int)):
-			return Scale(TONES.get("western")[TONES.get("western").index(self.getTonicNote()) + p_other], self.getIntervals())
+			possible_tonics = (TONES.get(System)*2)[([TONES.get(System).index(item) for item in TONES.get(System) if self.getTonicNote() in item][0] + p_other)]
+			min_length = 1000
+			for item in possible_tonics:
+				scale = Scale(item, self.getIntervals())
+				if (len(scale.__str__()) < min_length):
+					min_length = len(scale.__str__())
+					result = scale
+			return result
 		if (isinstance(p_other, str)):
 			return str(self) + p_other
 	def __radd__(self, p_other):
