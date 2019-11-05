@@ -31,10 +31,39 @@ M13 = Interval(21, 13)
 M14 = Interval(23, 14)
 
 aug4 = Interval(6, 4, "#")
-aug5 = Interval(8, 5, "#")
 aug11 = Interval(18, 11, "#")
 
 Intervals = [P1, m2, M2, m3, M3, P4, aug4, P5, m6, M6, m7, M7, P8, m9, M9, m10, M10, P11, aug11, P12, m13, M13, m14, M14, P15]
+
+Interval_Spectrum = {
+    "western": {
+        1: "D",
+        2: "S",
+        3: "N",
+        4: "M",
+        5: "P",
+        6: "T",
+        7: "P",
+        8: "M",
+        9: "N",
+        10: "S",
+        11: "D"
+    }
+}
+
+cardinality = {
+    "western": {
+        1: "monotonic",
+        2: "ditonic",
+        3: "tritonic",
+        4: "tetratonic",
+        5: "pentatonic",
+        6: "hexatonic",
+        7: "heptatonic", 
+        8: "octatonic",
+        12: "chromatic"
+    }
+}
 
 # Chord Quality Systems
 Chord_Qualities = {

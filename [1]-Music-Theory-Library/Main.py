@@ -76,5 +76,7 @@ def main():
 	CChromaticScale = Scale("C", [P1, m2, M2, m3, M3, P4, aug4, P5, m6, M6, m7, M7])
 	print(CChromaticScale[1].buildChord())
 
+	print(CMajorScale[1].buildPitchClass(10))
+
 if __name__ == "__main__":
 	main()
