@@ -99,7 +99,6 @@ class Scale:
 		return self.countIntervals(1)
 
 	def getTritonia(self):
-
 		return self.countIntervals(6)
 
 	def countIntervals(self, p_interval_size):
