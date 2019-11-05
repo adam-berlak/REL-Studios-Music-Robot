@@ -339,7 +339,7 @@ class Chord(Scale):
 			
 			return closest_match[style] + str((len(self.getDegrees())*2)-1) + accidentals
 		except: 
-			print(Error: Failed to create string represention of the chord)
+			print("Error: Failed to create string represention of the chord")
 
 	def printNumeral(self, system = "western"):
 		numeral = intToRoman(self.getParentDegree().getInterval().getNumeral())
