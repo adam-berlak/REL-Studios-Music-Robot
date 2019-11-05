@@ -23,10 +23,9 @@ def intToRoman(num):
 		i += 1
 	return roman_num
 
-class Chord(Scale):
-	def __init__(self, p_intervals, p_parent_degree = None, p_skip_size = 2):
-		super().__init__(self, p_parent_degree.__str__(), p_intervals, p_skip_size)
-		self.parent_degree = p_parent_degree
+class Chord:
+	def __init__(self, p_degrees):
+		self.degrees = p_degrees
 
 	def __add__(self, p_other):
 		if (isinstance(p_other, str)):
@@ -43,6 +42,12 @@ class Chord(Scale):
 	def __sub__(self, p_other):
 		if (isinstance(p_other, int)):
 			return self.getParentDegree().__sub__(p_other).buildChord()
+
+	def __str__(self):
+		result = "["
+		for degree in self.getDegrees():
+			result = result + degree.__str__() + ", "
+		return result[:-2] + "]"
 		
 	def __getitem__(self, p_other):
 		if (isinstance(p_other, slice)):
@@ -60,7 +65,7 @@ class Chord(Scale):
 
 	def getSecondaryDominant(self):
 		return self.getParentDegree().buildScaleWithIntervals(major)[5].buildChord()
-	'''
+
 	def printQuality(self, system = "western", style = 2):
 		chord_intervals = self.getIntervals()
 		smallest_difference = 1000
@@ -95,9 +100,24 @@ class Chord(Scale):
 
 	def jazzNumeralNotation(self, system = "western"):
 		return self.printNumeral() + self.printQuality() 
-	'''
+
+	def getDegrees(self):
+		return self.degrees
 	def getParentDegree(self):
 		return self.parent_degree
+	def getIntervals(self):
+		chord = self.getParentDegree().buildScale()[1].buildChord(len(self.getDegrees()))
+		intervals = []
+		padding = 0
+		previous = chord.getDegrees()[0].getInterval().getSemitones()
+		for degree in chord.getDegrees():
+			if (degree.getInterval().getSemitones() < previous):	
+				padding = 12
+			intervals.append(Intervals[chord.getParentDegree().distanceFromNext(degree) + padding])
+			previous = degree.getInterval().getSemitones()
+		return intervals
 
+	def setDegrees(self, p_degrees):
+		self.degrees = p_degrees
 	def setParentDegree(self, p_parent_degree):
 		self.parent_degree = p_parent_degree

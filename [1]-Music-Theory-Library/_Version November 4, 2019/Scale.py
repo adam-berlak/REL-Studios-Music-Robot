@@ -1,4 +1,5 @@
 from Interval import Interval
+from Chord import Chord
 from Constants import *
 
 # Internal Class Name: Scale
@@ -16,15 +17,12 @@ class Scale:
 			self.degrees.append(_Degree(self.intervals[i], self))
 
 		counter = 0
-		white_notes = (self.getTonicNote()[0] + ("ABCDEFG"*2).split(self.getTonicNote()[0])[1])*4
-		for i in range(len(self.getDegrees())):
-			degree = self.getDegrees()[i]
-			possible_notes = (TONES.get(System)*4)[([TONES.get(System).index(item) for item in TONES.get(System) if self.getTonicNote() in item][0] + degree.getInterval().getSemitones())]
+		white_notes = self.getTonicNote()[0] + ("ABCDEFG"*2).split(self.getTonicNote()[0])[1]
+		for degree in self.getDegrees():
+			possible_notes = (TONES.get(System)*2)[([TONES.get(System).index(item) for item in TONES.get(System) if self.getTonicNote() in item][0] + degree.getInterval().getSemitones())]
 			next_note = [item for item in possible_notes if white_notes[counter] in item][0]
 			degree.setNote(next_note)
-			if (i != len(self.getDegrees()) - 1):
-				skip_size = self.getDegrees()[i + 1].getInterval().getNumeral() - degree.getInterval().getNumeral()
-				counter = counter + skip_size
+			counter = counter + 1
 
 	def __str__(self):
 		result = "["
@@ -76,8 +74,7 @@ class Scale:
 			if (scale_steps == scale_steps[::-1]):
 				result = degree.getPosition()
 		return result 
-	# def getIntervalVector(self):
-
+	# def getIntervalVector(self)
 
 	# def isPrime(self)
 	# def isPalindromic(self)
@@ -149,8 +146,14 @@ class _Degree:
 		return abs(result)
 
 	def buildChord(self, p_num_notes = 4, p_leap_size = 2):
-		child_intervals = self.buildPitchClass(p_leap_size)[:p_num_notes]
-		child_chord = Chord(self.getNote(), child_intervals)
+		parent_degrees = self.getParentScale().getDegrees() * 3
+		chord_degrees = []
+		i = parent_degrees.index(self)
+		end = i + (p_leap_size * p_num_notes)
+		while (i < end):
+			chord_degrees.append(parent_degrees[i])
+			i = i + p_leap_size
+		child_chord = Chord(chord_degrees)
 		child_chord.setParentDegree(self)
 		return child_chord
 
@@ -160,18 +163,13 @@ class _Degree:
 		child_scale.setParentDegree(self)
 		return child_scale
 
-	def buildPitchClass(self, p_leap_size = 1):
-		parent_degrees = self.getParentScale().getDegrees() * 3
-		previous = 0
-		padding = 0
+	def buildPitchClass(self):
+		parent_degrees = self.getParentScale().getDegrees() * 2
 		child_intervals = [P1]
-		i = parent_degrees.index(self) + p_leap_size
+		i = parent_degrees.index(self) + 1
 		while (parent_degrees[i] != self):
-			if (self.distanceFromNext(parent_degrees[i]) < previous):
-				padding = padding + 12
-			child_intervals.append(Intervals[self.distanceFromNext(parent_degrees[i]) + padding])
-			previous = self.distanceFromNext(parent_degrees[i])
-			i = i + p_leap_size
+			child_intervals.append(Intervals[self.distanceFromNext(parent_degrees[i])])
+			i = i + 1
 		return child_intervals
 
 	def buildScaleWithIntervals(self, p_intervals):
@@ -195,97 +193,3 @@ class _Degree:
 		self.interval = p_interval
 	def setParentScale(self, p_parent_scale):
 		self.parent_scale = p_parent_scale
-
-def intToRoman(num):
-	val = [
-		1000, 900, 500, 400,
-		100, 90, 50, 40,
-		10, 9, 5, 4,
-		1
-		]
-	syb = [
-		"M", "CM", "D", "CD",
-		"C", "XC", "L", "XL",
-		"X", "IX", "V", "IV",
-		"I"
-		]
-	roman_num = ''
-	i = 0
-	while  num > 0:
-		for _ in range(num // val[i]):
-			roman_num += syb[i]
-			num -= val[i]
-		i += 1
-	return roman_num
-
-class Chord(Scale):
-	def __init__(self, p_note, p_intervals):
-		super().__init__(p_note, p_intervals)
-
-	def __add__(self, p_other):
-		if (isinstance(p_other, str)):
-			return str(self) + p_other
-		if (isinstance(p_other, int)):
-			return self.getParentDegree().__add__(p_other).buildChord()
-
-	def __radd__(self, p_other):
-		if (isinstance(p_other, str)):
-			return p_other + str(self)
-		if (isinstance(p_other, int)):
-			return self.getParentDegree().__add__(p_other).buildChord()
-
-	def __sub__(self, p_other):
-		if (isinstance(p_other, int)):
-			return self.getParentDegree().__sub__(p_other).buildChord()
-		
-	def __getitem__(self, p_other):
-		if (isinstance(p_other, slice)):
-			new_chord = Chord(self.getParentDegree().__str__(), self.getIntervals()[p_other.start - 1:p_other.stop])
-			new_chord.setParentDegree(new_chord.getDegrees()[0])
-			return new_chord
-		else:
-			return self.getDegrees()[p_other - 1]
-		
-	def resolveChord(self, p_voice_leading_rules = circleOfFifths):
-		return p_voice_leading_rules(self)
-
-	def getRelativeChord(self):
-		return self - 2
-
-	def getSecondaryDominant(self):
-		return self.getParentDegree().buildScaleWithIntervals(major)[5].buildChord()
-	
-	def printQuality(self, system = "western", style = 2):
-		chord_intervals = self.getIntervals()
-		smallest_difference = 1000
-		accidentals = ""
-		for key in Chord_Qualities[system].keys():
-			temp_accidentals = ""
-			count = 0
-			i = 0
-			while(i < len(chord_intervals)):
-				if (chord_intervals[i] != Chord_Qualities[system][key][i]):
-					count = count + 1
-					if (chord_intervals[i].getSemitones() < Chord_Qualities[system][key][i].getSemitones()):
-						temp_accidentals = temp_accidentals + "b" + str(((i + 1) * 2) - 1)
-					else:
-						temp_accidentals = temp_accidentals + "#" + str(((i + 1) * 2) - 1)
-				i = i + 1
-			if (count < smallest_difference):
-				closest_match = key
-				smallest_difference = count
-				accidentals = temp_accidentals
-		
-		return closest_match[style] + str((len(self.getDegrees())*2)-1) + accidentals
-	# def transformChordTo(self, p_intervals):
-	# def getParallelChord(self):
-	
-	def printNumeral(self, system = "western"):
-		numeral = intToRoman(self.getParentDegree().getInterval().getNumeral())
-		if (self[1:3].printQuality(system, 0) == "minor"):
-			numeral = position.lower()
-		accidental = self.getParentDegree().getInterval().getAccidental()
-		return  accidental + numeral
-
-	def jazzNumeralNotation(self, system = "western"):
-		return self.printNumeral() + self.printQuality() 

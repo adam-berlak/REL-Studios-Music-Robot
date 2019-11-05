@@ -1,14 +1,12 @@
 # TODO:
-# Support #/b notes and assign accidentals correctly : Completed
-# Print Roman Numerals : Completed
-# Support Non-heptatonic Scales : Completed
-# Find solution to multiplying scale for chords to support degrees of > 12 Semitone intervals :: Solution: Chord inherits from scale, it is a scale object but has additional methods like resolve etc. but it also has its own degrees
-# Fix Numeral Addition
-# Fix notation for non-triadic chords 
-# Get parallel key of scale
-# Get Negative Harmony of a Chord
 # Add try-catch statements of invalid inputs
 # Add full support for add-sub for all classes
+# Support #/b notes and assign accidentals correctly : Completed
+# Get parallel key of scale
+# Get Negative Harmony of a Chord
+# Print Roman Numerals
+# Fix Numeral Addition
+# Find solution to multiplying scale for chords to support degrees of > 12 Semitone intervals :: Solution: Chord inherits from scale, it is a scale object but has additional methods like resolve etc. but it also has its own degrees
 
 import random
 import sys
@@ -26,7 +24,7 @@ def main():
 	print("The D Dorian Scale is: " + DDorianScale)
 
 	# Build a chord off of a scale degree
-	G7 = DDorianScale[4].buildChord(5)
+	G7 = DDorianScale[4].buildChord(4)
 	print("The G Dominant Chord is: " + G7)
 
 	# Resolve the chord using a specific rule
@@ -69,12 +67,6 @@ def main():
 	print(CMajorScale.getImperfections())
 
 	print(CMajorScale.getReflectionAxes())
-
-	CDimScale = Scale("C", [P1, M2, m3, P4, aug4, m6, M6, M7])
-	print(CDimScale[1].buildChord())
-
-	CChromaticScale = Scale("C", [P1, m2, M2, m3, M3, P4, aug4, P5, m6, M6, m7, M7])
-	print(CChromaticScale[1].buildChord())
 
 if __name__ == "__main__":
 	main()
