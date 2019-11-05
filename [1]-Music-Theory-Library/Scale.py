@@ -34,6 +34,10 @@ class Scale:
 		except:
 			print("Something went wrong when assigning notes to your scale, ensure the intervals are sorted by increasing size")
 
+	#####################################
+	# Methods concerning class behavior #
+	#####################################
+	
 	def __str__(self):
 		result = "["
 		for degree in self.getDegrees():
@@ -66,34 +70,49 @@ class Scale:
 	def __radd__(self, p_other):
 		if (isinstance(p_other, str)):
 			return p_other + str(self)
-		
+
+	########
+	# Misc #
+	########
+
 	def getDegreeByInterval(self, p_interval):
 		for degree in self.getDegrees():
 			if (degree.getInterval() == p_interval):
 				return degree
 			return -1
 
+	######################################################
+	# Methods for logically calculating scale properties #
+	######################################################
+
 	def getCardinality(self, system = "western"):
 		return cardinality["western"][len(self.getDegrees())]
+
 	def getImperfections(self):
 		counter = 0
 		for degree in self.getDegrees():
 			if (P5 not in degree.buildPitchClass()):
 				counter = counter + 1
 		return counter
+
 	def getHemitonia(self):
 		return self.countIntervals(1)
+
 	def getTritonia(self):
+
 		return self.countIntervals(6)
+
 	def countIntervals(self, p_interval_size):
 		counter = collections.Counter(self.getScaleSteps(self.getIntervals()))
 		return counter[p_interval_size]
+
 	def getReflectionAxes(self):
 		for degree in self.getDegrees():
 			scale_steps = self.getScaleSteps(degree.buildPitchClass())
 			if (scale_steps == scale_steps[::-1]):
 				result = degree.getPosition()
 		return result 
+
 	def getIntervalVector(self, system = "western"):
 		all_intervals = []
 		for degree in self.getDegrees():
@@ -109,13 +128,15 @@ class Scale:
 		for key in counter.keys():
 			result = result + key + "(" + str(int(counter[key]/2)) + ")"
 		return result
+	
+	# TODO 
 	# def getPrimeMode(self)
-
 	# def isPrime(self)
 	# def isPalindromic(self)
 	# def isHelotonic(self)
 	# def isMaximallyEven(self)
 	# def isBalanced(self)
+
 	def getScaleSteps(self, p_pitch_class):
 		result = []
 		previous = 0
@@ -124,6 +145,10 @@ class Scale:
 			previous = interval.getSemitones()
 		result.append(abs(p_pitch_class[-1].getSemitones() - 12))
 		return result
+
+	#######################
+	# Getters and Setters #
+	#######################
    
 	def getIntervals(self):
 		return self.intervals
@@ -363,5 +388,7 @@ class Chord(Scale):
 
 	def getSecondaryDominant(self):
 		return self.getParentDegree().buildScaleWithIntervals(major)[5].buildChord()
+
+	# TODO 
 	# def transformChordTo(self, p_intervals):
 	# def getParallelChord(self):
