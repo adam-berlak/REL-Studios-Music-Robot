@@ -1,9 +1,10 @@
 from Interval import Interval
 from Constants import *
+from HelperMethods import *
 
 import collections
 
-# Internal Class Name: Scale
+# Class Name: Scale
 # Parameters: p_tonic_note (The tonic note the scale will be built off of), p_intervals (the interval pattern of the scale)
 # Info: A scale object requires a tonic tone and an interval pattern
 # Method getDegree: Retrieves the nth degree in the scale
@@ -45,24 +46,48 @@ class Scale:
 		return result[:-2] + "]"
 
 	def __eq__(self, p_other):
-		return (self.getIntervals() == p_other.getIntervals()) and (self.getTonicNote() == p_other.getTonicNote())
+		if (isInstance(p_other, Scale)):
+			return (self.getIntervals() == p_other.getIntervals()) and (self.getTonicNote() == p_other.getTonicNote())
 
 	def __getitem__(self, p_index):
 		try:
 			return self.getDegrees()[p_index - 1]
 		except: 
-			print("Scale indices return scale degrees, ranging from 1-n where the n is the cardinality of your scale")
+			print("Error: Scale indices return scale degrees, ranging from (1-n) where the n is the cardinality of your scale")
+	
+	def __contains__(self, p_other):
+		if (isinstance(p_other, Scale)):
+			if (all(elem in self.getNotes() for elem in p_other.getNotes())):
+				return True
+			return False
+		if (isinstance(p_other, Chord)):
+			if (all(elem in self.getNotes() for elem in p_other.getNotes())):
+				return True
+			return False
+		if (isinstance(p_other, str)):
+			if (p_other in self.getNotes()):
+				return True
+			return False
+		if (isinstance(p_other, list)):
+			if (isinstance(p_other[0], Interval)):
+				for degree in self.getDegrees():
+					if (all(elem in degree.buildPitchClass() for elem in p_other)):
+						return True
+				return False
 
 	def __add__(self, p_other):
 		if (isinstance(p_other, int)):
-			possible_tonics = (TONES.get(System)*2)[([TONES.get(System).index(item) for item in TONES.get(System) if self.getTonicNote() in item][0] + p_other)]
-			min_length = 1000
-			for item in possible_tonics:
-				scale = Scale(item, self.getIntervals())
-				if (len(scale.__str__()) < min_length):
-					min_length = len(scale.__str__())
-					result = scale
-			return result
+			try:
+				possible_tonics = (TONES.get(System)*2)[([TONES.get(System).index(item) for item in TONES.get(System) if self.getTonicNote() in item][0] + p_other)]
+				min_length = 1000
+				for item in possible_tonics:
+					scale = Scale(item, self.getIntervals())
+					if (len(scale.__str__()) < min_length):
+						min_length = len(scale.__str__())
+						result = scale
+				return result
+			except:
+				print("Error: Failed to assign notes to the new scale")
 
 		if (isinstance(p_other, str)):
 			return str(self) + p_other
@@ -89,11 +114,26 @@ class Scale:
 		return cardinality["western"][len(self.getDegrees())]
 
 	def getImperfections(self):
-		counter = 0
-		for degree in self.getDegrees():
-			if (P5 not in degree.buildPitchClass()):
-				counter = counter + 1
-		return counter
+		try:
+			counter = 0
+			for degree in self.getDegrees():
+				if (P5 not in degree.buildPitchClass()):
+					counter = counter + 1
+			return counter
+		except:
+			print("Error: Failed to get imperfections")
+	
+	def getRotationalSymmetry(self):
+		try:
+			parent_pitch_class = self.getScaleSteps(self.getIntervals())
+			result = []
+			for degree in self.getDegrees():
+				child_pitch_class = self.getScaleSteps(degree.buildPitchClass())
+				if (parent_pitch_class == child_pitch_class):
+					result.append(degree.getPosition())
+			return result
+		except:
+			print("Error: Failed to get rotational symmetry")
 
 	def getHemitonia(self):
 		return self.countIntervals(1)
@@ -106,43 +146,129 @@ class Scale:
 		return counter[p_interval_size]
 
 	def getReflectionAxes(self):
-		for degree in self.getDegrees():
-			scale_steps = self.getScaleSteps(degree.buildPitchClass())
-			if (scale_steps == scale_steps[::-1]):
-				result = degree.getPosition()
-		return result 
+		try:
+			result = []
+			for degree in self.getDegrees():
+				scale_steps = self.getScaleSteps(degree.buildPitchClass())
+				if (scale_steps == scale_steps[::-1]):
+					result.append(degree.getPosition())
+			return result 
+		except:
+			print("Error: Failed to get reflection axes")
 
 	def getIntervalVector(self, system = "western"):
-		all_intervals = []
-		for degree in self.getDegrees():
-			all_intervals = all_intervals + degree.buildPitchClass()[1:]
-		all_pitch_classes = []
-		for interval in all_intervals:
-			semitones = interval.getSemitones()
-			if (semitones > 11):
-				semitones = semitones - 12
-			all_pitch_classes.append(Interval_Spectrum[system][semitones])
-		counter = collections.Counter(all_pitch_classes)
-		result = ""
-		for key in counter.keys():
-			result = result + key + "(" + str(int(counter[key]/2)) + ")"
-		return result
-	
+		try: 
+			all_intervals = []
+			for degree in self.getDegrees():
+				all_intervals = all_intervals + degree.buildPitchClass()[1:]
+			all_pitch_classes = []
+			for interval in all_intervals:
+				semitones = interval.getSemitones()
+				if (semitones > 11):
+					semitones = semitones - 12
+				all_pitch_classes.append(Interval_Spectrum[system][semitones])
+			counter = collections.Counter(all_pitch_classes)
+			result = ""
+			for key in counter.keys():
+				result = result + key + "(" + str(int(counter[key]/2)) + ")"
+			return result
+		except:
+			print("Error: Failed to retrieve interval vector for scale")
+
+	def isChiral(self):
+		try:
+			reflection = self.getScaleSteps(self.getIntervals())[::-1]
+			result = []
+			for degree in self.getDegrees():
+				rotation = self.getScaleSteps(degree.buildPitchClass())
+				if (rotation == reflection):
+					return False
+			return True
+		except:
+			print("Error: Failed to check if scale is chiral")
+
+	def getCohemitonic(self):
+		try:
+			result = []
+			scale_steps = (self.getScaleSteps(self.getIntervals())*2)
+			for i in range(int(len(scale_steps)/2)):
+				if (scale_steps[i] == 1 and scale_steps[i + 1] == 1):
+					result.append(i + 1)
+			return result
+		except:
+			print("Error: Failed to retrieve cohemitonic note")
+
+	def hasCohemitonia(self):
+		if (len(self.getCohemitonic()) != 0):
+			return True
+		return False
+
+	def getPrimeMode(self, p_consider_inverted_modes = False):
+		try: 
+			min_count = 1000
+			for degree in self.getDegrees():
+				pitch_class = degree.buildPitchClass()
+
+				sum = 0
+				for interval in pitch_class:
+					sum = sum + interval.getSemitones()
+				if (sum < min_count):
+					print(sum)
+					prime_mode = str(degree.getPosition())
+					min_count = sum
+				
+				if (p_consider_inverted_modes):
+					inverted_pitch_class = self.getPitchClass(self.getScaleSteps(degree.buildPitchClass()))
+
+					sum = 0
+					for interval in inverted_pitch_class:
+						sum = sum + interval.getSemitones()
+					if (sum < min_count):
+						prime_mode = str(degree.getPosition()) + "Inverted"
+						min_count = sum
+				
+			return prime_mode
+		except:
+			print("Error: Failed to get prime mode of scale")
+
+	def isPrime(self):
+		if (self.getPrimeMode() == 1):
+			return True
+		return False
+			
 	# TODO 
-	# def getPrimeMode(self)
-	# def isPrime(self)
 	# def isPalindromic(self)
 	# def isHelotonic(self)
 	# def isMaximallyEven(self)
 	# def isBalanced(self)
 
 	def getScaleSteps(self, p_pitch_class):
+		try:
+			result = []
+			previous = 0
+			for interval in p_pitch_class[1:]:
+				result.append(interval - previous)
+				previous = interval.getSemitones()
+			result.append(abs(p_pitch_class[-1].getSemitones() - 12))
+			return result
+		except:
+			print("Error: Failed to retrieve scale steps")
+
+	def getPitchClass(self, p_scale_steps):
+		try:
+			result = []
+			count = 0
+			for integer in p_scale_steps:
+				count = count + integer
+				result.append(Intervals[count])
+			return result
+		except:
+			print("Error: Failed to retrieve pitch class")
+
+	def getNotes(self):
 		result = []
-		previous = 0
-		for interval in p_pitch_class[1:]:
-			result.append(interval - previous)
-			previous = interval.getSemitones()
-		result.append(abs(p_pitch_class[-1].getSemitones() - 12))
+		for degree in self.getDegrees():
+			result.append(degree.getNote())
 		return result
 
 	#######################
@@ -281,28 +407,6 @@ class _Degree:
 	def setParentScale(self, p_parent_scale):
 		self.parent_scale = p_parent_scale
 
-def intToRoman(num):
-	val = [
-		1000, 900, 500, 400,
-		100, 90, 50, 40,
-		10, 9, 5, 4,
-		1
-		]
-	syb = [
-		"M", "CM", "D", "CD",
-		"C", "XC", "L", "XL",
-		"X", "IX", "V", "IV",
-		"I"
-		]
-	roman_num = ''
-	i = 0
-	while  num > 0:
-		for _ in range(num // val[i]):
-			roman_num += syb[i]
-			num -= val[i]
-		i += 1
-	return roman_num
-
 class Chord(Scale):
 	def __init__(self, p_note, p_intervals):
 		super().__init__(p_note, p_intervals)
@@ -329,7 +433,8 @@ class Chord(Scale):
 		
 	def __getitem__(self, p_other):
 		if (isinstance(p_other, slice)):
-			new_chord = Chord(self.getParentDegree().__str__(), self.getIntervals()[p_other.start - 1:p_other.stop])
+			intervals = self[p_other.start].buildPitchClass()[:p_other.stop - p_other.start]
+			new_chord = Chord(self[p_other.start].__str__(), intervals)
 			new_chord.setParentDegree(new_chord.getDegrees()[0])
 			return new_chord
 		else:

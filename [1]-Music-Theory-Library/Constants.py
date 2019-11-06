@@ -112,6 +112,7 @@ major = [P1, M2, M3, P4, P5, M6, M7]
 minor = [P1, M2, m3, P4, P5, m6, m7]
 melodicMinor = [P1, M2, m3, P4, P5, M6, M7]
 harmonicMinor = [P1, M2, m3, P4, P5, m6, M7]
+neopolitanMajor = [P1, m2, m3, P4, P5, M6, M7]
 
 # Resolution Rules
 def circleOfFifths(p_chord):

@@ -45,8 +45,8 @@ def main():
 	DMajorScale = CMajorScale + 2
 	print("The D Major Scale is: " + DMajorScale)
 
-	# Print the quality of a chord
-	print(G7[1:5].printQuality())
+	# Print the quality of a subset of a chord
+	print(G7[2:5])
 
 	# Properly print quality of a chord with accidentals
 	Bhalfdim9 = CMajorScale[7].buildChord()
@@ -76,7 +76,9 @@ def main():
 	CChromaticScale = Scale("C", [P1, m2, M2, m3, M3, P4, aug4, P5, m6, M6, m7, M7])
 	print(CChromaticScale[1].buildChord())
 
-	print(CMajorScale[1].buildPitchClass(10))
+	pentatonicScale = Scale("A", [P1, m2, m3, M3, aug4, m6, M6])
+	if DDorianScale in CMajorScale:
+		print("got here")
 
 if __name__ == "__main__":
 	main()
