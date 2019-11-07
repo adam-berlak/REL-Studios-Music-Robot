@@ -8,5 +8,5 @@ when they should be derived using logical formulas within a Scale object. As a r
 
 ## 2. How to use this library:
 
-#### A Scale Object requires a note for the Tonic, and a list of Intervals organized as a Pitch Class Set
-Ex: C_Major_Scale = Scale("C", major)
+A Scale Object requires a note for the Tonic, and a list of Intervals organized as a Pitch Class Set
+#### Ex: C_Major_Scale = Scale("C", major)
