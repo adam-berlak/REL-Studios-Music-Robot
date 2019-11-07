@@ -1,6 +1,6 @@
 # REL STUDIOS - pyMusicTheory Guide
 
-### 1. About this project:
+#### 1. About this project:
 
 Lookng through existing libraries for music theory, I noticed a recurring problem. Most of the existing music theory libraries
 rely heavily on hardcoding of information. Things like Chord qualitys and properties of scales are often hardcoded in dictionaries
