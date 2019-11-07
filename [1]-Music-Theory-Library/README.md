@@ -7,3 +7,6 @@ rely heavily on hardcoding of information. Things like Chord qualitys and proper
 when they should be derived using logical formulas within a Scale object. As a result, these libraries are not very extensible, they limit your inputs and likely fall apart when you try to get more creative with your scales. As a goal for myself I attempted to limit all hardcoding to names, and reduce everything else that can be derived logically to methods. The result; less reliance on definitions, less constants, and greater extensibility.
 
 ## 2. How to use this library:
+
+#### A Scale Object requires a note for the Tonic, and a list of Intervals organized as a Pitch Class Set
+Ex: C_Major_Scale = Scale("C", major)
