@@ -12,6 +12,7 @@ A Scale Object requires a note for the Tonic, and a list of Intervals organized 
 ```
 >>> major = [P1, M2, M3, P4, P5, M6, M7]
 >>> C_Major_Scale = Scale("C", major)
+>>> print(C_Major_Scale)
 [C, D, E, F, G, A, B]
 ```
 
