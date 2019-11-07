@@ -95,3 +95,16 @@ bVI
 >>> Scale("A", minor)[6].buildChord(7).jazzNumeralNotation()
 bVIM13#11
 ```
+You can resolve a chord using a certain rule
+```
+>>> G7.resolveChord(circleOfFifths)
+[C, E, G, B]
+```
+## 3. Goals:
+
+A lot of Chord functionality will be added. There is a lot of things I plan to add to this project. Scales and Chords are only the beginning. Some things I plan to create:
+```
+- Motif, Sentance, Period, Phrase Objects for structural components of music
+- A more fleshed out Note object that keeps track of octaves
+- A progression object that uses artificial intelligence to analyse a chord progression
+```
