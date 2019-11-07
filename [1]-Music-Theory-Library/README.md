@@ -8,6 +8,8 @@ when they should be derived using logical formulas within a Scale object. As a r
 
 ## 2. How to use this library:
 
+#### 2.1. Scales
+
 A Scale Object requires a note for the Tonic, and a list of Intervals organized as a Pitch Class Set
 ```
 >>> major = [P1, M2, M3, P4, P5, M6, M7]
