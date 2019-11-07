@@ -72,4 +72,20 @@ Build a chord off of a scale degree, the build chord method has two optional par
 >>> G9 = D_Dorian_Scale[4].buildChord(5)
 [G, B, D, F, A]
 ```
+You can print the quality of the chord in three different ways. The quality is derived through an algorithm that emulates how music theorists method, so there is very little reliance on hardcoding and you can get the quality for almost any chord.
+```
+>>> AMelodicMinor = Scale("A", melodicMinor)
+>>> chord = AMelodicMinor[1].buildChord(6)
+>>> chord.printQuality(2)
+M11b3
+>>> chord.printQuality(1)
+Maj11b3
+>>> chord.printQuality(0)
+Major11b3
+```
+You can also slice chords in case you only want the quality of a certain part of the chord. Like with the scale, the indices start at 1 signifying the first degree of the chord. [1:3] will retrieve notes one through and including three of the chord.
+```
+>>> chord[1:3].printQuality(0)
+minor
+```
 
