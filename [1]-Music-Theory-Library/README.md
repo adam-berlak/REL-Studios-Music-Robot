@@ -34,7 +34,7 @@ Db Major notation will be used over C# Major despite the latter also being valid
 >>> D_Major_Scale = C_Major_Scale + 2
 [D, E, F#, G, A, B, C#]
 ```
-Build a chord off of a scale degree, the build chord method has two optional params, the amount of notes in the chord, and the skip size, by default, chords are comprised of four notes with a skip size of two. 
+Build a chord off of a scale degree, the build chord method has two optional params, the amount of notes in the chord, and the skip size, by default, chords are comprised of four notes with a skip size of two. In this case we are building a chord with five notes on the fourth scale degree of the dorian scale/mode.
 ```
 >>> G9 = D_Dorian_Scale[4].buildChord(5)
 [G, B, D, F, A]
