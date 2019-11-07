@@ -12,20 +12,18 @@ A Scale Object requires a note for the Tonic, and a list of Intervals organized 
 ```
 >>> major = [P1, M2, M3, P4, P5, M6, M7]
 >>> C_Major_Scale = Scale("C", major)
->>> print(C_Major_Scale)
 [C, D, E, F, G, A, B]
 ```
 
 You can access any of the scale degrees by using an index. The indices start at 1 as opposed to 0
 ```
->>> print(C_Major_Scale[1])
+>>> C_Major_Scale[1]
 C
 ```
 
 From a scale degree you can build a new scale or chord
 ```
 >>> D_Dorian_Scale = C_Major_Scale[2].buildScale()
->>> print(D_Dorian_Scale)
 [D, E, F, G, A, B, C]
 ```
 Build a chord off of a scale degree, the build chord method has two optional params, the amount of notes in the chord, and the skip size, by default, chords are comprised of four notes with a skip size of two. 
