@@ -26,7 +26,8 @@ From a scale degree you can build a new scale or chord
 >>> D_Dorian_Scale = C_Major_Scale[2].buildScale()
 [D, E, F, G, A, B, C]
 ```
-You can also transpose a Scale up by adding integers to it
+You can also transpose a Scale up by adding integers to it. My library assigns pitchs and accidentals to the scales automatically without any hardcoding. The proccess is identical to how its done by theorists ensuring minimal accidentals are used. As an example:
+Db Major notation will be used over C# Major despite being the same scales.
 ```
 >>> D_Major_Scale = C_Major_Scale + 2
 [D, E, F#, G, A, B, C#]
