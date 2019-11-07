@@ -29,4 +29,5 @@ From a scale degree you can build a new scale or chord
 Build a chord off of a scale degree, the build chord method has two optional params, the amount of notes in the chord, and the skip size, by default, chords are comprised of four notes with a skip size of two. 
 ```
 >>> G9 = D_Dorian_Scale[4].buildChord(5)
+[G, B, D, F, A]
 ```
