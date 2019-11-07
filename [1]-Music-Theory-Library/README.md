@@ -1,1 +1,1 @@
-# REL STUDIOS - pyMusic Guide
+# REL STUDIOS - pyMusicTheory Guide
