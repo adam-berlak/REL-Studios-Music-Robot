@@ -64,9 +64,9 @@ The scale also has several methods for determining properties of scales. You can
 >>> Scale.getRotationalSymmetry()
 >>> Scale.getImperfections()
 >>> Scale.getCardinality()
-
-#### 2.2. Chords
 ```
+#### 2.2. Chords
+
 Build a chord off of a scale degree, the build chord method has two optional params, the amount of notes in the chord, and the skip size, by default, chords are comprised of four notes with a skip size of two. In this case we are building a chord with five notes on the fourth scale degree of the dorian scale/mode.
 ```
 >>> G9 = D_Dorian_Scale[4].buildChord(5)
