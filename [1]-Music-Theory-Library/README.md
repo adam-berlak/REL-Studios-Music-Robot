@@ -39,6 +39,32 @@ You can also preform addition with degrees. When adding an integer x to a scale 
 >>> C_Major_Scale[1] + 2
 E
 ```
+You can also check if a Scale contains a Chord, another Scale, or a Pitch Class
+```
+>>> D_Dorian_Scale in C_Major_Scale
+True
+>>> G9 in D_Dorian_Scale
+True
+>>> [P1, M3, P5] in C_Major_Scale
+True
+```
+My Scale class also works with non-heptatonic scales. You can create a Chromatic scale of 12 notes, or a diminished scale of 8. There is no limitation to the scales you can create at this point.
+
+The scale also has several methods for determining properties of scales. You can read about what these algorithms do at https://ianring.com/musictheory/scales/. Currently the properties supported are:
+```
+>>> Scale.getPrimeMode()
+>>> Scale.isPrime()
+>>> Scale.getCohemitonic()
+>>> Scale.hasCohemitonia()
+>>> Scale.isChiral()
+>>> Scale.getIntervalVector()
+>>> Scale.getReflectionAxes()
+>>> Scale.getTritonia()
+>>> Scale.getHemitonia()
+>>> Scale.getRotationalSymmetry()
+>>> Scale.getImperfections()
+>>> Scale.getCardinality()
+```
 Build a chord off of a scale degree, the build chord method has two optional params, the amount of notes in the chord, and the skip size, by default, chords are comprised of four notes with a skip size of two. In this case we are building a chord with five notes on the fourth scale degree of the dorian scale/mode.
 ```
 >>> G9 = D_Dorian_Scale[4].buildChord(5)
