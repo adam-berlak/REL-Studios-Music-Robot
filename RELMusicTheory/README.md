@@ -1,4 +1,4 @@
-# REL STUDIOS - RELMusicTheory Guide
+# REL STUDIOS - RELMusicTheory for Python Guide
 
 ## 1. About this project:
 
