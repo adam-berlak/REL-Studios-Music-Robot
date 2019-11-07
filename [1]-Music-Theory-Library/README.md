@@ -21,3 +21,9 @@ You can access any of the scale degrees by using an index. The indices start at 
 >>> print(C_Major_Scale[1])
 C
 ```
+
+From a scale degree you can build a new scale or chord
+```
+>>> D_Dorian_Scale = C_Major_Scale[2].buildScale()
+>>> print(D_Dorian_Scale)
+[D, E, F, G, A, B, C]
