@@ -26,6 +26,11 @@ From a scale degree you can build a new scale or chord
 >>> D_Dorian_Scale = C_Major_Scale[2].buildScale()
 [D, E, F, G, A, B, C]
 ```
+You can also transpose a Scale up by adding integers to it
+```
+>>> D_Major_Scale = C_Major_Scale + 2
+[D, E, F#, G, A, B, C#]
+```
 Build a chord off of a scale degree, the build chord method has two optional params, the amount of notes in the chord, and the skip size, by default, chords are comprised of four notes with a skip size of two. 
 ```
 >>> G9 = D_Dorian_Scale[4].buildChord(5)
