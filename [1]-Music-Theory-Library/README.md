@@ -79,13 +79,19 @@ You can print the quality of the chord in three different ways. The quality is d
 >>> chord.printQuality(2)
 M11b3
 >>> chord.printQuality(1)
-Maj11b3
+maj11b3
 >>> chord.printQuality(0)
-Major11b3
+major11b3
 ```
 You can also slice chords in case you only want the quality of a certain part of the chord. Like with the scale, the indices start at 1 signifying the first degree of the chord. [1:3] will retrieve notes one through and including three of the chord.
 ```
 >>> chord[1:3].printQuality(0)
 minor
 ```
-
+You can also print the Jazz Numeral Notation or just the Numeral of the chord by itself
+```
+>>> Scale("A", minor)[6].buildChord(7).printNumeral()
+bVI
+>>> Scale("A", minor)[6].buildChord(7).jazzNumeralNotation()
+bVIM13#11
+```
