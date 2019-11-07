@@ -28,7 +28,7 @@ From a scale degree you can build a new scale or chord
 >>> print(D_Dorian_Scale)
 [D, E, F, G, A, B, C]
 ```
-Build a chord off of a scale degree, the build chord method has two optional params, the amount of notes in the chord, and the leap size
+Build a chord off of a scale degree, the build chord method has two optional params, the amount of notes in the chord, and the skip size, by default, chords are comprised of four notes with a skip size of two. 
 ```
 >>> G9 = D_Dorian_Scale[4].buildChord(5)
 ```
