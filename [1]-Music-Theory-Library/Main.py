@@ -9,6 +9,7 @@
 # Get Negative Harmony of a Chord
 # Add try-catch statements of invalid inputs
 # Add full support for add-sub for all classes
+# fix building chords with skips greater or less than three
 
 import random
 import sys
@@ -26,59 +27,69 @@ def main():
 	print("The D Dorian Scale is: " + DDorianScale)
 
 	# Build a chord off of a scale degree
-	G7 = DDorianScale[4].buildChord(5)
-	print("The G Dominant Chord is: " + G7)
+	G9 = DDorianScale[4].buildChord(5)
+	print("The G Dominant Chord is: " + G9)
 
 	# Resolve the chord using a specific rule
-	CM7 = G7.resolveChord(circleOfFifths)
-	print("The result of resolving G7 is: " + CM7)
+	CM7 = G9.resolveChord(circleOfFifths)
+	print("The result of resolving G9 is: " + CM7)
 
 	# Find the relative chord of a chord
-	Em7 = G7.getRelativeChord()
-	print("The relative chord of G7 is Em7: " + Em7)
+	Em7 = G9.getRelativeChord()
+	print("The relative chord of G9 is Em7: " + Em7)
 
 	# Get secondary dominant of a chord
-	D7 = G7.getSecondaryDominant()
-	print("The secondary dominant of G7 is D7: " + D7)
+	D7 = G9.getSecondaryDominant()
+	print("The secondary dominant of G9 is D7: " + D7)
 
 	# Transpose a scale up by semitones
 	DMajorScale = CMajorScale + 2
 	print("The D Major Scale is: " + DMajorScale)
 
 	# Print the quality of a subset of a chord
-	print(G7[2:5])
+	print("The chord resulting from subsetting G9 by 2-5 are: " + G9[2:5])
 
 	# Properly print quality of a chord with accidentals
 	Bhalfdim9 = CMajorScale[7].buildChord()
-	print(Bhalfdim9.printQuality())
+	print("The quality of the 7th chord of the C major scale is: " + Bhalfdim9.printQuality())
 
 	# Properly assign notes to non-major heptatonic scales
 	AMelodicMinor = Scale("A", melodicMinor)
 	print("The A Melodic Minor Scale is: " + AMelodicMinor)
 
 	# Build a chord on a non-major heptatonic scale
-	AChord = AMelodicMinor[1].buildChord(6)
-	print("The A Melodic Minor 7 Chord is: " + AChord)
+	AM11b3 = AMelodicMinor[1].buildChord(6)
+	print("The first chord of the melodic minor scale is: " + AM11b3)
 
 	# Properly print the quality of non-major diatonic chord
-	print("The A Melodic Minor 11 Chord Quality is is: " + AChord.printQuality())
+	print("The quality of this chord is: " + AM11b3.printQuality())
 
 	# Print Roman Numerals with the Correct quality
-	print(Scale("A", minor)[6].buildChord(7).jazzNumeralNotation())
+	print("The jazz numeral notation of the 6th chord of A minor, with 7 notes is: " + Scale("A", minor)[6].buildChord(7).jazzNumeralNotation())
 
-	print(CMajorScale.getImperfections())
+	# Get properties of scale
+	print("The number of imperfections in the C Major Scale is: " + str(CMajorScale.getImperfections()))
+	print("The reflection axes of the C Major scale are: " + str(CMajorScale.getReflectionAxes()))
 
-	print(CMajorScale.getReflectionAxes())
-
-	CDimScale = Scale("C", [P1, M2, m3, P4, aug4, m6, M6, M7])
-	print(CDimScale[1].buildChord())
-
+	# Build non-heptatonic scales
 	CChromaticScale = Scale("C", [P1, m2, M2, m3, M3, P4, aug4, P5, m6, M6, m7, M7])
-	print(CChromaticScale[1].buildChord())
+	print("The Chromatic Scale is: " + CChromaticScale)
 
-	pentatonicScale = Scale("A", [P1, m2, m3, M3, aug4, m6, M6])
+	# Build chord on non-heptatonic scales
+	CDimScale = Scale("C", [P1, M2, m3, P4, aug4, m6, M6, M7])
+	print("The first chord of the C Diminished Scale is: " + CDimScale[1].buildChord())
+
+	# Check if chord exists in a scale
+	if G9 in CMajorScale:
+		print("Check if G9 in C Major Scale: True")
+
+	# Check if scale exists in a scale
 	if DDorianScale in CMajorScale:
-		print("got here")
+		print("Check if D Dorian Scale in C Major Scale: True")
+
+	# Check if intervals exist in a scale
+	if [P1, M3, P5] in CMajorScale:
+		print("Check if [P1, M3, P5] in C Major Scale: True")
 
 if __name__ == "__main__":
 	main()

@@ -271,6 +271,12 @@ class Scale:
 			result.append(degree.getNote())
 		return result
 
+	def findDegreeInParent(self, p_degree):
+		for degree in self.getParentDegree().getParentScale():
+			if (degree.getNote() == p_degree.getNote()):
+				return degree
+		return -1
+
 	#######################
 	# Getters and Setters #
 	#######################
@@ -311,7 +317,7 @@ class _Degree:
 	#####################################
 
 	def __eq__(self, p_other):
-		return (self.getInterval() == p_other.getInterval()) and (self.getNote() == p_other.getNote())
+		return (self.getInterval().getSemitones() == p_other.getInterval().getSemitones()) and (self.getNote() == p_other.getNote())
 
 	def __str__(self):
 		return self.getNote()
@@ -344,13 +350,14 @@ class _Degree:
 	######################################################
 
 	def buildChord(self, p_num_notes = 4, p_leap_size = 2):
-		try:
+		# try:
 			child_intervals = self.buildPitchClass(p_leap_size)[:p_num_notes]
 			child_chord = Chord(self.getNote(), child_intervals)
 			child_chord.setParentDegree(self)
+			child_chord.setLeapSize(p_leap_size)
 			return child_chord
-		except:
-			print("Error: Failed to build chord")
+		# except:
+		# 	print("Error: Failed to build chord")
 
 	def buildScale(self):
 		try:
@@ -361,22 +368,31 @@ class _Degree:
 		except:
 			print("Error: Failed to build scale")
 
-	def buildPitchClass(self, p_leap_size = 1):
-		try:
+	def buildPitchClass(self, p_leap_size = 1, system = "western"):
+		# try:
 			parent_degrees = self.getParentScale().getDegrees() * 3
 			previous = 0
 			padding = 0
 			child_intervals = [P1]
 			i = parent_degrees.index(self) + p_leap_size
+			degree_count = 1 + p_leap_size
 			while (parent_degrees[i] != self):
-				if (self.distanceFromNext(parent_degrees[i]) < previous):
+				interval_semitones = self.distanceFromNext(parent_degrees[i])
+				if (interval_semitones < previous):
 					padding = padding + 12
-				child_intervals.append(Intervals[self.distanceFromNext(parent_degrees[i]) + padding])
+				possible_intervals = Intervals[system][interval_semitones + padding]
+				matches = [item for item in possible_intervals if degree_count == item.getNumeral()]
+				if (len(matches) != 0):
+					selected_interval = matches[0]
+				else:
+					selected_interval = min(possible_intervals, key=lambda x:abs(x.getNumeral()-degree_count))
+				child_intervals.append(selected_interval)
 				previous = self.distanceFromNext(parent_degrees[i])
 				i = i + p_leap_size
+				degree_count = degree_count + p_leap_size
 			return child_intervals
-		except:
-			print("Error: Failed to build pitch class set")
+		# except:
+		# 	print("Error: Failed to build pitch class set")
 
 	def buildScaleWithIntervals(self, p_intervals):
 		try:
@@ -433,9 +449,7 @@ class Chord(Scale):
 		
 	def __getitem__(self, p_other):
 		if (isinstance(p_other, slice)):
-			intervals = self[p_other.start].buildPitchClass()[:p_other.stop - p_other.start]
-			new_chord = Chord(self[p_other.start].__str__(), intervals)
-			new_chord.setParentDegree(new_chord.getDegrees()[0])
+			new_chord = self.findDegreeInParent(self[p_other.start]).buildChord(p_other.stop - (p_other.start - 1), self.getLeapSize())
 			return new_chord
 		else:
 			return self.getDegrees()[p_other - 1]
@@ -493,6 +507,13 @@ class Chord(Scale):
 	def getSecondaryDominant(self):
 		return self.getParentDegree().buildScaleWithIntervals(major)[5].buildChord()
 
+	def getLeapSize(self):
+		return self.leap_size
+
+	def setLeapSize(self, p_leap_size):
+		self.leap_size = p_leap_size
+
 	# TODO 
 	# def transformChordTo(self, p_intervals):
 	# def getParallelChord(self):
+		

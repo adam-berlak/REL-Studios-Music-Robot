@@ -5,35 +5,46 @@ System = "western"
 
 # Intervals
 P1 = Interval(0, 1)
+M2 = Interval(2, 2)
+M3 = Interval(4, 3)
 P4 = Interval(5, 4)
 P5 = Interval(7, 5)
+M6 = Interval(9, 6)
+M7 = Interval(11, 7)
 P8 = Interval(12, 8)
+M9 = Interval(14, 9)
+M10 = Interval(16, 10)
 P11 = Interval(17, 11)
 P12 = Interval(19, 12)
+M13 = Interval(21, 13)
+M14 = Interval(23, 14)
 P15 = Interval(24, 15)
 
 m2 = Interval(1, 2, "b")
 m3 = Interval(3, 3, "b")
+dim5 = Interval(6, 5, "b")
 m6 = Interval(8, 6, "b")
 m7 = Interval(10, 7, "b")
 m9 = Interval(13, 9, "b")
 m10 = Interval(15, 10, "b")
+dim12 = Interval(18, 12, "b")
 m13 = Interval(20, 13, "b")
 m14 = Interval(22, 14, "b")
 
-M2 = Interval(2, 2)
-M3 = Interval(4, 3)
-M6 = Interval(9, 6)
-M7 = Interval(11, 7)
-M9 = Interval(14, 9)
-M10 = Interval(16, 10)
-M13 = Interval(21, 13)
-M14 = Interval(23, 14)
-
+aug2 = Interval(3, 2, "#")
 aug4 = Interval(6, 4, "#")
+aug5 = Interval(8, 5, "#")
+aug6 = Interval(10, 6, "#")
+aug7 = Interval(12, 7, "#")
+aug9 = Interval(15, 9, "#")
 aug11 = Interval(18, 11, "#")
+aug12 = Interval(20, 12, "#")
+aug13 = Interval(22, 13, "#")
+aug14 = Interval(24, 14, "#")
 
-Intervals = [P1, m2, M2, m3, M3, P4, aug4, P5, m6, M6, m7, M7, P8, m9, M9, m10, M10, P11, aug11, P12, m13, M13, m14, M14, P15]
+Intervals = {
+    "western": [(P1,), (m2,), (M2,), (aug2, m3), (M3,), (P4,), (aug4, dim5), (P5,), (aug5, m6), (M6,), (aug6, m7), (M7,), (P8,), (m9,), (M9,), (aug9, m10), (M10,), (P11,), (aug11, dim12), (P12,), (aug12, m13), (M13,), (aug13, m14), (M14,), (P15,)]
+}
 
 Interval_Spectrum = {
     "western": {
