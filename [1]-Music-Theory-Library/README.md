@@ -11,3 +11,6 @@ when they should be derived using logical formulas within a Scale object. As a r
 A Scale Object requires a note for the Tonic, and a list of Intervals organized as a Pitch Class Set
 #### major = [P1, M2, M3, P4, P5, M6, M7]
 #### C_Major_Scale = Scale("C", major)
+
+You can access any of the scale degrees by using an index. The indices start at 1 as opposed to a normal list which starts at 0
+#### print(C_Major_Scale[1]) ==> "C"
