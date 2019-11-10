@@ -35,6 +35,11 @@ From a scale degree you can build a new scale or chord
 >>> D_Dorian_Scale = C_Major_Scale[2].buildScale()
 [D, E, F, G, A, B, C]
 ```
+Build a scale on a scale degree using a specific pitch class set
+```
+>>> D_Melodic_Minor = C_Major_Scale[2].buildScaleWithIntervals([P1, M2, m3, P4, P5, M6, M7])
+[D, E, F, G, A, B, C#]
+```
 
 You can also transpose a Scale up by adding integers or intervals to it. My library assigns pitchs and accidentals to the scales automatically without any hardcoding. The proccess is identical to how its done by theorists ensuring minimal accidentals are used. As an example: Db Major notation will be used over C# Major despite the latter also being valid. This is because Db Major has less accidentals. Despite this you can still create a C# Major Scale. An integer is treated as a Generic Interval, meaning the value represents scale steps as opposed to semitones. To transpose a scale by semitones you must add an interval to it
 ```
