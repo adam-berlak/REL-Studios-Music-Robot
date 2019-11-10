@@ -78,7 +78,7 @@ class Scale:
 			except:
 				print("Error: Failed to assign notes to the new scale")
 		if (isinstance(p_other, int)):
-			result = (self[1] + p_other).buildScale()
+			result = (self[1] + p_other).buildScaleWithIntervals(self.getIntervals())
 			return result
 
 		if (isinstance(p_other, str)):

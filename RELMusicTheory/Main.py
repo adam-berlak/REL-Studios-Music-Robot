@@ -44,7 +44,7 @@ def main():
 	print("The secondary dominant of G9 is D7: " + D7)
 
 	# Transpose a scale up by semitones
-	DMajorScale = CMajorScale + M2
+	DMajorScale = CMajorScale + 1
 	print("The D Major Scale is: " + DMajorScale)
 
 	# Print the quality of a subset of a chord
