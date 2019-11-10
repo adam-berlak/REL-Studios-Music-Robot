@@ -45,11 +45,7 @@ You can also transpose a Scale up by adding integers or intervals to it. My libr
 >>> Db_Major_Scale = C_Major_Scale + m2
 [Db, Eb, F, Gb, Ab, Bb, C]
 ```
-You can also preform addition with degrees. When adding an integer x to a scale degree, the integer is treated as a generic interval, meaning a degree x number of diatonic notes above the principle degree will be returned. In the future it may be treated as a specific interval.
-```
->>> C_Major_Scale[1] + 2
-E
-```
+
 You can also check if a Scale contains a Chord, another Scale, or a Pitch Class
 ```
 >>> D_Dorian_Scale in C_Major_Scale
