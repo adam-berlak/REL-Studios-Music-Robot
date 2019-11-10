@@ -79,7 +79,7 @@ The scale also has several methods for determining properties of scales. You can
 ```
 #### 2.2. Chords
 
-Build a chord off of a scale degree, the build chord method has two optional params, the amount of notes in the chord, and the skip size, by default, chords are comprised of four notes with a skip size of two. In this case we are building a chord with five notes on the fourth scale degree of the dorian scale/mode.
+Build a chord off of a scale degree, the build chord method has two optional params, the amount of notes in the chord, and the skip size, by default, chords are comprised of four notes with a skip size of two. In this case we are building a chord with five notes on the fifth scale degree of the C Major Scale. The following chord is a quartal chord based of the first degree of C Major.
 ```
 >>> G9 = C_Major_Scale[5].buildChord(5)
 [G, B, D, F, A]
