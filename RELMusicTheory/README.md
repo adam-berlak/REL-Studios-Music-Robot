@@ -76,8 +76,10 @@ The scale also has several methods for determining properties of scales. You can
 
 Build a chord off of a scale degree, the build chord method has two optional params, the amount of notes in the chord, and the skip size, by default, chords are comprised of four notes with a skip size of two. In this case we are building a chord with five notes on the fourth scale degree of the dorian scale/mode.
 ```
->>> G9 = D_Dorian_Scale[4].buildChord(5)
+>>> G9 = C_Major_Scale[5].buildChord(5)
 [G, B, D, F, A]
+>>> chord = C_Major_Scale[1].buildChord(5, 3)
+[C, F, B, E, A]
 ```
 You can print the quality of the chord in three different ways. The quality is derived through an algorithm that emulates how music theorists method, so there is very little reliance on hardcoding and you can get the quality for almost any chord.
 ```
@@ -106,6 +108,11 @@ You can resolve a chord using a certain rule
 ```
 >>> G7.resolveChord(circleOfFifths)
 [C, E, G, B]
+```
+One problem I encountered was trying to figure out how to print the quality of quartal/quintal harmony and beyond that. The solution I found was to rearrange the intervals of said chords so that they are built on thirds and indicate the missing notes. 
+```
+>>> C_Major_Scale[1].buildChord(7, 3).printQuality()
+M13
 ```
 ## 3. Goals:
 
