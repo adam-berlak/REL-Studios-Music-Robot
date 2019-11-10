@@ -22,16 +22,28 @@ You can access any of the scale degrees by using an index. The indices start at 
 >>> C_Major_Scale[1]
 C
 ```
+If you add an integer to a scale degree it is treated as a generic interval while adding an interval is treated like adding a specific interval. For now adding a specific interval to a scale degree produces a list of possible degrees, the difference between the degrees being the note they are assigned too. Its up to the user to decide which version to use.
+```
+>>> C_Major_Scale[1] + 3
+F
+>>> C_Major_Scale[1] + m3
+[D#, Eb, Fbb]
+```
 
 From a scale degree you can build a new scale or chord
 ```
 >>> D_Dorian_Scale = C_Major_Scale[2].buildScale()
 [D, E, F, G, A, B, C]
 ```
+
 You can also transpose a Scale up by adding integers or intervals to it. My library assigns pitchs and accidentals to the scales automatically without any hardcoding. The proccess is identical to how its done by theorists ensuring minimal accidentals are used. As an example: Db Major notation will be used over C# Major despite the latter also being valid. This is because Db Major has less accidentals. Despite this you can still create a C# Major Scale. An integer is treated as a Generic Interval, meaning the value represents scale steps as opposed to semitones. To transpose a scale by semitones you must add an interval to it
 ```
 >>> D_Major_Scale = C_Major_Scale + 1
 [D, E, F#, G, A, B, C#]
+>>> D_Major_Scale = C_Major_Scale + M2
+[D, E, F#, G, A, B, C#]
+>>> Db_Major_Scale = C_Major_Scale + m2
+[Db, Eb, F, Gb, Ab, Bb, C]
 ```
 You can also preform addition with degrees. When adding an integer x to a scale degree, the integer is treated as a generic interval, meaning a degree x number of diatonic notes above the principle degree will be returned. In the future it may be treated as a specific interval.
 ```
