@@ -86,7 +86,7 @@ Build a chord off of a scale degree, the build chord method has two optional par
 >>> chord = C_Major_Scale[1].buildChord(5, 3)
 [C, F, B, E, A]
 ```
-You can print the quality of the chord in three different ways. The quality is derived through an algorithm that emulates how music theorists method, so there is very little reliance on hardcoding and you can get the quality for almost any chord.
+You can print the quality of the chord in three different ways. It is derived through an algorithm that emulates how music theorists derive chord qualities, so there is very little reliance on hardcoding and you can get the quality for almost any chord.
 ```
 >>> AMelodicMinor = Scale("A", melodicMinor)
 >>> chord = AMelodicMinor[1].buildChord(6)
