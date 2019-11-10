@@ -1,0 +1,1 @@
+2741: [['2nd mode:Scale 1709', 'Dorian'], ['3rd mode:Scale 1451', 'Phrygian'], ['4th mode:Scale 2773', 'Lydian'], ['5th mode:Scale 1717', 'Mixolydian'], ['6th mode:Scale 1453', 'Aeolian'], ['7th mode:Scale 1387', 'Locrian', 'This is the prime mode']]

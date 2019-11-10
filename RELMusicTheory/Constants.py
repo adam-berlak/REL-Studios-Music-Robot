@@ -43,7 +43,7 @@ aug13 = Interval(22, 13, "#")
 aug14 = Interval(24, 14, "#")
 
 Intervals = {
-    "western": [(P1,), (m2,), (M2,), (aug2, m3), (M3,), (P4,), (aug4, dim5), (P5,), (aug5, m6), (M6,), (aug6, m7), (M7,), (P8,), (m9,), (M9,), (aug9, m10), (M10,), (P11,), (aug11, dim12), (P12,), (aug12, m13), (M13,), (aug13, m14), (M14,), (P15,)]
+    "western": [(P1,), (m2,), (M2,), (aug2, m3), (M3,), (P4,), (aug4, dim5), (P5,), (aug5, m6), (M6,), (aug6, m7), (M7,), (P8,), (m9,), (M9,), (aug9, m10), (M10,), (P11,), (aug11, dim12), (P12,), (aug12, m13), (M13,), (aug13, m14), (M14,)]
 }
 
 Interval_Spectrum = {

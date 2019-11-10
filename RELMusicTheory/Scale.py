@@ -46,28 +46,18 @@ class Scale:
 		return result[:-2] + "]"
 
 	def __eq__(self, p_other):
-		if (isInstance(p_other, Scale)):
-			return (self.getIntervals() == p_other.getIntervals()) and (self.getTonicNote() == p_other.getTonicNote())
+		return (self.getIntervals() == p_other.getIntervals()) and (self.getTonicNote() == p_other.getTonicNote())
 
 	def __getitem__(self, p_index):
-		try:
-			return self.getDegrees()[p_index - 1]
-		except: 
-			print("Error: Scale indices return scale degrees, ranging from (1-n) where the n is the cardinality of your scale")
+		return self.getDegrees()[p_index - 1]
 	
 	def __contains__(self, p_other):
 		if (isinstance(p_other, Scale)):
-			if (all(elem in self.getNotes() for elem in p_other.getNotes())):
-				return True
-			return False
+			return all(elem in self.getNotes() for elem in p_other.getNotes())
 		if (isinstance(p_other, Chord)):
-			if (all(elem in self.getNotes() for elem in p_other.getNotes())):
-				return True
-			return False
+			return all(elem in self.getNotes() for elem in p_other.getNotes())
 		if (isinstance(p_other, str)):
-			if (p_other in self.getNotes()):
-				return True
-			return False
+			return p_other in self.getNotes()
 		if (isinstance(p_other, list)):
 			if (isinstance(p_other[0], Interval)):
 				for degree in self.getDegrees():
@@ -76,18 +66,20 @@ class Scale:
 				return False
 
 	def __add__(self, p_other):
-		if (isinstance(p_other, int)):
+		if (isinstance(p_other, Interval)):
 			try:
-				possible_tonics = (TONES.get(System)*2)[([TONES.get(System).index(item) for item in TONES.get(System) if self.getTonicNote() in item][0] + p_other)]
 				min_length = 1000
-				for item in possible_tonics:
-					scale = Scale(item, self.getIntervals())
+				for item in [item for item in (self[1] + p_other) if len(item.getNote()) < 3]:
+					scale = item.buildScaleWithIntervals(self.getIntervals())
 					if (len(scale.__str__()) < min_length):
 						min_length = len(scale.__str__())
 						result = scale
 				return result
 			except:
 				print("Error: Failed to assign notes to the new scale")
+		if (isinstance(p_other, int)):
+			result = (self[1] + p_other).buildScale()
+			return result
 
 		if (isinstance(p_other, str)):
 			return str(self) + p_other
@@ -323,11 +315,26 @@ class _Degree:
 		return self.getNote()
 
 	def __add__(self, p_other):
-		try:
-			if (isinstance(p_other, int)):
-				return (self.getParentScale().getDegrees()*2)[self.getParentScale().getDegrees().index(self) + p_other]
-		except:
-			print("Error: Failed to add " + str(p_other) + " to degree")
+		if (isinstance(p_other, Interval)):
+			try:
+				possible_notes = (TONES.get(System)*2)[[TONES.get(System).index(item) for item in TONES.get(System) if self.getNote() in item][0] + p_other.getSemitones()]
+				degree_interval = [item for item in Intervals["western"][(self.getInterval() + p_other).getSemitones()] if item == (self.getInterval() + p_other)][0]
+				possible_degrees = []
+				for item in possible_notes:
+					degree = _Degree(degree_interval, self.getParentScale())
+					degree.setNote(item)
+					possible_degrees.append(degree)
+				return possible_degrees
+			except:
+				print("Error: Failed to assign notes to the new scale")
+		if (isinstance(p_other, int)):
+			return (self.getParentScale().getDegrees()*2)[self.getParentScale().getDegrees().index(self) + p_other]
+		if (isinstance(p_other, str)):
+			return str(self) + p_other
+	
+	def __radd__(self, p_other):
+		if (isinstance(p_other, str)):
+			return p_other + str(self)
 
 	def __sub__(self, p_other):
 		return (self.getParentScale().getDegrees()*2)[self.getParentScale().getDegrees().index(self) - p_other]
@@ -350,14 +357,14 @@ class _Degree:
 	######################################################
 
 	def buildChord(self, p_num_notes = 4, p_leap_size = 2):
-		# try:
+		try:
 			child_intervals = self.buildPitchClass(p_leap_size)[:p_num_notes]
 			child_chord = Chord(self.getNote(), child_intervals)
 			child_chord.setParentDegree(self)
 			child_chord.setLeapSize(p_leap_size)
 			return child_chord
-		# except:
-		# 	print("Error: Failed to build chord")
+		except:
+		 	print("Error: Failed to build chord")
 
 	def buildScale(self):
 		try:
@@ -369,8 +376,8 @@ class _Degree:
 			print("Error: Failed to build scale")
 
 	def buildPitchClass(self, p_leap_size = 1, system = "western"):
-		# try:
-			parent_degrees = self.getParentScale().getDegrees() * 3
+		try:
+			parent_degrees = self.getParentScale().getDegrees() * 7
 			previous = 0
 			padding = 0
 			child_intervals = [P1]
@@ -380,7 +387,8 @@ class _Degree:
 				interval_semitones = self.distanceFromNext(parent_degrees[i])
 				if (interval_semitones < previous):
 					padding = padding + 12
-				possible_intervals = Intervals[system][interval_semitones + padding]
+				# print(str(interval_semitones + padding))
+				possible_intervals = (Intervals[system]*7)[interval_semitones + padding]
 				matches = [item for item in possible_intervals if degree_count == item.getNumeral()]
 				if (len(matches) != 0):
 					selected_interval = matches[0]
@@ -391,8 +399,8 @@ class _Degree:
 				i = i + p_leap_size
 				degree_count = degree_count + p_leap_size
 			return child_intervals
-		# except:
-		# 	print("Error: Failed to build pitch class set")
+		except:
+		 	print("Error: Failed to build pitch class set")
 
 	def buildScaleWithIntervals(self, p_intervals):
 		try:
@@ -460,7 +468,7 @@ class Chord(Scale):
 
 	def printQuality(self, system = "western", style = 2):
 		try: 
-			chord_intervals = self.getIntervals()
+			chord_intervals = self.rearrangeIntervalsAsThirds()
 			smallest_difference = 1000
 			accidentals = ""
 			for key in Chord_Qualities[system].keys():
@@ -468,19 +476,22 @@ class Chord(Scale):
 				count = 0
 				i = 0
 				while(i < len(chord_intervals)):
-					if (chord_intervals[i] != Chord_Qualities[system][key][i]):
-						count = count + 1
-						if (chord_intervals[i].getSemitones() < Chord_Qualities[system][key][i].getSemitones()):
-							temp_accidentals = temp_accidentals + "b" + str(((i + 1) * 2) - 1)
-						else:
-							temp_accidentals = temp_accidentals + "#" + str(((i + 1) * 2) - 1)
+					if (chord_intervals[i]):
+						if (chord_intervals[i] != Chord_Qualities[system][key][i]):
+							count = count + 1
+							if (chord_intervals[i].getSemitones() < Chord_Qualities[system][key][i].getSemitones()):
+								temp_accidentals = temp_accidentals + "b" + str(((i + 1) * 2) - 1)
+							else:
+								temp_accidentals = temp_accidentals + "#" + str(((i + 1) * 2) - 1)
+					else:
+						temp_accidentals = temp_accidentals + "(omit" + str(((i + 1) * 2) - 1) + ")"
 					i = i + 1
 				if (count < smallest_difference):
 					closest_match = key
 					smallest_difference = count
 					accidentals = temp_accidentals
-			
-			return closest_match[style] + str((len(self.getDegrees())*2)-1) + accidentals
+
+			return closest_match[style] + str(max([x.getNumeral() for x in chord_intervals if x])) + accidentals
 		except: 
 			print("Error: Failed to create string represention of the chord")
 
@@ -493,6 +504,39 @@ class Chord(Scale):
 
 	def jazzNumeralNotation(self, system = "western"):
 		return self.printNumeral() + self.printQuality() 
+
+	def rearrangeIntervalsAsThirds(self):
+		new_interval_list = []
+		for degree in self.getDegrees():
+			possible_intervals = []
+			if (((degree.getInterval().getNumeral() - 1) % 2) != 0 and degree.getInterval().getSemitones() < 12):
+				interval_index = degree.getInterval().getSemitones() + 12
+				possible_intervals = Intervals["western"][interval_index]
+			elif ((degree.getInterval().getNumeral() - 1) % 2 != 0 and degree.getInterval().getSemitones() > 12):
+				interval_index = degree.getInterval().getSemitones()
+				while (interval_index > 12):
+					interval_index = interval_index - 12
+				possible_intervals = Intervals["western"][interval_index]
+			else:
+				possible_intervals = [degree.getInterval()]
+
+			new_interval = [item for item in possible_intervals if degree.getInterval().getAccidental() == item.getAccidental()]
+			new_interval_list.append(new_interval[0])
+
+		new_interval_list.sort(key=lambda x: x.getSemitones())
+
+		previous_numeral = -1
+		i = 0
+		while (i < len(new_interval_list)):
+			if (new_interval_list[i].getNumeral() - previous_numeral != 2):
+				difference = new_interval_list[i].getNumeral() - previous_numeral
+				for j in range(int((difference - 2)/2)):
+					new_interval_list.insert(i, None)
+					i = i + 1
+			previous_numeral = new_interval_list[i].getNumeral()
+			i = i + 1
+
+		return new_interval_list
 
 	###########################################################
 	# Methods concerning harmonic movement and transformation #

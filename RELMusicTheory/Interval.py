@@ -5,22 +5,25 @@ class Interval:
 		self.semitones = p_semitones
 		self.numeral = p_numeral
 		self.accidental = p_accidental
+
 	def __str__(self):
 		return str(self.getNumeral()) + self.getAccidental()
+
 	def __eq__(self, p_other):
-		return self.getSemitones() == p_other.getSemitones()
+		return self.getSemitones() == p_other.getSemitones() and self.getNumeral() == p_other.getNumeral()
+
 	def __add__(self, p_other):
 		if (isinstance(p_other, Interval)):
-			return self.getSemitones() + p_other.getSemitones()
+			return Interval(self.getSemitones() + p_other.getSemitones(), self.getNumeral() + p_other.getNumeral() - 1)
 		if (isinstance(p_other, int)):
 			return self.getSemitones() + p_other
 		if (isinstance(p_other, str)):
 			return self.__str__() + p_other
+
 	def __radd__(self, p_other):
-		if (isinstance(p_other, int)):
-			return self.getSemitones() + p_other
 		if (isinstance(p_other, str)):
-			return p_other + self.__str__() 
+			return p_other + self.__str__()
+
 	def __sub__(self, p_other):
 		if (isinstance(p_other, Interval)):
 			return self.getSemitones() - p_other.getSemitones()
