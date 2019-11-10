@@ -28,10 +28,9 @@ From a scale degree you can build a new scale or chord
 >>> D_Dorian_Scale = C_Major_Scale[2].buildScale()
 [D, E, F, G, A, B, C]
 ```
-You can also transpose a Scale up by adding integers to it. My library assigns pitchs and accidentals to the scales automatically without any hardcoding. The proccess is identical to how its done by theorists ensuring minimal accidentals are used. As an example:
-Db Major notation will be used over C# Major despite the latter also being valid. This is because Db Major has less accidentals. Despite this you can still create a C# Major Scale.
+You can also transpose a Scale up by adding integers or intervals to it. My library assigns pitchs and accidentals to the scales automatically without any hardcoding. The proccess is identical to how its done by theorists ensuring minimal accidentals are used. As an example: Db Major notation will be used over C# Major despite the latter also being valid. This is because Db Major has less accidentals. Despite this you can still create a C# Major Scale. An integer is treated as a Generic Interval, meaning the value represents scale steps as opposed to semitones. To transpose a scale by semitones you must add an interval to it
 ```
->>> D_Major_Scale = C_Major_Scale + 2
+>>> D_Major_Scale = C_Major_Scale + 1
 [D, E, F#, G, A, B, C#]
 ```
 You can also preform addition with degrees. When adding an integer x to a scale degree, the integer is treated as a generic interval, meaning a degree x number of diatonic notes above the principle degree will be returned. In the future it may be treated as a specific interval.
