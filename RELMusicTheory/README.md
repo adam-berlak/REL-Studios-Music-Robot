@@ -22,23 +22,35 @@ You can access any of the scale degrees by using an index. The indices start at 
 >>> C_Major_Scale[1]
 C
 ```
+If you add an integer to a scale degree it is treated as a generic interval while adding an interval is treated like adding a specific interval. For now adding a specific interval to a scale degree produces a list of possible degrees, the difference between the degrees being the note they are assigned too. Its up to the user to decide which version to use.
+```
+>>> C_Major_Scale[1] + 3
+F
+>>> C_Major_Scale[1] + m3
+[D#, Eb, Fbb]
+```
 
 From a scale degree you can build a new scale or chord
 ```
 >>> D_Dorian_Scale = C_Major_Scale[2].buildScale()
 [D, E, F, G, A, B, C]
 ```
-You can also transpose a Scale up by adding integers to it. My library assigns pitchs and accidentals to the scales automatically without any hardcoding. The proccess is identical to how its done by theorists ensuring minimal accidentals are used. As an example:
-Db Major notation will be used over C# Major despite the latter also being valid. This is because Db Major has less accidentals. Despite this you can still create a C# Major Scale.
+Build a scale on a scale degree using a specific pitch class set
 ```
->>> D_Major_Scale = C_Major_Scale + 2
+>>> D_Melodic_Minor = C_Major_Scale[2].buildScaleWithIntervals([P1, M2, m3, P4, P5, M6, M7])
+[D, E, F, G, A, B, C#]
+```
+
+You can also transpose a Scale up by adding integers or intervals to it. My library assigns pitchs and accidentals to the scales automatically without any hardcoding. The proccess is identical to how its done by theorists ensuring minimal accidentals are used. As an example: Db Major notation will be used over C# Major despite the latter also being valid. This is because Db Major has less accidentals. Despite this you can still create a C# Major Scale. An integer is treated as a Generic Interval, meaning the value represents scale steps as opposed to semitones. To transpose a scale by semitones you must add an interval to it
+```
+>>> D_Major_Scale = C_Major_Scale + 1
 [D, E, F#, G, A, B, C#]
+>>> D_Major_Scale = C_Major_Scale + M2
+[D, E, F#, G, A, B, C#]
+>>> Db_Major_Scale = C_Major_Scale + m2
+[Db, Eb, F, Gb, Ab, Bb, C]
 ```
-You can also preform addition with degrees. When adding an integer x to a scale degree, the integer is treated as a generic interval, meaning a degree x number of diatonic notes above the principle degree will be returned. In the future it may be treated as a specific interval.
-```
->>> C_Major_Scale[1] + 2
-E
-```
+
 You can also check if a Scale contains a Chord, another Scale, or a Pitch Class
 ```
 >>> D_Dorian_Scale in C_Major_Scale
@@ -67,12 +79,14 @@ The scale also has several methods for determining properties of scales. You can
 ```
 #### 2.2. Chords
 
-Build a chord off of a scale degree, the build chord method has two optional params, the amount of notes in the chord, and the skip size, by default, chords are comprised of four notes with a skip size of two. In this case we are building a chord with five notes on the fourth scale degree of the dorian scale/mode.
+Build a chord off of a scale degree, the build chord method has two optional params, the amount of notes in the chord, and the skip size, by default, chords are comprised of four notes with a skip size of two. In this case we are building a chord with five notes on the fifth scale degree of the C Major Scale. The following chord is a quartal chord based of the first degree of C Major.
 ```
->>> G9 = D_Dorian_Scale[4].buildChord(5)
+>>> G9 = C_Major_Scale[5].buildChord(5)
 [G, B, D, F, A]
+>>> chord = C_Major_Scale[1].buildChord(5, 3)
+[C, F, B, E, A]
 ```
-You can print the quality of the chord in three different ways. The quality is derived through an algorithm that emulates how music theorists method, so there is very little reliance on hardcoding and you can get the quality for almost any chord.
+You can print the quality of the chord in three different ways. It is derived through an algorithm that emulates how music theorists derive chord qualities, so there is very little reliance on hardcoding and you can get the quality for almost any chord.
 ```
 >>> AMelodicMinor = Scale("A", melodicMinor)
 >>> chord = AMelodicMinor[1].buildChord(6)
@@ -99,6 +113,11 @@ You can resolve a chord using a certain rule
 ```
 >>> G7.resolveChord(circleOfFifths)
 [C, E, G, B]
+```
+One problem I encountered was trying to figure out how to print the quality of quartal/quintal harmony and beyond that. The solution I found was to rearrange the intervals of said chords so that they are built on thirds and indicate the missing notes. 
+```
+>>> C_Major_Scale[1].buildChord(7, 3).printQuality()
+M13
 ```
 ## 3. Goals:
 
