@@ -4,13 +4,20 @@
 # Support Non-heptatonic Scales : Completed
 # Find solution to multiplying scale for chords to support degrees of > 12 Semitone intervals :: Solution: Chord inherits from scale, it is a scale object but has additional methods like resolve etc. but it also has its own degrees
 # fix building chords with skips greater or less than three : Completed
-# Fix Numeral Addition
-# Fix notation for non-triadic chords 
-# Get parallel key of scale
-# Get Negative Harmony of a Chord
-# Add try-catch statements of invalid inputs
-# Add full support for add-sub for all classes
-# Add support for chord inversions and sus notes
+# Fix notation for non-triadic chords : Completed
+# IMPORTANT: Fix Numeral Addition : Complete
+# IMPORTANT: Remove reliance on Interval objects, instead use semitones as is, interval objects only required for printing and interfacing : Complete
+# IMPORTANT: Automate creation of Interval objects within Scale so that it is always accurate, and have a fixed amount of intervals available for interfacing : Complete
+# IMPORTANT: Fix printing of quality for chord built on chromatic scale : Complete
+
+# STRETCH GOAL: Get parallel key of scale
+# STRETCH GOAL: Get Negative Harmony of a Chord
+# STRETCH GOAL: Add full support for sub for all classes
+# STRETCH GOAL: Add support for chord inversions and sus notes
+# STRETCH GOAL: Create a Scale.Dictionary.py file for holding thousands of Scale definitions
+
+# IMPORTANT: Add try-catch statements of invalid inputs
+# IMPORTANT: Move unaltered_intervals dictionary into constants
 
 import random
 import sys
@@ -22,6 +29,11 @@ def main():
 	# Create a C Major Scale
 	CMajorScale = Scale("C", major)
 	print("The C Major Scale is: " + CMajorScale)
+
+	test = CMajorScale * 3
+
+	Eb = CMajorScale[1] + m3
+	print("The first degree of the C Major Scale + m3 is: " + Eb)
 
 	# Build a scale off of a scale degree
 	DDorianScale = CMajorScale[2].buildScale()

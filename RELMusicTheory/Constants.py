@@ -1,9 +1,11 @@
-from Interval import Interval
+from Interval import *
 
-# Configuration
-System = "western"
+# Configuration System
+DEFAULT_SYSTEM = "western"
 
-# Intervals
+# Variables #
+
+# Configuration Interval Constants
 P1 = Interval(0, 1)
 M2 = Interval(2, 2)
 M3 = Interval(4, 3)
@@ -20,32 +22,41 @@ M13 = Interval(21, 13)
 M14 = Interval(23, 14)
 P15 = Interval(24, 15)
 
-m2 = Interval(1, 2, "b")
-m3 = Interval(3, 3, "b")
-dim5 = Interval(6, 5, "b")
-m6 = Interval(8, 6, "b")
-m7 = Interval(10, 7, "b")
-m9 = Interval(13, 9, "b")
-m10 = Interval(15, 10, "b")
-dim12 = Interval(18, 12, "b")
-m13 = Interval(20, 13, "b")
-m14 = Interval(22, 14, "b")
+m2 = Interval(1, 2)
+m3 = Interval(3, 3)
+dim5 = Interval(6, 5)
+m6 = Interval(8, 6)
+m7 = Interval(10, 7)
+m9 = Interval(13, 9)
+m10 = Interval(15, 10)
+dim12 = Interval(18, 12)
+m13 = Interval(20, 13)
+m14 = Interval(22, 14)
 
-aug2 = Interval(3, 2, "#")
-aug4 = Interval(6, 4, "#")
-aug5 = Interval(8, 5, "#")
-aug6 = Interval(10, 6, "#")
-aug7 = Interval(12, 7, "#")
-aug9 = Interval(15, 9, "#")
-aug11 = Interval(18, 11, "#")
-aug12 = Interval(20, 12, "#")
-aug13 = Interval(22, 13, "#")
-aug14 = Interval(24, 14, "#")
+aug2 = Interval(3, 2)
+aug4 = Interval(6, 4)
+aug5 = Interval(8, 5)
+aug6 = Interval(10, 6)
+aug7 = Interval(12, 7)
+aug9 = Interval(15, 9)
+aug11 = Interval(18, 11)
+aug12 = Interval(20, 12)
+aug13 = Interval(22, 13)
+aug14 = Interval(24, 14)
 
-Intervals = {
-    "western": [(P1,), (m2,), (M2,), (aug2, m3), (M3,), (P4,), (aug4, dim5), (P5,), (aug5, m6), (M6,), (aug6, m7), (M7,), (P8,), (m9,), (M9,), (aug9, m10), (M10,), (P11,), (aug11, dim12), (P12,), (aug12, m13), (M13,), (aug13, m14), (M14,)]
+# Configuration Heptatonic Scales Constants
+major = [P1, M2, M3, P4, P5, M6, M7]
+minor = [P1, M2, m3, P4, P5, m6, m7]
+melodicMinor = [P1, M2, m3, P4, P5, M6, M7]
+harmonicMinor = [P1, M2, m3, P4, P5, m6, M7]
+neopolitanMajor = [P1, m2, m3, P4, P5, M6, M7]
+
+# Configuration Tonal Systems
+TONES = {
+    "western": [("B#", "C", "Dbb"), ("B##", "C#", "Db"), ("C##", "D", "Ebb"), ("D#", "Eb", "Fbb"), ("D##", "E", "Fb"), ("E#", "F", "Gbb"), ("E##", "F#", "Gb"), ("F##", "G", "Abb"), ("G#", "Ab", "Bbbb"), ("G##", "A", "Bbb"), ("A#", "Bb", "Cbb"), ("A##", "B", "Cb")]
 }
 
+# Configuration Interval Spectrum Systems
 Interval_Spectrum = {
     "western": {
         1: "D",
@@ -62,6 +73,7 @@ Interval_Spectrum = {
     }
 }
 
+# Configuration Cardinality Systems
 cardinality = {
     "western": {
         1: "monotonic",
@@ -76,7 +88,7 @@ cardinality = {
     }
 }
 
-# Chord Quality Systems
+# Configuration Chord Quality Systems
 Chord_Qualities = {
     "western": {
         ("major", "maj", "M"): [P1, M3, P5, M7, M9, P11, M13],
@@ -84,48 +96,15 @@ Chord_Qualities = {
         ("dominant", "dom", ""): [P1, M3, P5, m7, M9, P11, M13]
     }
 }
-'''
-class ScaleDescriptor:
-    def __init__(self, p_intervals, p_mode_names, p_cardinality, p_pitch_class_set, p_forte_number, p_rotational_symmetry, p_reflection_axes, p_palindromic, p_chirality, p_hemitonia, p_cohemitonia, p_imperfections, p_modes, p_prime_mode):
-        self.intervals = p_intervals
-        self.mode_names = p_mode_names
-        self.cardinality = p_cardinality
-        self.pitch_class_set = p_pitch_class_set
-        self.forte_number = p_forte_number
-        self.rotational_symmetry = p_rotational_symmetry
-        self.reflection_axes = p_reflection_axes
-        self.palindromic = p_palindromic
-        self.chirality = p_chirality
-        self.hemitonia = p_hemitonia
-        self.cohemitonia = p_cohemitonia
-        self.imperfections = p_imperfections
-        self.modes = p_modes
-        self.prime_mode = p_prime_mode
 
-# Scale Quality Systems
-Scale_Qualities = {
+# Configuration Scale Nameing Systems
+Scales = {
     "western": {
-        ("major", ): ScaleDescriptor([P1, M2, M3, P4, P5, M6, M7], [("major", "lonian"), ("dorian",), ("phrygian",), ("lydian",), ("myxolydian",), ("minor", "aeolian"), ("locrian",)], (7,"heptatonic"), [0,2,4,5,7,9,11], "7-35", "none", 2, "no", "no", (2,"dihemitonic"), (0,"ancohemitonic"), 1, 6, 7),
-        ("melodic minor", ): ScaleDescriptor([P1, M2, m3, P4, P5, M6, M7], [("melodic minor",), ("dorian flat 2",), ("lydian augmented",), ("acoustic",), ("major-minor",), ("minor locrian",), ("superlocrian",)]),
-        ("harmonic minor", ): ScaleDescriptor([P1, M2, m3, P4, P5, m6, M7], [("harmonic minor",)("locrian natural 6",)("major augmented",)("lydian augmented",)("phrygian dominant",)("aeolian harmonic",)("ultralociran",)]),
-        ("neopolitan major", ): ScaleDescriptor([P1, m2, m3, P4, P5, M6, M7], [("neopolitan major",)("leading whole-tone",)("aeroptian",)("lydian minor",)("major locrian",)("storian",)("leading whole-tone inverse",)]),
-        ("neopolitan minor", ): ScaleDescriptor([P1, m2, m3, P4, P5, m6, M7], [("neopolitan minor",)("mela citrambari",)("lagian",)("minor romani",)("asian (a)",)("mela sulini",)("porian",)])
+        "major": ([P1, M2, M3, P4, P5, M6, M7], ["ionian", "dorian", "phrygian", "lydian", "myxolydian", "aeolian", "locrian"])
     }
 }
-'''
-# Tonal Systems
-TONES = {
-    "western": [("B#", "C", "Dbb"), ("B##", "C#", "Db"), ("C##", "D", "Ebb"), ("D#", "Eb", "Fbb"), ("D##", "E", "Fb"), ("E#", "F", "Gbb"), ("E##", "F#", "Gb"), ("F##", "G", "Abb"), ("G#", "Ab", "Bbbb"), ("G##", "A", "Bbb"), ("A#", "Bb", "Cbb"), ("A##", "B", "Cb")]
-}
 
-# Heptatonic Scales
-major = [P1, M2, M3, P4, P5, M6, M7]
-minor = [P1, M2, m3, P4, P5, m6, m7]
-melodicMinor = [P1, M2, m3, P4, P5, M6, M7]
-harmonicMinor = [P1, M2, m3, P4, P5, m6, M7]
-neopolitanMajor = [P1, m2, m3, P4, P5, M6, M7]
-
-# Resolution Rules
+# Configuration Resolution Rules
 def circleOfFifths(p_chord):
 	return p_chord + 3
 def circleOfFourths(p_chord):
