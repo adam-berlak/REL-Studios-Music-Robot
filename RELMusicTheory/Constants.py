@@ -72,7 +72,21 @@ Interval_Spectrum = {
         11: "D"
     }
 }
-
+'''
+# Configuration Scale Degree Naming Systems
+scale_degree_names = {
+    "western": {
+        (P1,): "tonic",
+        (m2, M2): "supertonic",
+        (m3, M3): "mediant",
+        (P4,): "subdominant",
+        (P5,): "dominant",
+        (m6, M6): "submediant",
+        (m7,): "subtonic",
+        (M7,): "leading tone"
+    }
+}
+'''
 # Configuration Cardinality Systems
 cardinality = {
     "western": {
@@ -106,6 +120,6 @@ Scales = {
 
 # Configuration Resolution Rules
 def circleOfFifths(p_chord):
-	return p_chord + 3
-def circleOfFourths(p_chord):
 	return p_chord + 4
+def circleOfFourths(p_chord):
+	return p_chord + 5
