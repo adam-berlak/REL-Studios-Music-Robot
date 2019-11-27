@@ -8,6 +8,8 @@
 # COMPLETED: Fix Numeral Addition
 # COMPLETED: Remove reliance on Interval objects, instead use semitones as is, interval objects only required for printing and interfacing
 # COMPLETED: Automate creation of Interval objects within Scale so that it is always accurate, and have a fixed amount of intervals available for interfacing
+# COMPLETED: Add support for subtraction, find better way of looping through degrees IE cycle
+# COMPLETED: Fix arithmetic with degrees such that adding a generic interval includes the principle degree, IE C + 3 = E as opposed to F
 
 # STRETCH GOAL: Get parallel key of scale
 # STRETCH GOAL: Get Negative Harmony of a Chord
@@ -15,8 +17,6 @@
 # STRETCH GOAL: Add support for chord inversions and sus notes
 # STRETCH GOAL: Create a Scale.Dictionary.py file for holding thousands of Scale definitions
 
-# IMPORTANT: Fix arithmetic with degrees such that adding a generic interval includes the principle degree, IE C + 3 = E as opposed to F
-# IMPORTANT: Add support for subtraction, find better way of looping through degrees IE cycle
 # IMPORTANT: Add try-catch statements of invalid inputs
 # IMPORTANT: Move unaltered_intervals dictionary into constants
 
@@ -35,6 +35,10 @@ def main():
 
 	Eb = CMajorScale[1] + m3
 	print("The first degree of the C Major Scale + m3 is: " + Eb)
+	
+	result = CMajorScale[1] - 4
+
+	print(result)
 
 	# Build a scale off of a scale degree
 	DDorianScale = CMajorScale[2].buildScale()

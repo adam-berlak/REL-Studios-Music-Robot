@@ -3,7 +3,7 @@ from Scale import *
 class Chord(Scale):
 	def __init__(self, p_tone, p_pitch_class):
 		super().__init__(p_tone, p_pitch_class)
-		self.parent_chord = p_pitch_class
+		self.parent_chord = self.rearrangeIntervalsAsThirds(p_pitch_class)
 
 	#####################################
 	# Methods concerning class behavior #
@@ -14,6 +14,7 @@ class Chord(Scale):
 		if (isinstance(p_other, slice)):
 			new_interval_list = self[p_other.start].buildPitchClass()
 			new_chord = self.findDegreeInParent(self[p_other.start]).buildWithIntervals(Chord, new_interval_list[:-(len(new_interval_list) - (p_other.stop - 1))])
+
 			return new_chord
 		else:
 			return self.getDegrees()[p_other - 1]
@@ -24,24 +25,27 @@ class Chord(Scale):
 
 	def __add__(self, p_other):
 
-		if (isinstance(p_other, str)):
-			return str(self) + p_other
+		if (isinstance(p_other, Interval)):
+			return (self.getParentDegree() + p_other).build(Chord)
 
 		if (isinstance(p_other, int)):
-			return self.getParentDegree().__add__(p_other).build(Chord)
+			return (self.getParentDegree() + p_other).build(Chord)
+
+		if (isinstance(p_other, str)):
+			return str(self) + p_other
 
 	def __radd__(self, p_other):
 
 		if (isinstance(p_other, str)):
 			return p_other + str(self)
 
-		if (isinstance(p_other, int)):
-			return self.getParentDegree().__add__(p_other).build(Chord)
-
 	def __sub__(self, p_other):
 
+		if (isinstance(p_other, Interval)):
+			return (self.getParentDegree() - p_other).build(Chord)
+
 		if (isinstance(p_other, int)):
-			return self.getParentDegree().__sub__(p_other).build(Chord)
+			return (self.getParentDegree() - p_other).build(Chord)
 		
 	######################################################
 	# Methods concerning string representaton of a chord #

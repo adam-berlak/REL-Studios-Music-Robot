@@ -497,6 +497,9 @@ class Scale:
 # Method buildScale: Builds and returns a scale on the current scale degree based off the parent scale
 # Method buildScaleWithIntervals: Builds and returns a scale on the current scale degree based off an scale parameter
 
+# TODO 
+# def getAppoggiaturas()
+
 class _Degree:
 	def __init__(self, p_interval, p_parent_scale, p_octaves = 0):
 		self.interval = p_interval
@@ -548,7 +551,11 @@ class _Degree:
 				print("Error: Failed to assign tones to the new scale")
 
 		if (isinstance(p_other, int)):
-			return (self.getParentScale().getDegrees() * 7)[self.getPosition() + (p_other - 1)]
+			
+			if (p_other == 1):
+				return self
+
+			return self.next() + (p_other - 1)
 
 		if (isinstance(p_other, str)):
 			return str(self) + p_other
@@ -560,8 +567,31 @@ class _Degree:
 
 	def __sub__(self, p_other):
 
+		if (isinstance(p_other, Interval)):
+
+			try:
+
+				new_interval = (self.getInterval() - p_other).minimize()
+
+				while (new_interval < P1):
+					new_interval = new_interval + P8
+
+				if not new_interval in self.getParentScale():
+					new_scale = self.getParentScale().addInterval(new_interval)
+					return new_scale.getDegreeByInterval(new_interval)
+
+				return self.getParentScale().getDegreeByInterval(new_interval)
+
+			except:
+				print("Error: Failed to assign tones to the new scale")
+
 		if (isinstance(p_other, int)):
-			return (self.getParentScale().getDegrees() * 7)[self.getPosition() - (p_other - 1)]
+
+			if (p_other == 1):
+				return self
+
+			return self.previous() - (p_other - 1)
+
 
 	#############################################################
 	# Methods concerned with measuring distance between degrees #
@@ -658,15 +688,13 @@ class _Degree:
 		except:
 		 	print("Error: Failed to build pitch class set")
 
-	def getPosition(self):
-		return self.getParentScale().getDegrees().index(self) + 1
-
 	##########################
 	# Transformation methods #
 	##########################
 
 	def transform(self, p_accidental, p_object_type = Scale, p_system = DEFAULT_SYSTEM):
-		#try:
+
+		try:
 			new_interval = self.getInterval().transform(p_accidental)
 			new_pitch_class = self.getParentScale().getIntervals()[:]
 			new_pitch_class = [item for item in new_pitch_class if item != self.getInterval()]
@@ -676,8 +704,27 @@ class _Degree:
 
 			return new_object
 
-		#except:
-		#	print("Error: Failed to transform " + self + " by " + p_accidental)
+		except:
+			print("Error: Failed to transform " + self + " by " + p_accidental)
+
+	def next(self):
+		if (self.getPosition() == len(self.getParentScale().getDegrees())):
+			return self.getParentScale()[1]
+
+		return self.getParentScale()[self.getPosition() + 1]
+
+	def previous(self):
+		if (self.getPosition() == 1):
+			return self.getParentScale()[-0]
+
+		return self.getParentScale()[self.getPosition() - 1]
+
+	#######################
+	# Convenience methods #
+	#######################
+
+	def getPosition(self):
+		return self.getParentScale().getDegrees().index(self) + 1
 
 	#######################
 	# Getters and Setters #
@@ -700,7 +747,4 @@ class _Degree:
 		self.interval = p_interval
 	def setParentScale(self, p_parent_scale):
 		self.parent_scale = p_parent_scale
-
-	# TODO 
-	# def getAppoggiaturas()
 		
