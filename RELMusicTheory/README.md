@@ -26,8 +26,8 @@ You can perform interval arithmetic
 
 An important method I created is called minimize(). This method takes any interval larger than a M7 and creates a simple interval as opposed to a compound interval.
 ```
->>> P8.minimize()
-P1
+>>> M10.minimize()
+2
 ```
 
 You can transform an interval with accidentals. However currently you are limited to one flat or sharp. If you try and apply an accidental to an Interval that already has one an exception is thrown. This might be changed in the future.
