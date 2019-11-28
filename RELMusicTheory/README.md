@@ -24,7 +24,7 @@ C
 ```
 If you add an integer to a scale degree it is treated as a generic interval while adding an interval is treated like adding a specific interval.
 ```
->>> C_Major_Scale[1] + 3
+>>> C_Major_Scale[1] + 4
 F
 >>> C_Major_Scale[1] + m3
 Eb
@@ -63,7 +63,7 @@ Build a scale on a scale degree using a specific pitch class set
 
 You can also transpose a Scale up by adding integers or intervals to it. My library assigns pitchs and accidentals to the scales automatically without any hardcoding. The proccess is identical to how its done by theorists ensuring minimal accidentals are used. As an example: Db Major notation will be used over C# Major despite the latter also being valid. This is because Db Major has less accidentals. Despite this you can still create a C# Major Scale. An integer is treated as a Generic Interval, meaning the value represents scale steps as opposed to semitones. To transpose a scale by semitones you must add an interval to it
 ```
->>> D_Major_Scale = C_Major_Scale + 1
+>>> D_Major_Scale = C_Major_Scale + 2
 [D, E, F#, G, A, B, C#]
 >>> D_Major_Scale = C_Major_Scale + M2
 [D, E, F#, G, A, B, C#]
