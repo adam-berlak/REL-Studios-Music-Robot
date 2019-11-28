@@ -22,7 +22,7 @@ You can access any of the scale degrees by using an index. The indices start at 
 >>> C_Major_Scale[1]
 C
 ```
-If you add an integer to a scale degree it is treated as a generic interval while adding an interval is treated like adding a specific interval. For now adding a specific interval to a scale degree is treated as a specific interval retrieving a new scale that contains that degree. 
+If you add an integer to a scale degree it is treated as a generic interval while adding an interval is treated like adding a specific interval.
 ```
 >>> C_Major_Scale[1] + 3
 F
