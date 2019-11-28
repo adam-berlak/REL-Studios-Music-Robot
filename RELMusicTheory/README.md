@@ -8,6 +8,39 @@ when they should be derived using logical formulas within a Scale object. As a r
 
 ## 2. How to use this library:
 
+#### 2.0. Intervals
+
+Intervals require a numeral, and semitones. The Interval object can determine if the interval should be printed with an accidental automatically depending on what the user defined as the "unaltered intervals". In our case it is the intervals of the major scale. Since an interval with the numeral '5' and semitones '7' does not exist in the 'unaltered intervals' list, it is treated as an altered interval. You can change however which intervals are considered altered.
+```
+>>> Interval(7, 5)
+b5
+```
+
+You can perform interval arithmetic
+```
+>>> P5 + M3
+7
+>>> P5 - m2
+#4
+```
+
+An important method I created is called minimize(). This method takes any interval larger than a M7 and creates a simple interval as opposed to a compound interval.
+```
+>>> P8.minimize()
+P1
+```
+
+You can transform an interval with accidentals. However currently you are limited to one flat or sharp. If you try and apply an accidental to an Interval that already has one an exception is thrown. This might be changed in the future.
+```
+>>> P5.transform(#)
+#5
+```
+
+While the size of intervals you can create is unlimited, the constants are limited to a P15. To use intervals beyond this you can just use arithmetic.
+```
+>>> M16 = P15 + M2
+```
+
 #### 2.1. Scales
 
 A Scale Object requires a note for the Tonic, and a list of Intervals organized as a Pitch Class Set
