@@ -167,7 +167,9 @@ III7/ii
 
 A lot of Chord functionality will be added. There is a lot of things I plan to add to this project. Scales and Chords are only the beginning. Some things I plan to create:
 ```
+- I am currently working on a Keyboard and Tone class to translate scale objects into midi recognizable tones
 - Motif, Sentance, Period, Phrase Objects for structural components of music
 - A more fleshed out Note object that keeps track of octaves
-- A progression object that uses artificial intelligence to analyse a chord progression
+- A progression object that keeps track of a pieces chord progression
+- Just as how many people manually create midi files based on sheet music, once I am complete this library I will translate many classical pieces into object form. The library should be able to reproduce a piece from scratch using the concepts within its library. Doing this manually will be tedious but after a decent quantity of pieces are described it might be sufficient to teach an AI to describe the pieces automatically.
 ```
