@@ -138,12 +138,12 @@ The scale also has several methods for determining properties of scales. You can
 ```
 #### 2.2. Chords
 
-Build a chord off of a scale degree, the build chord method has two optional params, the amount of notes in the chord, and the skip size, by default, chords are comprised of four notes with a skip size of two. In this case we are building a chord with five notes on the fifth scale degree of the C Major Scale. The following chord is a quartal chord based of the first degree of C Major.
+Build a chord off of a scale degree, the build chord method has two optional params, the amount of notes in the chord, and the generic interval between each degree, by default, chords are comprised of four notes with a generic interval of 3 (A third). In this case we are building a chord with five notes on the fifth scale degree of the C Major Scale. The succeeding chord is a quartal chord based off of the same degree.
 ```
 >>> G9 = C_Major_Scale[5].buildChord(5)
 [G, B, D, F, A]
->>> chord = C_Major_Scale[1].buildChord(5, 3)
-[C, F, B, E, A]
+>>> chord = C_Major_Scale[5].buildChord(5, 4)
+[G, C, F, B, E]
 ```
 You can print the quality of the chord in three different ways. It is derived through an algorithm that emulates how music theorists derive chord qualities, so there is very little reliance on hardcoding and you can get the quality for almost any chord.
 ```
