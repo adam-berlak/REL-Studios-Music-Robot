@@ -85,6 +85,7 @@ My Scale class also works with non-heptatonic scales. You can create a Chromatic
 ```
 >>> C_Chromatic_Scale = Scale("C", [P1, m2, M2, m3, M3, P4, aug4, P5, aug5, M6, aug6, M7])
 [C, Db, D, Eb, E, F, F#, G, G#, A, A#, B]
+```
 
 The scale also has several methods for determining properties of scales. You can read about what these algorithms do at https://ianring.com/musictheory/scales/. Currently the properties supported are:
 ```
