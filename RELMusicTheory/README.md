@@ -160,7 +160,7 @@ There is also support for Secondary Chords. Whenever you build a scale off of a 
 >>> D_Dorian_Scale = C_Major_Scale[2].buildScale()
 >>> FM7 = D_Dorian_Scale[3].buildChord()
 >>> FM7.jazzNumeralNotation()
-III7/ii
+IIIM7/ii
 ```
 
 ## 3. Goals:
