@@ -37,7 +37,7 @@ I think its worth emphasizing that adding a interval to a degree, which produces
 [C, D, E, F, F#, G, A, B]
 ```
 
-You can modify an existing scale to produce a new scale by using the addInterval method.
+You can modify an existing scale to produce a new scale by using the addInterval() method.
 ```
 >>> new_scale = C_Major_Scale.addInterval(aug5)
 [C, D, E, F, G, G#, A, B]
