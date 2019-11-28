@@ -123,7 +123,7 @@ maj11b3
 major11b3
 ```
 
-You can also slice chords in case you only want the quality of a certain part of the chord. Like with the scale, the indices start at 1 signifying the first degree of the chord. [1:3] will retrieve notes one through and including three of the chord.
+You can also slice chords in case you only want the quality of a certain part of the chord. Like with the scale, the indices start at 1 signifying the first degree of the chord. [1:4] will retrieve notes one through and including three of the chord.
 ```
 >>> chord[1:3].printQuality(0)
 minor3
