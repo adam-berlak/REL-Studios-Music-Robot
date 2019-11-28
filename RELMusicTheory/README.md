@@ -22,19 +22,39 @@ You can access any of the scale degrees by using an index. The indices start at 
 >>> C_Major_Scale[1]
 C
 ```
-If you add an integer to a scale degree it is treated as a generic interval while adding an interval is treated like adding a specific interval. For now adding a specific interval to a scale degree produces a list of possible degrees, the difference between the degrees being the note they are assigned too. Its up to the user to decide which version to use.
+If you add an integer to a scale degree it is treated as a generic interval while adding an interval is treated like adding a specific interval. For now adding a specific interval to a scale degree is treated as a specific interval retrieving a new scale that contains that degree. 
 ```
 >>> C_Major_Scale[1] + 3
 F
 >>> C_Major_Scale[1] + m3
-[D#, Eb, Fbb]
+Eb
 ```
 
-From a scale degree you can build a new scale or chord
+I think its worth emphasizing that adding a interval to a degree, which produces a degree that is not contained in the principle scale will create a new parent scale for the resulting degree. EG:
+```
+>>> new_degree = C_Major_Scale[2] + M3 # The second degree of the C Major Scale is D, and the result of adding a M3 Interval to it is F#
+>>> new_degree.getParentScale()
+[C, D, E, F, F#, G, A, B]
+```
+
+You can modify an existing scale to produce a new scale by using the addInterval method.
+```
+>>> new_scale = C_Major_Scale.addInterval(aug5)
+[C, D, E, F, G, G#, A, B]
+```
+
+The scale degrees can also be altered to produce new scales
+```
+>>> C_Harmonic_Major_Scale = C_Major_Scale[6].transform("b")
+[C, D, E, F, G, Ab, B]
+```
+
+From a scale degree you can build a new Scale or Chord
 ```
 >>> D_Dorian_Scale = C_Major_Scale[2].buildScale()
 [D, E, F, G, A, B, C]
 ```
+
 Build a scale on a scale degree using a specific pitch class set
 ```
 >>> D_Melodic_Minor = C_Major_Scale[2].buildScaleWithIntervals([P1, M2, m3, P4, P5, M6, M7])
@@ -60,7 +80,11 @@ True
 >>> [P1, M3, P5] in C_Major_Scale
 True
 ```
+
 My Scale class also works with non-heptatonic scales. You can create a Chromatic scale of 12 notes, or a diminished scale of 8. There is no limitation to the scales you can create at this point.
+```
+>>> C_Chromatic_Scale = Scale("C", [P1, m2, M2, m3, M3, P4, aug4, P5, aug5, M6, aug6, M7])
+[C, Db, D, Eb, E, F, F#, G, G#, A, A#, B]
 
 The scale also has several methods for determining properties of scales. You can read about what these algorithms do at https://ianring.com/musictheory/scales/. Currently the properties supported are:
 ```
@@ -97,11 +121,13 @@ maj11b3
 >>> chord.printQuality(0)
 major11b3
 ```
+
 You can also slice chords in case you only want the quality of a certain part of the chord. Like with the scale, the indices start at 1 signifying the first degree of the chord. [1:3] will retrieve notes one through and including three of the chord.
 ```
 >>> chord[1:3].printQuality(0)
-minor
+minor3
 ```
+
 You can also print the Jazz Numeral Notation or just the Numeral of the chord by itself
 ```
 >>> Scale("A", minor)[6].buildChord(7).printNumeral()
@@ -109,16 +135,32 @@ bVI
 >>> Scale("A", minor)[6].buildChord(7).jazzNumeralNotation()
 bVIM13#11
 ```
+
 You can resolve a chord using a certain rule
 ```
 >>> G7.resolveChord(circleOfFifths)
 [C, E, G, B]
 ```
+
 One problem I encountered was trying to figure out how to print the quality of quartal/quintal harmony and beyond that. The solution I found was to rearrange the intervals of said chords so that they are built on thirds and indicate the missing notes. 
 ```
 >>> C_Major_Scale[1].buildChord(7, 3).printQuality()
 M13
 ```
+
+I also created a method called stringToPitchClass() which takes as input a string, and parses it with RegEx to generate a Pitch Class
+```
+>>> Chord.StringToPitchClass("maj9b5#9")
+[1, 3, b5, 7, #9]
+```
+
+There is also support for Secondary Chords. Whenever you build a scale off of a degree, the degree is saved within the new scale object by reference. So you are able to print more accurate roman numeral symbols. EG
+```
+>>> D_Dorian_Scale = C_Major_Scale[2].buildScale()
+>>> FM7 = D_Dorian_Scale[3].buildChord()
+>>> FM7.jazzNumeralNotation()
+III7/ii
+
 ## 3. Goals:
 
 A lot of Chord functionality will be added. There is a lot of things I plan to add to this project. Scales and Chords are only the beginning. Some things I plan to create:
