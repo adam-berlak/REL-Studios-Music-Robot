@@ -65,7 +65,8 @@ Eb
 
 I think its worth emphasizing that adding a interval to a degree, which produces a degree that is not contained in the principle scale will create a new parent scale for the resulting degree. EG:
 ```
->>> new_degree = C_Major_Scale[2] + M3 # The second degree of the C Major Scale is D, and the result of adding a M3 Interval to it is F#
+# The second degree of the C Major Scale is D, and the result of adding a M3 Interval to it is F#
+>>> new_degree = C_Major_Scale[2] + M3 
 >>> new_degree.getParentScale()
 [C, D, E, F, F#, G, A, B]
 ```
