@@ -1,7 +1,7 @@
 # REL STUDIOS - RELMusicTheory for Python Guide
 
 ##### Table of Contents
-[About this project](#about)
+[## 1. About this project](#about)
 [How to use](#usage) 
 ...snip... 
 
