@@ -38,6 +38,8 @@ def main():
 	
 	result = CMajorScale[1] - 4
 
+	print(Scale.pitchClassToDecimal([P1, M2, M3, P4, P5, M6, M7]))
+
 	print(result)
 
 	# Build a scale off of a scale degree

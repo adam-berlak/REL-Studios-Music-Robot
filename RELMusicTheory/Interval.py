@@ -22,6 +22,9 @@ class Interval:
 	def __str__(self):
 		return self.getAccidental() + str(self.getNumeral())
 
+	def __repr__(self):
+		return str(self)
+
 	##############
 	# Comparison #
 	##############
@@ -76,10 +79,12 @@ class Interval:
 		return int(self.getSemitones() / 12)
 
 	def transform(self, p_accidental):
+
 		try:
 			new_semitones = self.getSemitones() + accidentals["western"][p_accidental]
 			interval_list = self.generateIntervalList(self.multiplySemitoneList(Unaltered_Intervals["western"], 20))
 			interval = [item for item in interval_list[new_semitones] if self.getNumeral() == item.getNumeral()][0]
+
 			return interval
 		except:
 			print("Error: Trying to apply " + p_accidental + " to " + str(self) + "")

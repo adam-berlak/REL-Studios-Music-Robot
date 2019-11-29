@@ -1,5 +1,9 @@
 from Scale import *
 
+# TODO 
+# def transformChordTo(self, p_intervals):
+# def getParallelChord(self):
+
 class Chord(Scale):
 	def __init__(self, p_tone, p_pitch_class):
 		super().__init__(p_tone, p_pitch_class)
@@ -52,6 +56,7 @@ class Chord(Scale):
 	######################################################
 
 	def printQuality(self, p_system = DEFAULT_SYSTEM, style = 2):
+
 		try: 
 			chord_intervals = Chord.rearrangeIntervalsAsThirds(self.getIntervals())
 
@@ -101,18 +106,24 @@ class Chord(Scale):
 			print("Error: Failed to create string represention of the chord")
 
 	def printNumeral(self, p_system = DEFAULT_SYSTEM):
+
+		# Convert numeral integer into roman numeral
 		numeral = intToRoman(self.getParentDegree().getInterval().getNumeral())
 
+		# Check quality of triad built on this degree, and change numeral to lower if minor
 		if (self[1:3].printQuality(p_system, 0) == "minor3"):
 			numeral = numeral.lower()
 
+		# Obtain the accidental of the associated interval
 		accidental = self.getParentDegree().getInterval().getAccidental()
 
+		# If parent scale is based off a degree of another scale, print the following degree as a secondary chord
 		secondary_information = ""
+
 		if (self.getParentDegree().getParentScale().getParentDegree() != None):
 			secondary_information = self.getParentDegree().getParentScale().getParentDegree().build(Chord).printNumeral() + "/"
 
-		return  secondary_information + accidental + numeral
+		return secondary_information + accidental + numeral
 
 	def jazzNumeralNotation(self, p_system = DEFAULT_SYSTEM):
 		return self.printNumeral(p_system) + self.printQuality(p_system) 
@@ -186,15 +197,20 @@ class Chord(Scale):
 
 	@staticmethod
 	def stringToPitchClass(p_root_tone, p_quality, p_system = DEFAULT_SYSTEM):
+
+		# Obtain chord quality components via regex
 		altered_intervals = re.findall(r'[b,#]\d+', p_quality)
 		quality = re.search('(^[a-zA-Z]+)\d', p_quality).group(1)
 		chord_size = re.search('^[a-zA-Z]+(\d).*', p_quality).group(1)
 
+		# Loop through each chord types names and find the matching type
 		for quality_tuple in Chord_Qualities[p_system].keys():
 
+			# Copy types pitch class
 			if quality in quality_tuple:
 				pitch_class = Chord_Qualities[p_system][quality_tuple][:]
 
+		# Loop through all altered intervals and apply them to the pitch class set
 		for altered_interval in altered_intervals:
 			accidental = altered_interval[0]
 			number = re.findall(r'\d+', altered_interval)[0]
@@ -205,7 +221,7 @@ class Chord(Scale):
 		return pitch_class
 
 		@staticmethod
-		def pitchClassToFiguredBass(p_pitch_class, p_slice):
+		def pitchClassToFiguredBass(p_pitch_class, p_slice = 2):
 			new_pitch_class = p_pitch_class.reverse()[:-1]
 			return [item.getNumeral() for item in new_pitch_class][:p_slice]
 
@@ -244,7 +260,3 @@ class Chord(Scale):
 		self.parent_chord = p_parent_chord
 	def setLeapSize(self, p_leap_size):
 		self.leap_size = p_leap_size
-
-	# TODO 
-	# def transformChordTo(self, p_intervals):
-	# def getParallelChord(self):

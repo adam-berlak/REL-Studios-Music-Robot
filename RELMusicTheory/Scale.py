@@ -100,7 +100,7 @@ class Scale:
 		return (self.getIntervals() == p_other.getIntervals()) and (self.getTonicTone() == p_other.getTonicTone())
 
 	def __ne__(self, p_other):
-		return (not self.__eq__(p_other))
+		return not (self == p_other)
 
 	##############
 	# Arithmetic #
@@ -199,6 +199,49 @@ class Scale:
 			print("Error: Failed to retrieve pitch class")
 
 	@staticmethod
+	def pitchClassToBinary(p_intervals):
+
+		try:
+			result = ""
+
+			for i in range(12):
+
+				if (len([item for item in p_intervals if i == item.getSemitones()]) == 0):
+					result = result + "0"
+				else:
+					result = result + "1"
+
+			return result[::-1]
+
+		except:
+			print("Error: Failed to convert pitch class " + p_intervals + " to decimal")
+
+	@staticmethod
+	def pitchClassToDecimal(p_intervals):
+		return int(Scale.pitchClassToBinary(p_intervals), 2)
+
+	@staticmethod
+	def scaleIntervalsByOrder(p_intervals):
+
+		try: 
+			result = []
+			previous = P1
+
+			for interval in p_intervals:
+
+				while (interval < previous):
+					interval = interval + P8
+
+				previous = interval
+				result.append(interval)
+
+			return result
+
+		except:
+			print("Error: Failed to order intervals")
+
+
+	@staticmethod
 	def intervalsToTones(p_tonic_tone, p_intervals, p_system = DEFAULT_SYSTEM):
 		
 		try:
@@ -229,6 +272,7 @@ class Scale:
 
 	@staticmethod
 	def intervalToTone(p_principle_tone, p_interval, p_system = DEFAULT_SYSTEM):
+
 		try:
 			white_tones = (p_principle_tone[0] + ("ABCDEFG"*2).split(p_principle_tone[0])[1])*4
 			possible_tones = (TONES.get(p_system)*4)[([TONES.get(p_system).index(item) for item in TONES.get(p_system) if p_principle_tone in item][0] + p_interval.getSemitones())]
@@ -239,9 +283,15 @@ class Scale:
 		except:
 			print("Error: Failed to convert " + p_interval + " to a tone using a principle tone of " + p_principle_tone + " and the system " + p_system)
 
-	##################
-	# Helper Methods #
-	##################
+	####################
+	# Courtesy Methods #
+	####################
+
+	def rotate(self):
+		return self + 2
+	
+	def getRoot(self):
+		return self[1]
 
 	def getIntervals(self):
 		result = []
@@ -266,16 +316,17 @@ class Scale:
 			if (degree.getInterval() == p_interval):
 				return degree
 
-		return -1
+		return None
 
 	def findDegreeInParent(self, p_degree):
+		parent_scale = self.getParentDegree().getParentScale()
 
-		for degree in self.getParentDegree().getParentScale():
+		for degree in parent_scale:
 
-			if (degree.getTone() == p_degree.getTone()):
+			if (degree.getInterval() == (self.getParentDegree().getInterval() + p_degree.getInterval()).minimize()):
 				return degree	
 
-		return -1
+		return None
 
 	##########################
 	# Transformation methods #
@@ -286,6 +337,7 @@ class Scale:
 		new_pitch_class.append(p_interval)
 		new_pitch_class.sort(key=lambda x: x.getNumeral())
 		new_scale = Scale(self.getTonic().getTone(), new_pitch_class)
+
 		return new_scale
 
 	######################################################
@@ -311,6 +363,7 @@ class Scale:
 		return (self.getPrimeMode() == 1)
 
 	def getImperfections(self):
+
 		try:
 			counter = 0
 
@@ -452,13 +505,6 @@ class Scale:
 		except:
 			print("Error: Failed to get prime mode of scale: " + str(self))
 
-	####################
-	# Courtesy Methods #
-	####################
-
-	def getTonic(self):
-		return self[1]
-
 	#######################
 	# Getters and Setters #
 	#######################
@@ -543,6 +589,7 @@ class _Degree:
 
 				if not new_interval in self.getParentScale():
 					new_scale = self.getParentScale().addInterval(new_interval)
+
 					return new_scale.getDegreeByInterval(new_interval)
 
 				return self.getParentScale().getDegreeByInterval(new_interval)
@@ -578,6 +625,7 @@ class _Degree:
 
 				if not new_interval in self.getParentScale():
 					new_scale = self.getParentScale().addInterval(new_interval)
+
 					return new_scale.getDegreeByInterval(new_interval)
 
 				return self.getParentScale().getDegreeByInterval(new_interval)
@@ -707,6 +755,13 @@ class _Degree:
 		except:
 			print("Error: Failed to transform " + self + " by " + p_accidental)
 
+	####################
+	# Courtesy methods #
+	####################
+
+	def getPosition(self):
+		return self.getParentScale().getDegrees().index(self) + 1
+
 	def next(self):
 		if (self.getPosition() == len(self.getParentScale().getDegrees())):
 			return self.getParentScale()[1]
@@ -718,13 +773,6 @@ class _Degree:
 			return self.getParentScale()[-0]
 
 		return self.getParentScale()[self.getPosition() - 1]
-
-	#######################
-	# Convenience methods #
-	#######################
-
-	def getPosition(self):
-		return self.getParentScale().getDegrees().index(self) + 1
 
 	#######################
 	# Getters and Setters #
