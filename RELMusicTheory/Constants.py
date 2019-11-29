@@ -107,7 +107,9 @@ Chord_Qualities = {
     "western": {
         ("major", "maj", "M"): [P1, M3, P5, M7, M9, P11, M13],
         ("minor", "min", "m"): [P1, m3, P5, m7, M9, P11, m13],
-        ("dominant", "dom", ""): [P1, M3, P5, m7, M9, P11, M13]
+        ("dominant", "dom", ""): [P1, M3, P5, m7, M9, P11, M13],
+	("augmented", "aug", "+"): [P1, aug2, M3, P5, m6, M7], # Fix issue with index being out of range
+	("half-diminished", "half-dim", "ø"): [P1, m2, m3, P4, dim5, m6, m7]
     }
 }
 
