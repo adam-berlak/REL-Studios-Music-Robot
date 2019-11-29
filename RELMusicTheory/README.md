@@ -2,6 +2,9 @@
 # RELMusicTheory 
 **A Music Theory Library for Python Programmers**
 
+<br>
+<br>
+
 ## 0. Table of Contents
 [**1 - About this project**](#about)<br>
 [**2 - How to use**](#usage)<br>
