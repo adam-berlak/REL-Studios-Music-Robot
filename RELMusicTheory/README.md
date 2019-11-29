@@ -3,8 +3,8 @@
 ##### Table of Contents
 [Headers](#headers)
 [Emphasis](#emphasis) 
-
-<a name="about"/>
+...snip... 
+<a name="headers"/>
 ## About
 
 ## 1. About this project:
