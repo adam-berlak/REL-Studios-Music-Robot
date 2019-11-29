@@ -1,8 +1,6 @@
-<p align="center">
-[# RELMusicTheory ]
-[**A Music Theory Library for Python Programmers**]
-<br>
-<br>
+
+# RELMusicTheory 
+**A Music Theory Library for Python Programmers**
 
 ## 0. Table of Contents
 [**1 - About this project**](#about)<br>
@@ -11,8 +9,6 @@
 [**2.1 - Scales**](#scales)<br>
 [**2.2 - Chords**](#chords)<br>
 [**3 - Goals**](#goals)<br>
-
-</p>
 
 <a name="about"/>
 
