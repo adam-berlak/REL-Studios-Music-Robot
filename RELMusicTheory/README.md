@@ -5,8 +5,6 @@
 [Emphasis](#emphasis) 
 ...snip... 
 <a name="headers"/>
-## About
-
 ## 1. About this project:
 
 Looking through existing libraries for music theory, I noticed a recurring problem. Most of the existing music theory libraries
