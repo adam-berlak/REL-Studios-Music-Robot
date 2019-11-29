@@ -1,4 +1,6 @@
-# REL STUDIOS - RELMusicTheory for Python Guide
+# RELMusicTheory 
+## A Music Theory Library for Python Programmers
+### by Adam Berlak
 
 ## 0. Table of Contents
 [**1 - About this project**](#about)<br>
