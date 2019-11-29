@@ -4,7 +4,7 @@
 [Headers](#headers)
 [Emphasis](#emphasis) 
 
-<a name="About this project"/>
+<a name="about"/>
 ## 1. About this project:
 
 Looking through existing libraries for music theory, I noticed a recurring problem. Most of the existing music theory libraries
