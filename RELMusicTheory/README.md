@@ -1,9 +1,9 @@
 # REL STUDIOS - RELMusicTheory for Python Guide
 
 ##### Table of Contents
-[## 1. About this project](#about)
-[How to use](#usage) 
-...snip... 
+[1 - About this project](#about)
+[2 - How to use](#usage)
+  [2.0 - Intervals](#intervals)
 
 <a name="about"/>
 
@@ -14,7 +14,10 @@ rely heavily on hardcoding of information. Things like Chord qualitys and proper
 when they should be derived using logical formulas within a Scale object. As a result, these libraries are not very extensible, they limit your inputs and likely fall apart when you try to get more creative with your scales. As a goal for myself I attempted to limit all hardcoding to names, and reduce everything else that can be derived logically to methods. The result; less reliance on definitions, less constants, and greater extensibility.
 
 <a name="usage"/>
+
 ## 2. How to use this library:
+
+<a name="intervals"/>
 
 #### 2.0. Intervals
 
