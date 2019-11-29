@@ -1,12 +1,10 @@
 # REL STUDIOS - RELMusicTheory for Python Guide
 
 ##### Table of Contents
-[Headers](#headers)
-[Emphasis](#emphasis)
-...snip...    
-<a name="headers"/>
-## Headers
+[Headers](#About this project)
+[Emphasis](#emphasis) 
 
+<a name="About this project"/>
 ## 1. About this project:
 
 Looking through existing libraries for music theory, I noticed a recurring problem. Most of the existing music theory libraries
