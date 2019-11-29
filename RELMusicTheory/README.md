@@ -3,7 +3,10 @@
 ## 0. Table of Contents
 [**1 - About this project**](#about)<br>
 [**2 - How to use**](#usage)<br>
-  [    **2.0 - Intervals**](#intervals)<br>
+[**2.0 - Intervals**](#intervals)<br>
+[**2.1 - Scales**](#scales)<br>
+[**2.2 - Chords**](#chords)<br>
+[**3 - Goals**](#goals)<br>
 
 <a name="about"/>
 
@@ -51,6 +54,8 @@ While the size of intervals you can create is unlimited, the constants are limit
 ```
 >>> M16 = P15 + M2
 ```
+
+<a name="scales"/>
 
 #### 2.1. Scales
 
@@ -146,6 +151,9 @@ The scale also has several methods for determining properties of scales. You can
 >>> Scale.getRotationalSymmetry()
 >>> Scale.getImperfections()
 >>> Scale.getCardinality()
+
+<a name="chords"/>
+
 ```
 #### 2.2. Chords
 
@@ -207,6 +215,8 @@ There is also support for Secondary Chords. Whenever you build a scale off of a 
 >>> FM7.jazzNumeralNotation()
 IIIM7/ii
 ```
+
+<a name="goals"/>
 
 ## 3. Goals:
 
