@@ -151,10 +151,10 @@ The scale also has several methods for determining properties of scales. You can
 >>> Scale.getRotationalSymmetry()
 >>> Scale.getImperfections()
 >>> Scale.getCardinality()
+```
 
 <a name="chords"/>
 
-```
 #### 2.2. Chords
 
 Build a chord off of a scale degree, the build chord method has two optional params, the amount of notes in the chord, and the generic interval between each degree, by default, chords are comprised of four notes with a generic interval of 3 (A third). In this case we are building a chord with five notes on the fifth scale degree of the C Major Scale. The succeeding chord is a quartal chord based off of the same degree.
