@@ -3,7 +3,7 @@
 ## 0. Table of Contents
 [**1 - About this project**](#about)<br>
 [**2 - How to use**](#usage)<br>
-  [**    2.0 - Intervals**](#intervals)<br>
+  [    **2.0 - Intervals**](#intervals)<br>
 
 <a name="about"/>
 
