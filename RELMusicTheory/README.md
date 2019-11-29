@@ -1,6 +1,6 @@
 <p align="center">
-# RELMusicTheory 
-**A Music Theory Library for Python Programmers**
+[# RELMusicTheory ]
+[**A Music Theory Library for Python Programmers**]
 <br>
 <br>
 
