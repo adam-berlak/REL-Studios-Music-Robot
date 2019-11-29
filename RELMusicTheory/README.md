@@ -1,7 +1,7 @@
 # REL STUDIOS - RELMusicTheory for Python Guide
 
 ##### Table of Contents
-[Headers](#headers)
+[About this project](#headers)
 [Emphasis](#emphasis) 
 ...snip... 
 <a name="headers"/>
