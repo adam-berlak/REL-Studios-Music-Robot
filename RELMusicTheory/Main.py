@@ -19,6 +19,9 @@
 
 # IMPORTANT: Add try-catch statements of invalid inputs
 # IMPORTANT: Move unaltered_intervals dictionary into constants
+# IMPORTANT: Using buildWithIntervals method should change the parent scale of the resulting scale object if it includes intervals not in the parent, but only if the scale object is a chord
+# IMPORTANT: Fix stringToPitchClass
+# IMPORTANT: Fix issue with using Dominant as extension in printQuality()
 
 import random
 import sys
@@ -32,6 +35,8 @@ def main():
 	# Create a C Major Scale
 	CMajorScale = Scale("C", major)
 	print("The C Major Scale is: " + CMajorScale)
+
+	print(Chord("C", Chord.stringToPitchClass("Δ-7")))
 
 	Eb = CMajorScale[1] + m3
 	print("The first degree of the C Major Scale + m3 is: " + Eb)
@@ -52,7 +57,7 @@ def main():
 
 	print(G9[2].transform("b", Chord))
 
-	print(G9.jazzNumeralNotation())
+	print(G9.printNumeralWithContext(True, 2))
 
 	# Resolve the chord using a specific rule
 	CM7 = G9.resolveChord(circleOfFifths)
@@ -89,7 +94,9 @@ def main():
 	print("The quality of this chord is: " + AM11b3.printQuality())
 
 	# Print Roman Numerals with the Correct quality
-	print("The jazz numeral notation of the 6th chord of A minor, with 7 notes is: " + Scale("A", minor)[6].build(Chord, 7).jazzNumeralNotation())
+	print("The jazz numeral notation of the 6th chord of A minor, with 7 notes is: " + Scale("A", minor)[6].build(Chord, 7).printNumeral(True, 2))
+
+	print(CMajorScale[1].buildWithIntervals(Chord, Chord.stringToPitchClass("half-dimmaj7")).getParentDegree().getParentScale())
 
 	# Get properties of scale
 	print("The number of imperfections in the C Major Scale is: " + str(CMajorScale.getImperfections()))
@@ -102,6 +109,8 @@ def main():
 	# build a chord on the chromatic scale
 	chord = CChromaticScale[1].build(Chord, 5)
 	print("the quality of the first chord in the C chromatic scale is: " + chord.printQuality() + chord)
+
+	print(Chord.stringToPitchClass("half-dimmaj7"))
 
 	# Build chord on non-heptatonic scales
 	CDimScale = Scale("C", [P1, M2, m3, P4, aug4, m6, M6, M7])

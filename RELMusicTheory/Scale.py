@@ -80,7 +80,10 @@ class Scale:
 			return p_other in self.getTones()
 
 		if (isinstance(p_other, _Degree)):
-			return _Degree in self.getDegrees()
+			return p_other in self.getDegrees()
+
+		if (isinstance(p_other, Interval)):
+			return p_other in self.getIntervals()
 
 		if (isinstance(p_other, list)):
 
@@ -97,7 +100,7 @@ class Scale:
 	##############
 
 	def __eq__(self, p_other):
-		return (self.getIntervals() == p_other.getIntervals()) and (self.getTonicTone() == p_other.getTonicTone())
+		return (type(self) == type(p_other)) and ((self.getIntervals() == p_other.getIntervals()) and (self.getTonicTone() == p_other.getTonicTone()))
 
 	def __ne__(self, p_other):
 		return not (self == p_other)
@@ -335,8 +338,8 @@ class Scale:
 	def addInterval(self, p_interval):
 		new_pitch_class = self.getIntervals()[:]
 		new_pitch_class.append(p_interval)
-		new_pitch_class.sort(key=lambda x: x.getNumeral())
-		new_scale = Scale(self.getTonic().getTone(), new_pitch_class)
+		new_pitch_class.sort(key=lambda x: x.getSemitones())
+		new_scale = Scale(self[1].getTone(), new_pitch_class)
 
 		return new_scale
 
@@ -570,7 +573,7 @@ class _Degree:
 	##############
 
 	def __eq__(self, p_other):
-		return (p_other != None) and (self.getInterval() == p_other.getInterval()) and (self.getTone() == p_other.getTone())
+		return (type(self) == type(p_other)) and ((self.getInterval() == p_other.getInterval()) and (self.getTone() == p_other.getTone()))
 
 	def __ne__(self, p_other):
 		return (not self == p_other)
@@ -665,7 +668,7 @@ class _Degree:
 
 	def build(self, object_type, p_num_tones = 4, p_leap_size = 3, *args):
 
-		try:
+		#try:
 			child_intervals = self.buildPitchClass(p_leap_size)[:p_num_tones]
 
 			child_object = object_type(self.getTone(), child_intervals, *args)
@@ -674,8 +677,8 @@ class _Degree:
 
 			return child_object
 
-		except:
-		 	print("Error: Failed to build chord")
+		#except:
+		# 	print("Error: Failed to build chord")
 
 	def buildWithIntervals(self, object_type, p_pitch_class, *args):
 
@@ -748,7 +751,7 @@ class _Degree:
 			new_pitch_class = [item for item in new_pitch_class if item != self.getInterval()]
 			new_pitch_class.append(new_interval)
 			new_pitch_class.sort(key=lambda x: x.getNumeral())
-			new_object = p_object_type(self.getParentScale().getTonic().getTone(), new_pitch_class)
+			new_object = p_object_type(self.getParentScale()[1].getTone(), new_pitch_class)
 
 			return new_object
 

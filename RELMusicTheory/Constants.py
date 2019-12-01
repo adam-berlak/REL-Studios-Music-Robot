@@ -105,13 +105,15 @@ cardinality = {
 # Configuration Chord Quality Systems
 Chord_Qualities = {
     "western": {
-        ("major", "maj", "M"): [P1, M3, P5, M7, M9, P11, M13],
-        ("minor", "min", "m"): [P1, m3, P5, m7, M9, P11, m13],
-        ("dominant", "dom", ""): [P1, M3, P5, m7, M9, P11, M13],
-	("half-diminished", "half-dim", "ø"): [P1, m3, dim5, m7, m9, P11, m13]
-	("augmented", "aug", "+"): [P1, M3, aug5, M7, aug9, P12, None], # Fix issue with index being out of range
+        ("major", "maj", "M", "Δ"): [P1, M3, P5, M7, M9, P11, M13],
+        ("minor", "min", "m", "-"): [P1, m3, P5, m7, M9, P11, m13],
+        ("dominant", "dom", "'", "'"): [P1, M3, P5, m7, M9, P11, M13],
+        ("half-diminished", "half-dim", "ø", "ø"): [P1, m3, dim5, m7, m9, P11, m13]
     }
 }
+
+# ("half-diminished", "half-dim", "ø"): [P1, m3, dim5, m7, m9, P11, m13],
+# ("augmented", "aug", "+"): [P1, M3, aug5, M7, aug9, P12, None], # Fix issue with index being out of range
 
 # Configuration Scale Nameing Systems
 Scales = {

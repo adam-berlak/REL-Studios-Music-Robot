@@ -30,7 +30,7 @@ class Interval:
 	##############
 
 	def __eq__(self, p_other):
-		return (self.getSemitones() == p_other.getSemitones() and self.getNumeral() == p_other.getNumeral())
+		return (type(self) == type(p_other)) and ((self.getSemitones() == p_other.getSemitones()) and (self.getNumeral() == p_other.getNumeral()))
 
 	def __ne__(self, p_other):
 		return not (self == p_other)
@@ -89,6 +89,8 @@ class Interval:
 		except:
 			print("Error: Trying to apply " + p_accidental + " to " + str(self) + "")
 
+			return self
+
 	def generateIntervalList(self, p_unaltered_intervals):
 		result = []
 		degree_count = 1
@@ -145,7 +147,7 @@ class Interval:
 
 	def getMinSemitones(self):
 		semitones = self.getSemitones()
-		while (semitones > 12):
+		while (semitones > 11):
 			semitones -= 12
 
 		return semitones
