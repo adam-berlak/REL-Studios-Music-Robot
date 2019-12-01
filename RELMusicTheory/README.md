@@ -59,6 +59,15 @@ While the size of intervals you can create is unlimited, the constants are limit
 >>> M16 = P15 + M2
 ```
 
+You can convert a string into an Interval object using the static stringToInterval() method within the Interval object.
+```
+>>> m3 = Interval.stringToInterval("b3")
+>>> m3.getSemitones()
+3
+>>> m3.getNumeral()
+3
+```
+
 <a name="scales"/>
 
 #### 2.1. Scales
@@ -226,6 +235,24 @@ This can be very useful for creating chord objects with a specific pitch class
 ```
 >>> Chord("C", Chord.stringToPitchClass("maj7b5"))
 [C, E, Gb, B]
+```
+
+There is also support for sus chords. 
+```
+>>> Chord("C", Chord.stringToPitchClass("maj7b5sus4"))
+[C, E, F, Gb, B]
+```
+
+As a bonus you can even use sus for altered intervals.
+```
+>>> Chord("C", Chord.stringToPitchClass("maj7b5sus#4"))
+[C, E, #F, Gb, B]
+```
+
+You can use "no" to omit certain intervals from the pitch class
+```
+>>> Chord("C", Chord.stringToPitchClass("maj7b5no3"))
+[C, #F, Gb, B]
 ```
 
 There is also support for Secondary Chords. Whenever you build a scale off of a degree, the degree is saved within the new scale object by reference. So you are able to print more accurate roman numeral symbols. EG
