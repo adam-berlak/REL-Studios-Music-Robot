@@ -289,7 +289,7 @@ class Chord(Scale):
 			extensions_quality = bass_triad_quality
 
 		# Obtain accidental components via RegEx *TODO: Generate this RegEx aswell so you can change what b and # look like*
-		altered_intervals = re.findall(r'[b,#]\d+', p_quality)
+		altered_intervals = re.findall(r'!(sus|no)[b,#]\d+', p_quality)
 
 		# Loop through each chord types names and find the matching type
 		for quality_tuple in Chord_Qualities[p_system].keys():
@@ -309,14 +309,43 @@ class Chord(Scale):
 			accidental = altered_interval[0]
 			number = re.findall(r'\d+', altered_interval)[0]
 
-			altered_interval = [item for item in extensions_pitch_class if item.getNumeral() == int(number)][0]
-			extensions_pitch_class[extensions_pitch_class.index(altered_interval)] = altered_interval.transform(accidental)
+			interval_to_be_altered = [item for item in extensions_pitch_class if item.getNumeral() == int(number)][0]
+			extensions_pitch_class[extensions_pitch_class.index(interval_to_be_altered)] = Interval.stringToInterval(str(altered_interval))
 
 		# Return result with bass_triad_pitch class if it is defined
 		if (bass_triad_pitch_class != ""):
-			return (bass_triad_pitch_class[:2] + extensions_pitch_class[2:])[:int((int(extensions_numeral) + 1) / 2)]
+			result = (bass_triad_pitch_class[:2] + extensions_pitch_class[2:])[:int((int(extensions_numeral) + 1) / 2)]
 		else:
-			return extensions_pitch_class[:int((int(extensions_numeral) + 1) / 2)]
+			result = extensions_pitch_class[:int((int(extensions_numeral) + 1) / 2)]
+
+		# Obtain sus components via RegEx *TODO: Generate this RegEx aswell so you can change what notation is used for sus*
+		sus_intervals = re.findall(r'sus[b,#]*\d+', p_quality)
+		list_of_sus_intervals = []
+
+		# Create a list of suspended intervals
+		if (len(sus_intervals) != 0):
+
+			for sus_interval in sus_intervals:
+				interval = str(re.findall(r'[b,#]*\d+', str(sus_interval)))
+				list_of_sus_intervals.append(Interval.stringToInterval(interval))
+
+		result = result + list_of_sus_intervals
+		result.sort(key=lambda x: x.getSemitones())
+
+		# Obtain no components via RegEx *TODO: Generate this RegEx aswell so you can change what notation is used for no*
+		omitted_intervals = re.findall(r'no[b,#]*\d+', p_quality)
+
+		# Remove every interval within omitted intervals from result
+		if (len(omitted_intervals) != 0):
+			
+			for omitted_interval in omitted_intervals:
+				interval_string = str(re.findall(r'[b,#]*\d+', str(omitted_interval)))
+				interval = Interval.stringToInterval(interval_string)
+
+				if (interval in result):
+					result.pop(result.index(interval))
+
+		return result
 
 		@staticmethod
 		def pitchClassToFiguredBass(p_pitch_class, p_slice = 2):

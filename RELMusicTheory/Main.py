@@ -10,6 +10,7 @@
 # COMPLETED: Automate creation of Interval objects within Scale so that it is always accurate, and have a fixed amount of intervals available for interfacing
 # COMPLETED: Add support for subtraction, find better way of looping through degrees IE cycle
 # COMPLETED: Fix arithmetic with degrees such that adding a generic interval includes the principle degree, IE C + 3 = E as opposed to F
+# COMPLETED: Fix stringToPitchClass
 
 # STRETCH GOAL: Get parallel key of scale
 # STRETCH GOAL: Get Negative Harmony of a Chord
@@ -20,7 +21,8 @@
 # IMPORTANT: Add try-catch statements of invalid inputs
 # IMPORTANT: Move unaltered_intervals dictionary into constants
 # IMPORTANT: Using buildWithIntervals method should change the parent scale of the resulting scale object if it includes intervals not in the parent, but only if the scale object is a chord
-# IMPORTANT: Fix stringToPitchClass
+# IMPORTANT: Add support for stringToInterval in interval class
+# IMPORTANT: Add support for sus chords in stringToPitchClass method
 # IMPORTANT: Fix issue with using Dominant as extension in printQuality()
 
 import random
@@ -45,6 +47,8 @@ def main():
 
 	print(Scale.pitchClassToDecimal([P1, M2, M3, P4, P5, M6, M7]))
 
+	print(Chord.stringToPitchClass("dom7sus9no5b5"))
+
 	print(result)
 
 	# Build a scale off of a scale degree
@@ -54,6 +58,8 @@ def main():
 	# Build a chord off of a scale degree
 	G9 = DDorianScale[4].build(Chord)
 	print("The G Dominant chord is: " + G9)
+
+	print(Interval.stringToInterval("#3"))
 
 	print(G9[2].transform("b", Chord))
 

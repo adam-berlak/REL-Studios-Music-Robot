@@ -51,6 +51,19 @@ melodicMinor = [P1, M2, m3, P4, P5, M6, M7]
 harmonicMinor = [P1, M2, m3, P4, P5, m6, M7]
 neopolitanMajor = [P1, m2, m3, P4, P5, M6, M7]
 
+Unaltered_Intervals = {
+	"western": [0, 2, 4, 5, 7, 9, 11]
+}
+
+accidentals = {
+	"western": {
+		"b": -1,
+		"bb": -2,
+		"#": +1, 
+		"##": +2
+	}
+}
+
 # Configuration Tonal Systems
 TONES = {
     "western": [("B#", "C", "Dbb"), ("B##", "C#", "Db"), ("C##", "D", "Ebb"), ("D#", "Eb", "Fbb"), ("D##", "E", "Fb"), ("E#", "F", "Gbb"), ("E##", "F#", "Gb"), ("F##", "G", "Abb"), ("G#", "Ab", "Bbbb"), ("G##", "A", "Bbb"), ("A#", "Bb", "Cbb"), ("A##", "B", "Cb")]

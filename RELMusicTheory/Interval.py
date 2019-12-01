@@ -1,20 +1,14 @@
-Unaltered_Intervals = {
-	"western": [0, 2, 4, 5, 7, 9, 11]
-}
-
-accidentals = {
-	"western": {
-		"b": -1,
-		"bb": -2,
-		"#": +1, 
-		"##": +2
-	}
-}
+import re
 
 # Class Name: Interval
 # Parameters: p_semitones (Number of Semitones in interval), p_numeral (numeral representation), p_accidental (sharp/flat)
 
 class Interval:
+
+	unaltered_intervals = [0, 2, 4, 5, 7, 9, 11]
+
+	accidentals = {"b": -1, "bb": -2, "#": 1, "##": 2}
+
 	def __init__(self, p_semitones, p_numeral):
 		self.semitones = p_semitones
 		self.numeral = p_numeral
@@ -71,69 +65,12 @@ class Interval:
 		if (isinstance(p_other, int)):
 			return Interval(self.getSemitones() * p_other, ((self.getNumeral() + 1) * p_other) - p_other)
 
-	##################
-	# Helper Methods #
-	##################
+	###########################
+	# Properties of Intervals #
+	###########################
 
 	def getOctaveRange(self):
 		return int(self.getSemitones() / 12)
-
-	def transform(self, p_accidental):
-
-		try:
-			new_semitones = self.getSemitones() + accidentals["western"][p_accidental]
-			interval_list = self.generateIntervalList(self.multiplySemitoneList(Unaltered_Intervals["western"], 20))
-			interval = [item for item in interval_list[new_semitones] if self.getNumeral() == item.getNumeral()][0]
-
-			return interval
-		except:
-			print("Error: Trying to apply " + p_accidental + " to " + str(self) + "")
-
-			return self
-
-	def generateIntervalList(self, p_unaltered_intervals):
-		result = []
-		degree_count = 1
-
-		for i in range(max(p_unaltered_intervals) + 1):
-			if i not in p_unaltered_intervals:
-				result.append((Interval(i, degree_count - 1), Interval(i, degree_count)))
-			else:
-				result.append((Interval(i, degree_count), ""))
-				degree_count = degree_count + 1
-
-		return result
-
-	def multiplySemitoneList(self, p_semitone_list, p_multiplier):
-		result = p_semitone_list[:]
-		for i in range(1, p_multiplier):
-			for semitones in p_semitone_list:
-				new_semitones = semitones + (12 * i)
-				result.append(new_semitones)
-
-		return result
-
-	def multiplyPitchClass(self, p_pitch_class, p_multiplier):
-		result = p_pitch_class
-		for i in range(1, p_multiplier):
-			for interval in p_pitch_class:
-				new_interval = Interval(interval.getSemitones() + (12 * i), interval.getNumeral() + (7 * i))
-				result.append(new_interval)
-
-		return result
-
-	def getIdenticalIntervals(self):
-		return self.generateIntervalList(Unaltered_Intervals["western"])[self.getMinSemitones()]
-
-	def getAccidental(self):
-		default_semitones = Unaltered_Intervals["western"][self.getMinNumeral() - 1]
-
-		if (self.getMinSemitones() < default_semitones):
-			return "b"
-		elif (self.getMinSemitones() > default_semitones):
-			return "#"
-
-		return ""
 
 	def minimize(self):
 		return Interval(self.getMinSemitones(), self.getMinNumeral())
@@ -151,6 +88,99 @@ class Interval:
 			semitones -= 12
 
 		return semitones
+
+	##########################
+	# Representation Methods #
+	##########################
+
+	def getAccidental(self):
+		default_semitones = Interval.unaltered_intervals[self.getMinNumeral() - 1]
+
+		for key in Interval.accidentals.keys():
+			if (Interval.accidentals[key] == (self.getMinSemitones() - default_semitones)):
+				return key
+
+		return ""
+
+	##########################
+	# Transformation Methods #
+	##########################
+
+	def transform(self, p_accidental):
+
+		try:
+			new_semitones = self.getSemitones() + Interval.accidentals[p_accidental]
+			interval_list = Interval.generateIntervalList(Interval.multiplySemitoneList(Interval.unaltered_intervals, 20))
+			interval = [item for item in interval_list[new_semitones] if self.getNumeral() == item.getNumeral()][0]
+
+			return interval
+			
+		except:
+			print("Error: Trying to apply " + p_accidental + " to " + str(self) + "")
+
+			return self
+
+	##################
+	# STATIC Methods #
+	##################
+
+	@staticmethod
+	def stringToInterval(p_string):
+		intervals = Interval.multiplySemitoneList(Interval.unaltered_intervals, 20)
+		numeral = int(re.findall(r'\d+', p_string)[0])
+		accidentals = re.findall(r'[#,b]', p_string)
+		semitones = intervals[numeral - 1]
+
+		if (len(accidentals) != 0):
+			accidental = accidentals[0]
+			semitones = semitones + Interval.accidentals[accidental]
+
+		return Interval(semitones, numeral)
+
+	@staticmethod
+	def generateIntervalList(p_unaltered_intervals):
+		result = []
+		degree_count = 1
+
+		for i in range(max(p_unaltered_intervals) + 1):
+			if i not in p_unaltered_intervals:
+				result.append((Interval(i, degree_count - 1), Interval(i, degree_count)))
+			else:
+				result.append((Interval(i, degree_count), ""))
+				degree_count = degree_count + 1
+
+		return result
+
+	@staticmethod
+	def multiplySemitoneList(p_semitone_list, p_multiplier):
+		result = p_semitone_list[:]
+
+		for i in range(1, p_multiplier):
+
+			for semitones in p_semitone_list:
+				new_semitones = semitones + (12 * i)
+				result.append(new_semitones)
+
+		return result
+
+	@staticmethod
+	def multiplyPitchClass(p_pitch_class, p_multiplier):
+		result = p_pitch_class
+
+		for i in range(1, p_multiplier):
+
+			for interval in p_pitch_class:
+				new_interval = Interval(interval.getSemitones() + (12 * i), interval.getNumeral() + (7 * i))
+				result.append(new_interval)
+
+		return result
+
+	####################
+	# Courtesy Methods #
+	####################
+
+	def getIdenticalIntervals(self):
+		return Interval.generateIntervalList(Interval.unaltered_intervals)[self.getMinSemitones()]
 
 	#######################
 	# Getters and Setters #
