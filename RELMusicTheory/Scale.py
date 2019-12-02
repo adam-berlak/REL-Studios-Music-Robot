@@ -83,14 +83,14 @@ class Scale:
 			return p_other in self.getDegrees()
 
 		if (isinstance(p_other, Interval)):
-			return p_other in self.getIntervals()
+			return p_other.minimize() in self.getIntervals()
 
 		if (isinstance(p_other, list)):
 
 			if (isinstance(p_other[0], Interval)):
 
 				for degree in self.getDegrees():
-					if (all(elem in degree.buildPitchClass() for elem in p_other)):
+					if (all(elem.minimize() in degree.buildPitchClass() for elem in p_other)):
 						return True
 
 				return False
@@ -154,12 +154,12 @@ class Scale:
 			result = []
 
 			# Counters
-			previous = 0
+			previous = P1
 
 			# Loop through every element of the pitch class list except the first
 			for interval in p_pitch_class[1:]:
-				result.append(interval - previous)
-				previous = interval.getSemitones()
+				result.append((interval - previous).getSemitones())
+				previous = interval
 
 			# Add the distance between the last degree and the first
 			result.append(abs(p_pitch_class[-1].getSemitones() - 12))
@@ -289,6 +289,9 @@ class Scale:
 	####################
 	# Courtesy Methods #
 	####################
+
+	def getParentScale(self):
+		return self.getParentDegree().getParentScale()
 
 	def rotate(self):
 		return self + 2

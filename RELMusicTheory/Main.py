@@ -48,7 +48,7 @@ def main():
 	result = CMajorScale[1] - 4
 	print("The root of the major scale - 4 is " + result)
 
-	print(Chord("C", Chord.stringToPitchClass("maj7"))[2].buildPitchClass(2))
+	print(Chord("C", Chord.stringToPitchClass("min7")))
 	print(CMajorScale[1].build(Chord)[2].buildPitchClass(2))
 
 	# Build a scale off of a scale degree

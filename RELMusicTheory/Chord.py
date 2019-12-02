@@ -186,8 +186,8 @@ class Chord(Scale):
 
 	def printNumeralWithContext(self, p_with_quality = False, p_style = 2, p_system = DEFAULT_SYSTEM):
 
-		if (self.getParentDegree().getParentScale().getParentDegree() != None):
-			secondary_information = "\\" + self.getParentDegree().getParentScale().getParentDegree().build(Chord).printNumeral()
+		if (self.getParentScale().getParentDegree() != None):
+			secondary_information = "\\" + self.getParentScale().getParentDegree().build(Chord).printNumeral()
 
 		return self.printNumeral(p_with_quality, p_style, p_system) + secondary_information
 
@@ -309,7 +309,7 @@ class Chord(Scale):
 			extensions_quality = bass_triad_quality
 
 		# Obtain accidental components via RegEx *TODO: Generate this RegEx aswell so you can change what b and # look like*
-		altered_intervals = re.findall(r'!(sus|no)[b,#]\d+', p_quality)
+		altered_intervals = re.findall(r'[b,#]\d+', p_quality)
 
 		# Loop through each chord types names and find the matching type
 		for quality_tuple in Chord_Qualities[p_system].keys():
@@ -328,9 +328,11 @@ class Chord(Scale):
 		for altered_interval in altered_intervals:
 			accidental = altered_interval[0]
 			number = re.findall(r'\d+', altered_interval)[0]
+			match = [item for item in extensions_pitch_class if item.getNumeral() == int(number)]
 
-			interval_to_be_altered = [item for item in extensions_pitch_class if item.getNumeral() == int(number)][0]
-			extensions_pitch_class[extensions_pitch_class.index(interval_to_be_altered)] = Interval.stringToInterval(str(altered_interval))
+			if (len(match) != 0):
+				interval_to_be_altered = match[0]
+				extensions_pitch_class[extensions_pitch_class.index(interval_to_be_altered)] = Interval.stringToInterval(str(altered_interval))
 
 		# Return result with bass_triad_pitch class if it is defined
 		if (bass_triad_pitch_class != ""):
@@ -412,6 +414,12 @@ class Chord(Scale):
 
 	class _Degree(Scale._Degree):
 
+		def nextChordDegree(self):
+			return super().next()
+
+		def previousChordDegree(self):
+			return super().previous()
+
 		def build(self, object_type, p_num_tones = 4, p_leap_size = 3, *args):
 			if (self.getParentScale().getParentDegree() != None):
 				return self.getParentScale().findDegreeInParent(self).build(object_type, p_num_tones, p_leap_size, *args)
@@ -455,25 +463,12 @@ class Chord(Scale):
 				return super().previous()
 
 		def transform(self, p_accidental, p_system = DEFAULT_SYSTEM):
+			new_object = super().transform(p_accidental, p_system)
 
-			try:
-				# Alter parent interval
-				new_interval = self.getInterval().transform(p_accidental)
-
-				# Create new pitch class substituting original interval for the new one
-				new_pitch_class = [item for item in self.getParentScale().getIntervals() if item != self.getInterval()]
-				new_pitch_class.append(new_interval)
-				new_pitch_class.sort(key=lambda x: x.getNumeral())
-
-				# Build a new chord object
-				new_object = Chord(self.getParentScale()[1].getTone(), new_pitch_class)
-
-				# If the Chord has a parent degree and Scale make sure the same degree is also altered
+			if (self.getParentScale().getParentDegree() != None):
+				
 				if (self.getParentScale().getParentDegree() != None):
 					new_parent = self.getParentScale().findDegreeInParent(self).transform(p_accidental, p_system)
 					new_object.setParentDegree(new_parent.getDegreeByInterval(self.getParentScale().getParentDegree().getInterval()))
 
 				return new_object
-
-			except:
-				print("Error: Failed to transform " + self + " by " + p_accidental)
