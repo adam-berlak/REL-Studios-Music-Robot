@@ -38,18 +38,18 @@ def main():
 	CMajorScale = Scale("C", major)
 	print("The C Major Scale is: " + CMajorScale)
 
-	print(Chord("C", Chord.stringToPitchClass("Δ-7")))
-
 	Eb = CMajorScale[1] + m3
 	print("The first degree of the C Major Scale + m3 is: " + Eb)
-	
+
+	print("The major scale converted to Decimal is: " + str(Scale.pitchClassToDecimal([P1, M2, M3, P4, P5, M6, M7])))
+
+	print("The string dom7sus9no5b5 produces the pitch class " + str(Chord.stringToPitchClass("dom7sus9no5b5")))
+
 	result = CMajorScale[1] - 4
+	print("The root of the major scale - 4 is " + result)
 
-	print(Scale.pitchClassToDecimal([P1, M2, M3, P4, P5, M6, M7]))
-
-	print(Chord.stringToPitchClass("dom7sus9no5b5"))
-
-	print(result)
+	print(Chord("C", Chord.stringToPitchClass("maj7"))[2].buildPitchClass(2))
+	print(CMajorScale[1].build(Chord)[2].buildPitchClass(2))
 
 	# Build a scale off of a scale degree
 	DDorianScale = CMajorScale[2].buildScale()
@@ -59,11 +59,11 @@ def main():
 	G9 = DDorianScale[4].build(Chord)
 	print("The G Dominant chord is: " + G9)
 
-	print(Interval.stringToInterval("#3"))
+	print("Converting the string #3 to an interval produces: " + Interval.stringToInterval("#3"))
 
-	print(G9[2].transform("b", Chord))
+	print("G7 with a flat third is: " + G9[2].transform("b", Chord))
 
-	print(G9.printNumeralWithContext(True, 2))
+	print("The roman numeral notation of the G9 chord is " + G9.printNumeralWithContext(True, 2))
 
 	# Resolve the chord using a specific rule
 	CM7 = G9.resolveChord(circleOfFifths)
@@ -78,7 +78,7 @@ def main():
 	print("The secondary dominant of G9 is D7: " + D7)
 
 	# Transpose a scale up by semitones
-	DMajorScale = CMajorScale + 2
+	DMajorScale = CMajorScale + M2
 	print("The D Major Scale is: " + DMajorScale)
 
 	# Print the quality of a subset of a chord
