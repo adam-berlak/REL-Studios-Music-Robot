@@ -224,6 +224,17 @@ class Scale:
 	def pitchClassToDecimal(p_intervals):
 		return int(Scale.pitchClassToBinary(p_intervals), 2)
 
+	'''
+	def decimalToPitchClass(p_integer):
+		binary = '{0:012b}'.format(p_integer)
+
+		for i in range(12):
+			semitones = 0
+
+			for j in range(i + 1):
+				semitones = semitones + int(binary[j])
+	'''
+
 	@staticmethod
 	def scaleIntervalsByOrder(p_intervals):
 
@@ -293,6 +304,13 @@ class Scale:
 
 	def printQuality(self):
 		return scale_names[Scale.pitchClassToDecimal(self.getIntervals())]
+
+	def getModeNames(self):
+		result = []
+		for i in range(len(self.getIntervals())):
+			result.append((self + (i + 1)).printQuality())
+
+		return result
 
 	def getParentScale(self):
 		return self.getParentDegree().getParentScale()

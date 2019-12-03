@@ -39,7 +39,7 @@ def main():
 	CMajorScale = Scale("C", major)
 	print("The C Major Scale is: " + CMajorScale)
 
-	print(CMajorScale[3].buildScale().printQuality())
+	print(CMajorScale.getModeNames())
 
 	Eb = CMajorScale[1] + m3
 	print("The first degree of the C Major Scale + m3 is: " + Eb)
