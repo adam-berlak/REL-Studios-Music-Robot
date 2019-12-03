@@ -6,6 +6,7 @@ from Chord import *
 class TestScaleMethods(unittest.TestCase):
 
     def test_scale_creation(self):
+        self.assertEqual(str(Scale("Cb", [P1, M2, M3, P4, P5, M6, M7])), "[Cb, Db, Eb, Fb, Gb, Ab, Bb]")
         self.assertEqual(str(Scale("C", [P1, M2, M3, P4, P5, M6, M7])), "[C, D, E, F, G, A, B]")
         self.assertEqual(str(Scale("C#", [P1, M2, M3, P4, P5, M6, M7])), "[C#, D#, E#, F#, G#, A#, B#]")
         self.assertEqual(str(Scale("Db", [P1, M2, M3, P4, P5, M6, M7])), "[Db, Eb, F, Gb, Ab, Bb, C]")
@@ -14,6 +15,7 @@ class TestScaleMethods(unittest.TestCase):
         self.assertEqual(str(Scale("Eb", [P1, M2, M3, P4, P5, M6, M7])), "[Eb, F, G, Ab, Bb, C, D]")
         self.assertEqual(str(Scale("E", [P1, M2, M3, P4, P5, M6, M7])), "[E, F#, G#, A, B, C#, D#]")
         self.assertEqual(str(Scale("E#", [P1, M2, M3, P4, P5, M6, M7])), "[E#, F##, G##, A#, B#, C##, D##]")
+        self.assertEqual(str(Scale("Fb", [P1, M2, M3, P4, P5, M6, M7])), "[Fb, Gb, Ab, Bbb, Cb, Db, Eb]")
         self.assertEqual(str(Scale("F", [P1, M2, M3, P4, P5, M6, M7])), "[F, G, A, Bb, C, D, E]")
         self.assertEqual(str(Scale("F#", [P1, M2, M3, P4, P5, M6, M7])), "[F#, G#, A#, B, C#, D#, E#]")
         self.assertEqual(str(Scale("Gb", [P1, M2, M3, P4, P5, M6, M7])), "[Gb, Ab, Bb, Cb, Db, Eb, F]")
@@ -25,7 +27,7 @@ class TestScaleMethods(unittest.TestCase):
         self.assertEqual(str(Scale("Bb", [P1, M2, M3, P4, P5, M6, M7])), "[Bb, C, D, Eb, F, G, A]")
         self.assertEqual(str(Scale("B", [P1, M2, M3, P4, P5, M6, M7])), "[B, C#, D#, E, F#, G#, A#]")
         self.assertEqual(str(Scale("B#", [P1, M2, M3, P4, P5, M6, M7])), "[B#, C##, D##, E#, F##, G##, A##]")
-        self.assertEqual(str(Scale("Cb", [P1, M2, M3, P4, P5, M6, M7])), "[Cb, Db, Eb, Fb, Gb, Ab, Bb]")
+
 
     def test_scale_size(self):
         self.assertEqual(str(Scale("C", [P1])), "[C]")
@@ -87,13 +89,17 @@ class TestScaleMethods(unittest.TestCase):
 
     def test_string_to_pitch_class(self):
         self.assertEqual(str(Chord.stringToPitchClass("maj7")), "[1, 3, 5, 7]")
+        self.assertEqual(str(Chord.stringToPitchClass("majmaj7")), "[1, 3, 5, 7]")
         self.assertEqual(str(Chord.stringToPitchClass("maj7b5")), "[1, 3, b5, 7]")
+        self.assertEqual(str(Chord.stringToPitchClass("maj7b3b5")), "[1, b3, b5, 7]")
         self.assertEqual(str(Chord.stringToPitchClass("minmaj5")), "[1, b3, 5]")
         self.assertEqual(str(Chord.stringToPitchClass("minmaj7")), "[1, b3, 5, 7]")
         self.assertEqual(str(Chord.stringToPitchClass("minmaj7b7")), "[1, b3, 5, b7]")
         self.assertEqual(str(Chord.stringToPitchClass("minmaj7b9")), "[1, b3, 5, 7]")
-
-
+        self.assertEqual(str(Chord.stringToPitchClass("minmaj7no5")), "[1, b3, 7]")
+        self.assertEqual(str(Chord.stringToPitchClass("minmaj7no5sus2")), "[1, 2, b3, 7]")
+        self.assertEqual(str(Chord.stringToPitchClass("mindom7")), "[1, b3, 5, b7]")
+        self.assertEqual(str(Chord.stringToPitchClass("domdom7")), "[1, 3, 5, b7]")
 
 if __name__ == '__main__':
     unittest.main()

@@ -5,6 +5,7 @@ import re
 from Interval import *
 from Constants import *
 from HelperMethods import *
+from scalesDictionary import scale_names
 
 # Class Name: Scale
 # Parameters: p_tonic_tone (The tonic tone the scale will be built off of), p_intervals (the interval pattern of the scale)
@@ -289,6 +290,9 @@ class Scale:
 	####################
 	# Courtesy Methods #
 	####################
+
+	def printQuality(self):
+		return scale_names[Scale.pitchClassToDecimal(self.getIntervals())]
 
 	def getParentScale(self):
 		return self.getParentDegree().getParentScale()

@@ -1,0 +1,2742 @@
+0: Scale 0
+1: Scale 1
+2: Scale 2
+3: Scale 3
+4: Scale 4
+5: Vietnamese ditonic
+6: Scale 6
+7: Scale 7
+8: Scale 8
+9: Scale 9
+10: Scale 10
+11: Scale 11
+12: Scale 12
+13: Scale 13
+14: Scale 14
+15: Scale 15
+16: Scale 16
+17: Scale 17
+18: Scale 18
+19: Scale 19
+20: Scale 20
+21: Scale 21
+22: Scale 22
+23: Scale 23
+24: Scale 24
+25: Scale 25
+26: Scale 26
+27: Scale 27
+28: Scale 28
+29: Scale 29
+30: Scale 30
+31: Scale 31
+32: Scale 32
+33: Honchoshi
+34: Scale 34
+35: Scale 35
+36: Scale 36
+37: Scale 37
+38: Scale 38
+39: Scale 39
+40: Scale 40
+41: Vietnamese Tritonic
+42: Scale 42
+43: Scale 43
+44: Scale 44
+45: Scale 45
+46: Scale 46
+47: Scale 47
+48: Scale 48
+49: Scale 49
+50: Scale 50
+51: Scale 51
+52: Scale 52
+53: Scale 53
+54: Scale 54
+55: Scale 55
+56: Scale 56
+57: Scale 57
+58: Scale 58
+59: Scale 59
+60: Scale 60
+61: Scale 61
+62: Scale 62
+63: Scale 63
+64: Scale 64
+65: Scale 65
+66: Scale 66
+67: Scale 67
+68: Scale 68
+69: Scale 69
+70: Scale 70
+71: Scale 71
+72: Scale 72
+73: Scale 73
+74: Scale 74
+75: Scale 75
+76: Scale 76
+77: Scale 77
+78: Scale 78
+79: Scale 79
+80: Scale 80
+81: Scale 81
+82: Scale 82
+83: Scale 83
+84: Scale 84
+85: Scale 85
+86: Scale 86
+87: Scale 87
+88: Scale 88
+89: Scale 89
+90: Scale 90
+91: Scale 91
+92: Scale 92
+93: Scale 93
+94: Scale 94
+95: Scale 95
+96: Scale 96
+97: Scale 97
+98: Scale 98
+99: Scale 99
+100: Scale 100
+101: Scale 101
+102: Scale 102
+103: Scale 103
+104: Scale 104
+105: Scale 105
+106: Scale 106
+107: Scale 107
+108: Scale 108
+109: Scale 109
+110: Scale 110
+111: Scale 111
+112: Scale 112
+113: Scale 113
+114: Scale 114
+115: Scale 115
+116: Scale 116
+117: Scale 117
+118: Scale 118
+119: Scale 119
+120: Scale 120
+121: Scale 121
+122: Scale 122
+123: Scale 123
+124: Scale 124
+125: Scale 125
+126: Scale 126
+127: Scale 127
+128: Scale 128
+129: Niagari
+130: Scale 130
+131: Scale 131
+132: Scale 132
+133: Scale 133
+134: Scale 134
+135: Scale 135
+136: Scale 136
+137: Ute Tritonic
+138: Scale 138
+139: Scale 139
+140: Scale 140
+141: Scale 141
+142: Scale 142
+143: Scale 143
+144: Scale 144
+145: Raga Malasri
+146: Scale 146
+147: Scale 147
+148: Scale 148
+149: Eskimo Tetratonic
+150: Scale 150
+151: Scale 151
+152: Scale 152
+153: Scale 153
+154: Scale 154
+155: Scale 155
+156: Scale 156
+157: Scale 157
+158: Scale 158
+159: Scale 159
+160: Scale 160
+161: Raga Sarvasri
+162: Scale 162
+163: Scale 163
+164: Scale 164
+165: Genus Primum
+166: Scale 166
+167: Scale 167
+168: Scale 168
+169: Vietnamese Tetratonic
+170: Scale 170
+171: Scale 171
+172: Scale 172
+173: Raga Purnalalita
+174: Scale 174
+175: Scale 175
+176: Scale 176
+177: Scale 177
+178: Scale 178
+179: Scale 179
+180: Scale 180
+181: Raga Budhamanohari
+182: Scale 182
+183: Scale 183
+184: Scale 184
+185: Scale 185
+186: Scale 186
+187: Scale 187
+188: Scale 188
+189: Scale 189
+190: Scale 190
+191: Scale 191
+192: Scale 192
+193: Raga Ongkari
+194: Scale 194
+195: Messiaen Truncated Mode 5
+196: Scale 196
+197: Scale 197
+198: Scale 198
+199: Raga Nabhomani
+200: Scale 200
+201: Scale 201
+202: Scale 202
+203: Scale 203
+204: Scale 204
+205: Scale 205
+206: Scale 206
+207: Scale 207
+208: Scale 208
+209: Scale 209
+210: Scale 210
+211: Scale 211
+212: Scale 212
+213: Scale 213
+214: Scale 214
+215: Scale 215
+216: Scale 216
+217: Scale 217
+218: Scale 218
+219: Istrian
+220: Scale 220
+221: Scale 221
+222: Scale 222
+223: Scale 223
+224: Scale 224
+225: Scale 225
+226: Scale 226
+227: Scale 227
+228: Scale 228
+229: Scale 229
+230: Scale 230
+231: Scale 231
+232: Scale 232
+233: Scale 233
+234: Scale 234
+235: Scale 235
+236: Scale 236
+237: Scale 237
+238: Scale 238
+239: Scale 239
+240: Scale 240
+241: Scale 241
+242: Scale 242
+243: Scale 243
+244: Scale 244
+245: Raga Dipak
+246: Scale 246
+247: Scale 247
+248: Scale 248
+249: Scale 249
+250: Scale 250
+251: Scale 251
+252: Scale 252
+253: Scale 253
+254: Scale 254
+255: Scale 255
+256: Scale 256
+257: Scale 257
+258: Scale 258
+259: Scale 259
+260: Scale 260
+261: Scale 261
+262: Scale 262
+263: Scale 263
+264: Scale 264
+265: Scale 265
+266: Scale 266
+267: Scale 267
+268: Scale 268
+269: Scale 269
+270: Scale 270
+271: Scale 271
+272: Scale 272
+273: Augmented Triad
+274: Scale 274
+275: Dalic
+276: Scale 276
+277: Mixolyric
+278: Scale 278
+279: Poditonic
+280: Scale 280
+281: Lanic
+282: Scale 282
+283: Aerylitonic
+284: Scale 284
+285: Zaritonic
+286: Scale 286
+287: Gynimic
+288: Scale 288
+289: Scale 289
+290: Scale 290
+291: Raga Lavangi
+292: Scale 292
+293: Raga Haripriya
+294: Scale 294
+295: Gyritonic
+296: Scale 296
+297: Mynic
+298: Scale 298
+299: Raga Chitthakarshini
+300: Scale 300
+301: Raga Audav Tukhari
+302: Scale 302
+303: Golimic
+304: Scale 304
+305: Gonic
+306: Scale 306
+307: Raga Megharanjani
+308: Scale 308
+309: Palitonic
+310: Scale 310
+311: Stagimic
+312: Scale 312
+313: Goritonic
+314: Scale 314
+315: Stodimic
+316: Scale 316
+317: Korimic
+318: Scale 318
+319: Epodian
+320: Scale 320
+321: Scale 321
+322: Scale 322
+323: Scale 323
+324: Scale 324
+325: Messiaen Truncated Mode 6
+326: Scale 326
+327: Syptitonic
+328: Scale 328
+329: Mynic 2
+330: Scale 330
+331: Raga Chhaya Todi
+332: Scale 332
+333: Bogitonic
+334: Scale 334
+335: Zanimic
+336: Scale 336
+337: Koptic
+338: Scale 338
+339: Zaptitonic
+340: Scale 340
+341: Bothitonic
+342: Scale 342
+343: Ionorimic
+344: Scale 344
+345: Gylitonic
+346: Scale 346
+347: Barimic
+348: Scale 348
+349: Borimic
+350: Scale 350
+351: Epanian
+352: Scale 352
+353: Scale 353
+354: Scale 354
+355: Aeoloritonic
+356: Scale 356
+357: Banitonic
+358: Scale 358
+359: Bothimic
+360: Scale 360
+361: Bocritonic
+362: Scale 362
+363: Soptimic
+364: Scale 364
+365: Marimic
+366: Scale 366
+367: Aerodian
+368: Scale 368
+369: Laditonic
+370: Scale 370
+371: Rythimic
+372: Scale 372
+373: Epagimic
+374: Scale 374
+375: Sodian
+376: Scale 376
+377: Kathimic
+378: Scale 378
+379: Aeragian
+380: Scale 380
+381: Kogian
+382: Scale 382
+383: Logyllic
+384: Scale 384
+385: Scale 385
+386: Scale 386
+387: Scale 387
+388: Scale 388
+389: Scale 389
+390: Scale 390
+391: Scale 391
+392: Scale 392
+393: Lothic
+394: Scale 394
+395: Phrygian Pentatonic
+396: Scale 396
+397: Aeolian Pentatonic
+398: Scale 398
+399: Zynimic
+400: Scale 400
+401: Epogic
+402: Scale 402
+403: Raga Reva
+404: Scale 404
+405: Raga Bhupeshwari
+406: Scale 406
+407: Zylimic
+408: Scale 408
+409: Laritonic
+410: Scale 410
+411: Lygimic
+412: Scale 412
+413: Ganimic
+414: Scale 414
+415: Aeoladian
+416: Scale 416
+417: Scale 417
+418: Scale 418
+419: Hon-kumoi-joshi
+420: Scale 420
+421: Han-kumoi
+422: Scale 422
+423: Sogimic
+424: Scale 424
+425: Raga Kokil Pancham
+426: Scale 426
+427: Raga Suddha Simantini
+428: Scale 428
+429: Koptimic
+430: Scale 430
+431: Epyrian
+432: Scale 432
+433: Raga Zilaf
+434: Scale 434
+435: Raga Purna Pancama
+436: Scale 436
+437: Ronimic
+438: Scale 438
+439: Bythian
+440: Scale 440
+441: Thycrimic
+442: Scale 442
+443: Kothian
+444: Scale 444
+445: Gocrian
+446: Scale 446
+447: Thyphyllic
+448: Scale 448
+449: Scale 449
+450: Scale 450
+451: Raga Saugandhini
+452: Scale 452
+453: Raditonic
+454: Scale 454
+455: Messiaen Mode 5
+456: Scale 456
+457: Staptitonic
+458: Scale 458
+459: Zaptimic
+460: Scale 460
+461: Raga Syamalam
+462: Scale 462
+463: Zythian
+464: Scale 464
+465: Zoditonic
+466: Scale 466
+467: Raga Dhavalangam
+468: Scale 468
+469: Katyrimic
+470: Scale 470
+471: Dodian
+472: Scale 472
+473: Aeralimic
+474: Scale 474
+475: Aeolygian
+476: Scale 476
+477: Stacrian
+478: Scale 478
+479: Kocryllic
+480: Scale 480
+481: Scale 481
+482: Scale 482
+483: Kygimic
+484: Scale 484
+485: Stoptimic
+486: Scale 486
+487: Dynian
+488: Scale 488
+489: Phrathimic
+490: Scale 490
+491: Aeolyrian
+492: Scale 492
+493: Rygian
+494: Scale 494
+495: Bocryllic
+496: Scale 496
+497: Kadimic
+498: Scale 498
+499: Ionaptian
+500: Scale 500
+501: Katylian
+502: Scale 502
+503: Thoptyllic
+504: Scale 504
+505: Sanian
+506: Scale 506
+507: Moryllic
+508: Scale 508
+509: Ionothyllic
+510: Scale 510
+511: Polygic
+512: Scale 512
+513: Scale 513
+514: Scale 514
+515: Scale 515
+516: Scale 516
+517: Scale 517
+518: Scale 518
+519: Scale 519
+520: Scale 520
+521: Scale 521
+522: Scale 522
+523: Scale 523
+524: Scale 524
+525: Scale 525
+526: Scale 526
+527: Scale 527
+528: Scale 528
+529: Raga Bilwadala
+530: Scale 530
+531: Scale 531
+532: Scale 532
+533: Scale 533
+534: Scale 534
+535: Scale 535
+536: Scale 536
+537: Scale 537
+538: Scale 538
+539: Scale 539
+540: Scale 540
+541: Scale 541
+542: Scale 542
+543: Scale 543
+544: Scale 544
+545: Scale 545
+546: Scale 546
+547: Pyrric
+548: Scale 548
+549: Raga Bhavani
+550: Scale 550
+551: Aeoloditonic
+552: Scale 552
+553: Rothic 2
+554: Scale 554
+555: Aeolycritonic
+556: Scale 556
+557: Raga Abhogi
+558: Scale 558
+559: Lylimic
+560: Scale 560
+561: Phratic
+562: Scale 562
+563: Thacritonic
+564: Scale 564
+565: Aeolyphritonic
+566: Scale 566
+567: Aeoladimic
+568: Scale 568
+569: Mothitonic
+570: Scale 570
+571: Kynimic
+572: Scale 572
+573: Saptimic
+574: Scale 574
+575: Ionydian
+576: Scale 576
+577: Scale 577
+578: Scale 578
+579: Scale 579
+580: Scale 580
+581: Eporic 2
+582: Scale 582
+583: Aeritonic
+584: Scale 584
+585: Diminished Seventh
+586: Scale 586
+587: Pathitonic
+588: Scale 588
+589: Ionalitonic
+590: Scale 590
+591: Gaptimic
+592: Scale 592
+593: Saric
+594: Scale 594
+595: Sogitonic
+596: Scale 596
+597: Kung
+598: Scale 598
+599: Thyrimic
+600: Scale 600
+601: Bycritonic
+602: Scale 602
+603: Aeolygimic
+604: Scale 604
+605: Dycrimic
+606: Scale 606
+607: Kadian
+608: Scale 608
+609: Scale 609
+610: Scale 610
+611: Anchihoye
+612: Scale 612
+613: Phralitonic
+614: Scale 614
+615: Phrothimic
+616: Scale 616
+617: Katycritonic
+618: Scale 618
+619: Double-Phrygian Hexatonic
+620: Scale 620
+621: Pyramid Hexatonic
+622: Scale 622
+623: Sycrian
+624: Scale 624
+625: Ionyptitonic
+626: Scale 626
+627: Mogimic
+628: Scale 628
+629: Aeronimic
+630: Scale 630
+631: Zygian
+632: Scale 632
+633: Kydimic
+634: Scale 634
+635: Epolian
+636: Scale 636
+637: Debussy's Heptatonic
+638: Scale 638
+639: Ionaryllic
+640: Scale 640
+641: Scale 641
+642: Scale 642
+643: Scale 643
+644: Scale 644
+645: Scale 645
+646: Scale 646
+647: Scale 647
+648: Scale 648
+649: Byptic
+650: Scale 650
+651: Golitonic
+652: Scale 652
+653: Dorian Pentatonic
+654: Scale 654
+655: Kataptimic
+656: Scale 656
+657: Epathic
+658: Scale 658
+659: Raga Rasika Ranjani
+660: Scale 660
+661: Major Pentatonic
+662: Scale 662
+663: Phrynimic
+664: Scale 664
+665: Raga Mohanangi
+666: Scale 666
+667: Rodimic
+668: Scale 668
+669: Gycrimic
+670: Scale 670
+671: Stycrian
+672: Scale 672
+673: Scale 673
+674: Scale 674
+675: Altered Pentatonic
+676: Scale 676
+677: Scottish Pentatonic
+678: Scale 678
+679: Lanimic
+680: Scale 680
+681: Kyemyonjo
+682: Scale 682
+683: Stogimic
+684: Scale 684
+685: Raga Suddha Bangala
+686: Scale 686
+687: Aeolythian
+688: Scale 688
+689: Raga Nagasvaravali
+690: Scale 690
+691: Raga Kalavati
+692: Scale 692
+693: Arezzo Major Diatonic Hexachord
+694: Scale 694
+695: Sarian
+696: Scale 696
+697: Lagimic
+698: Scale 698
+699: Aerothian
+700: Scale 700
+701: Mixonyphian
+702: Scale 702
+703: Aerocryllic
+704: Scale 704
+705: Scale 705
+706: Scale 706
+707: Scale 707
+708: Scale 708
+709: Raga Shri Kalyan
+710: Scale 710
+711: Raga Chandrajyoti
+712: Scale 712
+713: Thoptitonic
+714: Scale 714
+715: Messiaen Truncated Mode 2
+716: Scale 716
+717: Raga Vijayanagari
+718: Scale 718
+719: Kanian
+720: Scale 720
+721: Raga Dhavalashri
+722: Scale 722
+723: Ionadimic
+724: Scale 724
+725: Raga Yamuna Kalyani
+726: Scale 726
+727: Phradian
+728: Scale 728
+729: Stygimic
+730: Scale 730
+731: Ionorian
+732: Scale 732
+733: Donian
+734: Scale 734
+735: Sylyllic
+736: Scale 736
+737: Scale 737
+738: Scale 738
+739: Rorimic
+740: Scale 740
+741: Gathimic
+742: Scale 742
+743: Chromatic Hypophrygian Inverse
+744: Scale 744
+745: Kolimic
+746: Scale 746
+747: Lynian
+748: Scale 748
+749: Aeologian
+750: Scale 750
+751: Scale 751
+752: Scale 752
+753: Aeronimic
+754: Scale 754
+755: Phrythian
+756: Scale 756
+757: Ionyptian
+758: Scale 758
+759: Katalyllic
+760: Scale 760
+761: Ponian
+762: Scale 762
+763: Doryllic
+764: Scale 764
+765: Scale 765
+766: Scale 766
+767: Raptygic
+768: Scale 768
+769: Scale 769
+770: Scale 770
+771: Scale 771
+772: Scale 772
+773: Scale 773
+774: Scale 774
+775: Raga Putrika
+776: Scale 776
+777: Scale 777
+778: Scale 778
+779: Scale 779
+780: Scale 780
+781: Scale 781
+782: Scale 782
+783: Scale 783
+784: Scale 784
+785: Aeoloric
+786: Scale 786
+787: Aeolapritonic
+788: Scale 788
+789: Zogitonic
+790: Scale 790
+791: Aeoloptimic
+792: Scale 792
+793: Mocritonic
+794: Scale 794
+795: Aeologimic
+796: Scale 796
+797: Katocrimic
+798: Scale 798
+799: Lolian
+800: Scale 800
+801: Scale 801
+802: Scale 802
+803: Loritonic
+804: Scale 804
+805: Rothitonic
+806: Scale 806
+807: Raga Suddha Mukhari
+808: Scale 808
+809: Dogitonic
+810: Scale 810
+811: Radimic
+812: Scale 812
+813: Larimic
+814: Scale 814
+815: Bolian
+816: Scale 816
+817: Zothitonic
+818: Scale 818
+819: Augmented Inverse
+820: Scale 820
+821: Aeranimic
+822: Scale 822
+823: Stodian
+824: Scale 824
+825: Thyptimic
+826: Scale 826
+827: Mixolocrian
+828: Scale 828
+829: Lygian
+830: Scale 830
+831: Rodyllic
+832: Scale 832
+833: Scale 833
+834: Scale 834
+835: Scale 835
+836: Scale 836
+837: Epaditonic
+838: Scale 838
+839: Ionathimic
+840: Scale 840
+841: Phrothitonic
+842: Scale 842
+843: Molimic
+844: Scale 844
+845: Raga Neelangi
+846: Scale 846
+847: Ganian
+848: Scale 848
+849: Aerynitonic
+850: Scale 850
+851: Raga Hejjajji
+852: Scale 852
+853: Epothimic
+854: Scale 854
+855: Porian
+856: Scale 856
+857: Aeolydimic
+858: Scale 858
+859: Ultralocrian
+860: Scale 860
+861: Rylian
+862: Scale 862
+863: Pyryllic
+864: Scale 864
+865: Scale 865
+866: Scale 866
+867: Phrocrimic
+868: Scale 868
+869: Kothimic
+870: Scale 870
+871: Locrian Double-flat 3 Double-flat 7
+872: Scale 872
+873: Bagimic
+874: Scale 874
+875: Locrian Double-flat 7
+876: Scale 876
+877: Moravian Pistalkova
+878: Scale 878
+879: Aeranyllic
+880: Scale 880
+881: Aerothimic
+882: Scale 882
+883: Ralian
+884: Scale 884
+885: Sathian
+886: Scale 886
+887: Sathyllic
+888: Scale 888
+889: Borian
+890: Scale 890
+891: Ionilyllic
+892: Scale 892
+893: Dadyllic
+894: Scale 894
+895: Aeolathygic
+896: Scale 896
+897: Scale 897
+898: Scale 898
+899: Scale 899
+900: Scale 900
+901: Scale 901
+902: Scale 902
+903: Scale 903
+904: Scale 904
+905: Bylitonic
+906: Scale 906
+907: Tholimic
+908: Scale 908
+909: Katarimic
+910: Scale 910
+911: Radian
+912: Scale 912
+913: Aeolyritonic
+914: Scale 914
+915: Raga Kalagada
+916: Scale 916
+917: Dygimic
+918: Scale 918
+919: Chromatic Phrygian Inverse
+920: Scale 920
+921: Bogimic
+922: Scale 922
+923: Ultraphrygian
+924: Scale 924
+925: Chromatic Hypodorian
+926: Scale 926
+927: Gaptyllic
+928: Scale 928
+929: Scale 929
+930: Scale 930
+931: Raga Kalakanthi
+932: Scale 932
+933: Dadimic
+934: Scale 934
+935: Chromatic Dorian
+936: Scale 936
+937: Stothimic
+938: Scale 938
+939: Mela Senavati
+940: Scale 940
+941: Mela Jhankaradhvani
+942: Scale 942
+943: Aerygyllic
+944: Scale 944
+945: Raga Saravati
+946: Scale 946
+947: Mela Gayakapriya
+948: Scale 948
+949: Mela Mararanjani
+950: Scale 950
+951: Thogyllic
+952: Scale 952
+953: Mela Yagapriya
+954: Scale 954
+955: Ionogyllic
+956: Scale 956
+957: Phronyllic
+958: Scale 958
+959: Katylygic
+960: Scale 960
+961: Scale 961
+962: Scale 962
+963: Scale 963
+964: Scale 964
+965: Ionothimic
+966: Scale 966
+967: Mela Salaga
+968: Scale 968
+969: Ionogimic
+970: Scale 970
+971: Mela Gavambodhi
+972: Scale 972
+973: Mela Syamalangi
+974: Scale 974
+975: Messiaen Mode 4
+976: Scale 976
+977: Kocrimic
+978: Scale 978
+979: Mela Dhavalambari
+980: Scale 980
+981: Mela Kantamani
+982: Scale 982
+983: Thocryllic
+984: Scale 984
+985: Mela Sucaritra
+986: Scale 986
+987: Aeraptyllic
+988: Scale 988
+989: Phrolyllic
+990: Scale 990
+991: Aeolygic
+992: Scale 992
+993: Scale 993
+994: Scale 994
+995: Phrathian
+996: Scale 996
+997: Rycrian
+998: Scale 998
+999: Ionodyllic
+1000: Scale 1000
+1001: Badian
+1002: Scale 1002
+1003: Ionyryllic
+1004: Scale 1004
+1005: Radyllic
+1006: Scale 1006
+1007: Epitygic
+1008: Scale 1008
+1009: Katyptian
+1010: Scale 1010
+1011: Kycryllic
+1012: Scale 1012
+1013: Stydyllic
+1014: Scale 1014
+1015: Ionodygic
+1016: Scale 1016
+1017: Dythyllic
+1018: Scale 1018
+1019: Aeranygic
+1020: Scale 1020
+1021: Ladygic
+1022: Scale 1022
+1023: Dodyllian
+1024: Scale 1024
+1025: Warao Ditonic
+1026: Scale 1026
+1027: Scale 1027
+1028: Scale 1028
+1029: Scale 1029
+1030: Scale 1030
+1031: Scale 1031
+1032: Scale 1032
+1033: Scale 1033
+1034: Scale 1034
+1035: Scale 1035
+1036: Scale 1036
+1037: Warao Tetratonic
+1038: Scale 1038
+1039: Scale 1039
+1040: Scale 1040
+1041: Scale 1041
+1042: Scale 1042
+1043: Scale 1043
+1044: Scale 1044
+1045: Scale 1045
+1046: Scale 1046
+1047: Scale 1047
+1048: Scale 1048
+1049: Scale 1049
+1050: Scale 1050
+1051: Scale 1051
+1052: Scale 1052
+1053: Scale 1053
+1054: Scale 1054
+1055: Scale 1055
+1056: Scale 1056
+1057: Sansagari
+1058: Scale 1058
+1059: Scale 1059
+1060: Scale 1060
+1061: Scale 1061
+1062: Scale 1062
+1063: Scale 1063
+1064: Scale 1064
+1065: Scale 1065
+1066: Scale 1066
+1067: Scale 1067
+1068: Scale 1068
+1069: Scale 1069
+1070: Scale 1070
+1071: Scale 1071
+1072: Scale 1072
+1073: Scale 1073
+1074: Scale 1074
+1075: Scale 1075
+1076: Scale 1076
+1077: Scale 1077
+1078: Scale 1078
+1079: Scale 1079
+1080: Scale 1080
+1081: Scale 1081
+1082: Scale 1082
+1083: Scale 1083
+1084: Scale 1084
+1085: Scale 1085
+1086: Scale 1086
+1087: Scale 1087
+1088: Scale 1088
+1089: Scale 1089
+1090: Scale 1090
+1091: Scale 1091
+1092: Scale 1092
+1093: Lydic
+1094: Scale 1094
+1095: Phrythitonic
+1096: Scale 1096
+1097: Aeraphic
+1098: Scale 1098
+1099: Dyritonic
+1100: Scale 1100
+1101: Stothitonic
+1102: Scale 1102
+1103: Lynimic
+1104: Scale 1104
+1105: Messiaen Truncated Mode 6 Inverse
+1106: Scale 1106
+1107: Mogitonic
+1108: Scale 1108
+1109: Kataditonic
+1110: Scale 1110
+1111: Sycrimic
+1112: Scale 1112
+1113: Locrian Pentatonic 2
+1114: Scale 1114
+1115: Superlocrian Hexamirror
+1116: Scale 1116
+1117: Raptimic
+1118: Scale 1118
+1119: Rarian
+1120: Scale 1120
+1121: Scale 1121
+1122: Scale 1122
+1123: Iwato
+1124: Scale 1124
+1125: Ionaritonic
+1126: Scale 1126
+1127: Eparimic
+1128: Scale 1128
+1129: Raga Jayakauns
+1130: Scale 1130
+1131: Honchoshi Plagal Form
+1132: Scale 1132
+1133: Stycrimic
+1134: Scale 1134
+1135: Katolian
+1136: Scale 1136
+1137: Stonitonic
+1138: Scale 1138
+1139: Aerygimic
+1140: Scale 1140
+1141: Rynimic
+1142: Scale 1142
+1143: Styrian
+1144: Scale 1144
+1145: Zygimic
+1146: Scale 1146
+1147: Epynian
+1148: Scale 1148
+1149: Bydian
+1150: Scale 1150
+1151: Mythyllic
+1152: Scale 1152
+1153: Scale 1153
+1154: Scale 1154
+1155: Scale 1155
+1156: Scale 1156
+1157: Scale 1157
+1158: Scale 1158
+1159: Scale 1159
+1160: Scale 1160
+1161: Bi Yu
+1162: Scale 1162
+1163: Raga Rukmangi
+1164: Scale 1164
+1165: Gycritonic
+1166: Scale 1166
+1167: Aerodimic
+1168: Scale 1168
+1169: Raga Mahathi
+1170: Scale 1170
+1171: Raga Manaranjani I
+1172: Scale 1172
+1173: Dominant Pentatonic
+1174: Scale 1174
+1175: Epycrimic
+1176: Scale 1176
+1177: Garitonic
+1178: Scale 1178
+1179: Sonimic
+1180: Scale 1180
+1181: Katagimic
+1182: Scale 1182
+1183: Sadian
+1184: Scale 1184
+1185: Genus Primum Inverse
+1186: Scale 1186
+1187: Kokin-joshi
+1188: Scale 1188
+1189: Suspended Pentatonic
+1190: Scale 1190
+1191: Pyrimic
+1192: Scale 1192
+1193: Minor Pentatonic
+1194: Scale 1194
+1195: Raga Gandharavam
+1196: Scale 1196
+1197: Minor Hexatonic
+1198: Scale 1198
+1199: Magian
+1200: Scale 1200
+1201: Mixolydian Pentatonic
+1202: Scale 1202
+1203: Pagimic
+1204: Scale 1204
+1205: Raga Siva Kambhoji
+1206: Scale 1206
+1207: Aeoloptian
+1208: Scale 1208
+1209: Raga Bhanumanjari
+1210: Scale 1210
+1211: Zadian
+1212: Scale 1212
+1213: Gyrian
+1214: Scale 1214
+1215: Scale 1215
+1216: Scale 1216
+1217: Scale 1217
+1218: Scale 1218
+1219: Scale 1219
+1220: Scale 1220
+1221: Epyritonic
+1222: Scale 1222
+1223: Phryptimic
+1224: Scale 1224
+1225: Raga Samudhra Priya
+1226: Scale 1226
+1227: Thacrimic
+1228: Scale 1228
+1229: Raga Simharava
+1230: Scale 1230
+1231: Logian
+1232: Scale 1232
+1233: Ionoditonic
+1234: Scale 1234
+1235: Messiaen Truncated Mode 2
+1236: Scale 1236
+1237: Salimic
+1238: Scale 1238
+1239: Epaptian
+1240: Scale 1240
+1241: Pygimic
+1242: Scale 1242
+1243: Epylian
+1244: Scale 1244
+1245: Lathian
+1246: Scale 1246
+1247: Aeodyllic
+1248: Scale 1248
+1249: Scale 1249
+1250: Scale 1250
+1251: Sylimic
+1252: Scale 1252
+1253: Zolimic
+1254: Scale 1254
+1255: Chromatic Mixolydian
+1256: Scale 1256
+1257: Blues Scale
+1258: Scale 1258
+1259: Stadian
+1260: Scale 1260
+1261: Modified Blues
+1262: Scale 1262
+1263: Stynyllic
+1264: Scale 1264
+1265: Pynimic
+1266: Scale 1266
+1267: Katynian
+1268: Scale 1268
+1269: Katythian
+1270: Scale 1270
+1271: Kolyllic
+1272: Scale 1272
+1273: Ronian
+1274: Scale 1274
+1275: Stagyllic
+1276: Scale 1276
+1277: Zadyllic
+1278: Scale 1278
+1279: Sarygic
+1280: Scale 1280
+1281: Scale 1281
+1282: Scale 1282
+1283: Scale 1283
+1284: Scale 1284
+1285: Scale 1285
+1286: Scale 1286
+1287: Scale 1287
+1288: Scale 1288
+1289: Scale 1289
+1290: Scale 1290
+1291: Scale 1291
+1292: Scale 1292
+1293: Scale 1293
+1294: Scale 1294
+1295: Scale 1295
+1296: Scale 1296
+1297: Aeolic
+1298: Scale 1298
+1299: Aerophitonic
+1300: Scale 1300
+1301: Koditonic
+1302: Scale 1302
+1303: Epolimic
+1304: Scale 1304
+1305: Dynitonic
+1306: Scale 1306
+1307: Katorimic
+1308: Scale 1308
+1309: Pogimic
+1310: Scale 1310
+1311: Bynian
+1312: Scale 1312
+1313: Scale 1313
+1314: Scale 1314
+1315: Pyritonic
+1316: Scale 1316
+1317: Chaio
+1318: Scale 1318
+1319: Phronimic
+1320: Scale 1320
+1321: Blues Minor
+1322: Scale 1322
+1323: Ritsu
+1324: Scale 1324
+1325: Phradimic
+1326: Scale 1326
+1327: Zalian
+1328: Scale 1328
+1329: Epygitonic
+1330: Scale 1330
+1331: Raga Vasantabhairavi
+1332: Scale 1332
+1333: Lyptimic
+1334: Scale 1334
+1335: Elephant Scale
+1336: Scale 1336
+1337: Epogimic
+1338: Scale 1338
+1339: Kycrian
+1340: Scale 1340
+1341: Madian
+1342: Scale 1342
+1343: Zalyllic
+1344: Scale 1344
+1345: Scale 1345
+1346: Scale 1346
+1347: Scale 1347
+1348: Scale 1348
+1349: Tholitonic
+1350: Scale 1350
+1351: Aeraptimic
+1352: Scale 1352
+1353: Raga Harikauns
+1354: Scale 1354
+1355: Raga Bhavani
+1356: Scale 1356
+1357: Takemitsu Linea Mode 2
+1358: Scale 1358
+1359: Aerygian
+1360: Scale 1360
+1361: Bolitonic
+1362: Scale 1362
+1363: Gygimic
+1364: Scale 1364
+1365: Whole Tone
+1366: Scale 1366
+1367: Leading Whole-Tone Inverse
+1368: Scale 1368
+1369: Boptimic
+1370: Scale 1370
+1371: Superlocrian
+1372: Scale 1372
+1373: Storian
+1374: Scale 1374
+1375: Bothyllic
+1376: Scale 1376
+1377: Scale 1377
+1378: Scale 1378
+1379: Kycrimic
+1380: Scale 1380
+1381: Padimic
+1382: Scale 1382
+1383: Pynian
+1384: Scale 1384
+1385: Phracrimic
+1386: Scale 1386
+1387: Locrian
+1388: Scale 1388
+1389: Minor Locrian
+1390: Scale 1390
+1391: Aeradyllic
+1392: Scale 1392
+1393: Mycrimic
+1394: Scale 1394
+1395: Locrian Dominant
+1396: Scale 1396
+1397: Major Locrian
+1398: Scale 1398
+1399: Syryllic
+1400: Scale 1400
+1401: Pagian
+1402: Scale 1402
+1403: Espla's Scale
+1404: Scale 1404
+1405: Goryllic
+1406: Scale 1406
+1407: Tharygic
+1408: Scale 1408
+1409: Scale 1409
+1410: Scale 1410
+1411: Scale 1411
+1412: Scale 1412
+1413: Scale 1413
+1414: Scale 1414
+1415: Scale 1415
+1416: Scale 1416
+1417: Raga Shailaja
+1418: Scale 1418
+1419: Raga Kashyapi
+1420: Scale 1420
+1421: Raga Trimurti
+1422: Scale 1422
+1423: Doptian
+1424: Scale 1424
+1425: Ryphitonic
+1426: Scale 1426
+1427: Lolimic
+1428: Scale 1428
+1429: Bythimic
+1430: Scale 1430
+1431: Phragian
+1432: Scale 1432
+1433: Dynimic
+1434: Scale 1434
+1435: Makam Huzzam
+1436: Scale 1436
+1437: Sabach ascending
+1438: Scale 1438
+1439: Rolyllic
+1440: Scale 1440
+1441: Scale 1441
+1442: Scale 1442
+1443: Raga Phenadyuti
+1444: Scale 1444
+1445: Raga Navamanohari
+1446: Scale 1446
+1447: Mela Ratnangi
+1448: Scale 1448
+1449: Raga Gopikavasantam
+1450: Scale 1450
+1451: Phrygian
+1452: Scale 1452
+1453: Aeolian
+1454: Scale 1454
+1455: Phrygiolian
+1456: Scale 1456
+1457: Raga Kamalamanohari
+1458: Scale 1458
+1459: Phrygian Dominant
+1460: Scale 1460
+1461: Major-Minor
+1462: Scale 1462
+1463: Scale 1463
+1464: Scale 1464
+1465: Mela Ragavardhani
+1466: Scale 1466
+1467: Spanish Phrygian
+1468: Scale 1468
+1469: Epiryllic
+1470: Scale 1470
+1471: Radygic
+1472: Scale 1472
+1473: Scale 1473
+1474: Scale 1474
+1475: Scale 1475
+1476: Scale 1476
+1477: Raga Jaganmohanam
+1478: Scale 1478
+1479: Mela Jalarnava
+1480: Scale 1480
+1481: Zagimic
+1482: Scale 1482
+1483: Mela Bhavapriya
+1484: Scale 1484
+1485: Minor Romani
+1486: Scale 1486
+1487: Mothyllic
+1488: Scale 1488
+1489: Raga Jyoti
+1490: Scale 1490
+1491: Mela Namanarayani
+1492: Scale 1492
+1493: Lydian Minor
+1494: Scale 1494
+1495: Messiaen Mode 6
+1496: Scale 1496
+1497: Mela Jyotisvarupini
+1498: Scale 1498
+1499: Bebop Locrian
+1500: Scale 1500
+1501: Stygyllic
+1502: Scale 1502
+1503: Padygic
+1504: Scale 1504
+1505: Scale 1505
+1506: Scale 1506
+1507: Zynian
+1508: Scale 1508
+1509: Ragian
+1510: Scale 1510
+1511: Styptyllic
+1512: Scale 1512
+1513: Stathian
+1514: Scale 1514
+1515: Phrygian/Locrian Mixed
+1516: Scale 1516
+1517: Sagyllic
+1518: Scale 1518
+1519: Locrian/Aeolian Mixed
+1520: Scale 1520
+1521: Stanian
+1522: Scale 1522
+1523: Zothyllic
+1524: Scale 1524
+1525: Sodyllic
+1526: Scale 1526
+1527: Aeolyrigic
+1528: Scale 1528
+1529: Kataryllic
+1530: Scale 1530
+1531: Styptygic
+1532: Scale 1532
+1533: Katycrygic
+1534: Scale 1534
+1535: Mixodyllian
+1536: Scale 1536
+1537: Scale 1537
+1538: Scale 1538
+1539: Scale 1539
+1540: Scale 1540
+1541: Scale 1541
+1542: Scale 1542
+1543: Scale 1543
+1544: Scale 1544
+1545: Scale 1545
+1546: Scale 1546
+1547: Scale 1547
+1548: Scale 1548
+1549: Scale 1549
+1550: Scale 1550
+1551: Scale 1551
+1552: Scale 1552
+1553: Scale 1553
+1554: Scale 1554
+1555: Scale 1555
+1556: Scale 1556
+1557: Scale 1557
+1558: Scale 1558
+1559: Scale 1559
+1560: Scale 1560
+1561: Scale 1561
+1562: Scale 1562
+1563: Scale 1563
+1564: Scale 1564
+1565: Scale 1565
+1566: Scale 1566
+1567: Scale 1567
+1568: Scale 1568
+1569: Scale 1569
+1570: Scale 1570
+1571: Lagitonic
+1572: Scale 1572
+1573: Raga Guhamanohari
+1574: Scale 1574
+1575: Zycrimic
+1576: Scale 1576
+1577: Raga Chandrakauns (Kafi)
+1578: Scale 1578
+1579: Sagimic
+1580: Scale 1580
+1581: Raga Bagesri
+1582: Scale 1582
+1583: Salian
+1584: Scale 1584
+1585: Raga Khamaji Durga
+1586: Scale 1586
+1587: Raga Rudra Pancama
+1588: Scale 1588
+1589: Raga Rageshri
+1590: Scale 1590
+1591: Rodian
+1592: Scale 1592
+1593: Zogimic
+1594: Scale 1594
+1595: Dacrian
+1596: Scale 1596
+1597: Aeolodian
+1598: Scale 1598
+1599: Pocryllic
+1600: Scale 1600
+1601: Scale 1601
+1602: Scale 1602
+1603: Scale 1603
+1604: Scale 1604
+1605: Zanitonic
+1606: Scale 1606
+1607: Epytimic
+1608: Scale 1608
+1609: Thyritonic
+1610: Scale 1610
+1611: Dacrimic
+1612: Scale 1612
+1613: Thylimic
+1614: Scale 1614
+1615: Sydian
+1616: Scale 1616
+1617: Phronitonic
+1618: Scale 1618
+1619: Prometheus Neapolitan
+1620: Scale 1620
+1621: Scriabin's Prometheus
+1622: Scale 1622
+1623: Lothian
+1624: Scale 1624
+1625: Lythimic
+1626: Scale 1626
+1627: Zyptian
+1628: Scale 1628
+1629: Synian
+1630: Scale 1630
+1631: Rynyllic
+1632: Scale 1632
+1633: Scale 1633
+1634: Scale 1634
+1635: Sygimic
+1636: Scale 1636
+1637: Syptimic
+1638: Scale 1638
+1639: Aeolothian
+1640: Scale 1640
+1641: Bocrimic
+1642: Scale 1642
+1643: Locrian Natural 6
+1644: Scale 1644
+1645: Dorian Flat 5
+1646: Scale 1646
+1647: Polyllic
+1648: Scale 1648
+1649: Bolimic
+1650: Scale 1650
+1651: Asian
+1652: Scale 1652
+1653: Minor Romani Inverse
+1654: Scale 1654
+1655: Katygyllic
+1656: Scale 1656
+1657: Ionothian
+1658: Scale 1658
+1659: Maqam Shadd'araban
+1660: Scale 1660
+1661: Gonyllic
+1662: Scale 1662
+1663: Lydygic
+1664: Scale 1664
+1665: Scale 1665
+1666: Scale 1666
+1667: Scale 1667
+1668: Scale 1668
+1669: Raga Matha Kokila
+1670: Scale 1670
+1671: Scale 1671
+1672: Scale 1672
+1673: Thocritonic
+1674: Scale 1674
+1675: Raga Salagavarali
+1676: Scale 1676
+1677: Raga Manavi
+1678: Scale 1678
+1679: Kydian
+1680: Scale 1680
+1681: Raga Valaji
+1682: Scale 1682
+1683: Raga Malayamarutam
+1684: Scale 1684
+1685: Zeracrimic
+1686: Scale 1686
+1687: Phralian
+1688: Scale 1688
+1689: Lorimic
+1690: Scale 1690
+1691: Kathian
+1692: Scale 1692
+1693: Dogian
+1694: Scale 1694
+1695: Phrodyllic
+1696: Scale 1696
+1697: Raga Kuntvarali
+1698: Scale 1698
+1699: Raga Rasavali
+1700: Scale 1700
+1701: Dominant Seventh
+1702: Scale 1702
+1703: Mela Vanaspati
+1704: Scale 1704
+1705: Raga Manohari
+1706: Scale 1706
+1707: Dorian Flat 2
+1708: Scale 1708
+1709: Dorian
+1710: Scale 1710
+1711: Adonai Malakh
+1712: Scale 1712
+1713: Raga Khamas
+1714: Scale 1714
+1715: Harmonic Minor Inverse
+1716: Scale 1716
+1717: Mixolydian
+1718: Scale 1718
+1719: Lyryllic
+1720: Scale 1720
+1721: Mela Vagadhisvari
+1722: Scale 1722
+1723: JG Octatonic
+1724: Scale 1724
+1725: Minor Bebop
+1726: Scale 1726
+1727: Sydygic
+1728: Scale 1728
+1729: Scale 1729
+1730: Scale 1730
+1731: Scale 1731
+1732: Scale 1732
+1733: Raga Sarasvati
+1734: Scale 1734
+1735: Mela Navanitam
+1736: Scale 1736
+1737: Raga Madhukauns
+1738: Scale 1738
+1739: Mela Sadvidhamargini
+1740: Scale 1740
+1741: Lydian Diminished
+1742: Scale 1742
+1743: Epigyllic
+1744: Scale 1744
+1745: Raga Vutari
+1746: Scale 1746
+1747: Mela Ramapriya
+1748: Scale 1748
+1749: Acoustic
+1750: Scale 1750
+1751: Aeolyryllic
+1752: Scale 1752
+1753: Hungarian Major
+1754: Scale 1754
+1755: Octatonic
+1756: Scale 1756
+1757: Scale 1757
+1758: Scale 1758
+1759: Pylygic
+1760: Scale 1760
+1761: Scale 1761
+1762: Scale 1762
+1763: Katalian
+1764: Scale 1764
+1765: Lonian
+1766: Scale 1766
+1767: Dyryllic
+1768: Scale 1768
+1769: Blues Heptatonic II
+1770: Scale 1770
+1771: Scale 1771
+1772: Scale 1772
+1773: Blues Scale II
+1774: Scale 1774
+1775: Lyrygic
+1776: Scale 1776
+1777: Saptian
+1778: Scale 1778
+1779: Zynyllic
+1780: Scale 1780
+1781: Gocryllic
+1782: Scale 1782
+1783: Youlan Scale
+1784: Scale 1784
+1785: Tharyllic
+1786: Scale 1786
+1787: Mycrygic
+1788: Scale 1788
+1789: Blues Enneatonic II
+1790: Scale 1790
+1791: Aerygyllian
+1792: Scale 1792
+1793: Scale 1793
+1794: Scale 1794
+1795: Scale 1795
+1796: Scale 1796
+1797: Scale 1797
+1798: Scale 1798
+1799: Scale 1799
+1800: Scale 1800
+1801: Scale 1801
+1802: Scale 1802
+1803: Scale 1803
+1804: Scale 1804
+1805: Scale 1805
+1806: Scale 1806
+1807: Scale 1807
+1808: Scale 1808
+1809: Ranitonic
+1810: Scale 1810
+1811: Kyptimic
+1812: Scale 1812
+1813: Katothimic
+1814: Scale 1814
+1815: Godian
+1816: Scale 1816
+1817: Phrythimic
+1818: Scale 1818
+1819: Pydian
+1820: Scale 1820
+1821: Aeradian
+1822: Scale 1822
+1823: Phralyllic
+1824: Scale 1824
+1825: Scale 1825
+1826: Scale 1826
+1827: Katygimic
+1828: Scale 1828
+1829: Pathimic
+1830: Scale 1830
+1831: Pothian
+1832: Scale 1832
+1833: Ionacrimic
+1834: Scale 1834
+1835: Byptian
+1836: Scale 1836
+1837: Dalian
+1838: Scale 1838
+1839: Zogyllic
+1840: Scale 1840
+1841: Thogimic
+1842: Scale 1842
+1843: Ionygian
+1844: Scale 1844
+1845: Lagian
+1846: Scale 1846
+1847: Thacryllic
+1848: Scale 1848
+1849: Chromatic Hypodorian Inverse
+1850: Scale 1850
+1851: Zacryllic
+1852: Scale 1852
+1853: Maryllic
+1854: Scale 1854
+1855: Gaptygic
+1856: Scale 1856
+1857: Scale 1857
+1858: Scale 1858
+1859: Scale 1859
+1860: Scale 1860
+1861: Phrygimic
+1862: Scale 1862
+1863: Pycrian
+1864: Scale 1864
+1865: Thagimic
+1866: Scale 1866
+1867: Solian
+1868: Scale 1868
+1869: Katyrian
+1870: Scale 1870
+1871: Aeolyllic
+1872: Scale 1872
+1873: Dathimic
+1874: Scale 1874
+1875: Persichetti Scale
+1876: Scale 1876
+1877: Aeroptian
+1878: Scale 1878
+1879: Mixoryllic
+1880: Scale 1880
+1881: Katorian
+1882: Scale 1882
+1883: Scale 1883
+1884: Scale 1884
+1885: Saptyllic
+1886: Scale 1886
+1887: Aerocrygic
+1888: Scale 1888
+1889: Scale 1889
+1890: Scale 1890
+1891: Thalian
+1892: Scale 1892
+1893: Ionylian
+1894: Scale 1894
+1895: Salyllic
+1896: Scale 1896
+1897: Ionopian
+1898: Scale 1898
+1899: Moptyllic
+1900: Scale 1900
+1901: Ionidyllic
+1902: Scale 1902
+1903: Rocrygic
+1904: Scale 1904
+1905: Katacrian
+1906: Scale 1906
+1907: Lynyllic
+1908: Scale 1908
+1909: Epicryllic
+1910: Scale 1910
+1911: Messiaen Mode 3
+1912: Scale 1912
+1913: Scale 1913
+1914: Scale 1914
+1915: Thydygic
+1916: Scale 1916
+1917: Sacrygic
+1918: Scale 1918
+1919: Rocryllian
+1920: Scale 1920
+1921: Scale 1921
+1922: Scale 1922
+1923: Scale 1923
+1924: Scale 1924
+1925: Scale 1925
+1926: Scale 1926
+1927: Scale 1927
+1928: Scale 1928
+1929: Aeolycrimic
+1930: Scale 1930
+1931: Stogian
+1932: Scale 1932
+1933: Mocrian
+1934: Scale 1934
+1935: Mycryllic
+1936: Scale 1936
+1937: Galimic
+1938: Scale 1938
+1939: Dathian
+1940: Scale 1940
+1941: Aeranian
+1942: Scale 1942
+1943: Scale 1943
+1944: Scale 1944
+1945: Zarian
+1946: Scale 1946
+1947: Byptyllic
+1948: Scale 1948
+1949: Mathyllic
+1950: Scale 1950
+1951: Marygic
+1952: Scale 1952
+1953: Scale 1953
+1954: Scale 1954
+1955: Sonian
+1956: Scale 1956
+1957: Pyrian
+1958: Scale 1958
+1959: Katolyllic
+1960: Scale 1960
+1961: Soptian
+1962: Scale 1962
+1963: Epocryllic
+1964: Scale 1964
+1965: Raga Mukhari
+1966: Scale 1966
+1967: Diatonic Dorian Mixed
+1968: Scale 1968
+1969: Stylian
+1970: Scale 1970
+1971: Aerynyllic
+1972: Scale 1972
+1973: Zyryllic
+1974: Scale 1974
+1975: Ionocrygic
+1976: Scale 1976
+1977: Dagyllic
+1978: Scale 1978
+1979: Aeradygic
+1980: Scale 1980
+1981: Houseini
+1982: Scale 1982
+1983: Soryllian
+1984: Scale 1984
+1985: Scale 1985
+1986: Scale 1986
+1987: Scale 1987
+1988: Scale 1988
+1989: Dydian
+1990: Scale 1990
+1991: Phryptyllic
+1992: Scale 1992
+1993: Katoptian
+1994: Scale 1994
+1995: Aeolacryllic
+1996: Scale 1996
+1997: Raga Cintamani
+1998: Scale 1998
+1999: Zacrygic
+2000: Scale 2000
+2001: Gydian
+2002: Scale 2002
+2003: Podyllic
+2004: Scale 2004
+2005: Gygyllic
+2006: Scale 2006
+2007: Stonygic
+2008: Scale 2008
+2009: Stacryllic
+2010: Scale 2010
+2011: Raphygic
+2012: Scale 2012
+2013: Mocrygic
+2014: Scale 2014
+2015: Messiaen Mode 7
+2016: Scale 2016
+2017: Scale 2017
+2018: Scale 2018
+2019: Palyllic
+2020: Scale 2020
+2021: Katycryllic
+2022: Scale 2022
+2023: Zodygic
+2024: Scale 2024
+2025: Scale 2025
+2026: Scale 2026
+2027: Boptygic
+2028: Scale 2028
+2029: Kiourdi
+2030: Scale 2030
+2031: Gadyllian
+2032: Scale 2032
+2033: Stolyllic
+2034: Scale 2034
+2035: Aerythygic
+2036: Scale 2036
+2037: Sythygic
+2038: Scale 2038
+2039: Danyllian
+2040: Scale 2040
+2041: Aeolacrygic
+2042: Scale 2042
+2043: Maqam Tarzanuyn
+2044: Scale 2044
+2045: Katogyllian
+2046: Scale 2046
+2047: Monatic
+2048: Scale 2048
+2049: Scale 2049
+2050: Scale 2050
+2051: Scale 2051
+2052: Scale 2052
+2053: Scale 2053
+2054: Scale 2054
+2055: Scale 2055
+2056: Scale 2056
+2057: Scale 2057
+2058: Scale 2058
+2059: Scale 2059
+2060: Scale 2060
+2061: Scale 2061
+2062: Scale 2062
+2063: Scale 2063
+2064: Scale 2064
+2065: Scale 2065
+2066: Scale 2066
+2067: Scale 2067
+2068: Scale 2068
+2069: Scale 2069
+2070: Scale 2070
+2071: Scale 2071
+2072: Scale 2072
+2073: Scale 2073
+2074: Scale 2074
+2075: Scale 2075
+2076: Scale 2076
+2077: Scale 2077
+2078: Scale 2078
+2079: Scale 2079
+2080: Scale 2080
+2081: Scale 2081
+2082: Scale 2082
+2083: Scale 2083
+2084: Scale 2084
+2085: Scale 2085
+2086: Scale 2086
+2087: Scale 2087
+2088: Scale 2088
+2089: Scale 2089
+2090: Scale 2090
+2091: Scale 2091
+2092: Scale 2092
+2093: Scale 2093
+2094: Scale 2094
+2095: Scale 2095
+2096: Scale 2096
+2097: Scale 2097
+2098: Scale 2098
+2099: Raga Megharanji
+2100: Scale 2100
+2101: Scale 2101
+2102: Scale 2102
+2103: Scale 2103
+2104: Scale 2104
+2105: Scale 2105
+2106: Scale 2106
+2107: Scale 2107
+2108: Scale 2108
+2109: Scale 2109
+2110: Scale 2110
+2111: Scale 2111
+2112: Scale 2112
+2113: Scale 2113
+2114: Scale 2114
+2115: Scale 2115
+2116: Scale 2116
+2117: Raga Sumukam
+2118: Scale 2118
+2119: Scale 2119
+2120: Scale 2120
+2121: Scale 2121
+2122: Scale 2122
+2123: Scale 2123
+2124: Scale 2124
+2125: Scale 2125
+2126: Scale 2126
+2127: Scale 2127
+2128: Scale 2128
+2129: Raga Nigamagamini
+2130: Scale 2130
+2131: Scale 2131
+2132: Scale 2132
+2133: Raga Kumurdaki
+2134: Scale 2134
+2135: Scale 2135
+2136: Scale 2136
+2137: Scale 2137
+2138: Scale 2138
+2139: Scale 2139
+2140: Scale 2140
+2141: Scale 2141
+2142: Scale 2142
+2143: Scale 2143
+2144: Scale 2144
+2145: Messiaen Truncated Mode 5 Inverse
+2146: Scale 2146
+2147: Scale 2147
+2148: Scale 2148
+2149: Scale 2149
+2150: Scale 2150
+2151: Scale 2151
+2152: Scale 2152
+2153: Scale 2153
+2154: Scale 2154
+2155: Scale 2155
+2156: Scale 2156
+2157: Scale 2157
+2158: Scale 2158
+2159: Scale 2159
+2160: Scale 2160
+2161: Scale 2161
+2162: Scale 2162
+2163: Scale 2163
+2164: Scale 2164
+2165: Scale 2165
+2166: Scale 2166
+2167: Scale 2167
+2168: Scale 2168
+2169: Scale 2169
+2170: Scale 2170
+2171: Scale 2171
+2172: Scale 2172
+2173: Scale 2173
+2174: Scale 2174
+2175: Scale 2175
+2176: Scale 2176
+2177: Scale 2177
+2178: Scale 2178
+2179: Scale 2179
+2180: Scale 2180
+2181: Scale 2181
+2182: Scale 2182
+2183: Scale 2183
+2184: Scale 2184
+2185: Dygic
+2186: Scale 2186
+2187: Ionothitonic
+2188: Scale 2188
+2189: Zagitonic
+2190: Scale 2190
+2191: Thydimic
+2192: Scale 2192
+2193: Thaptic
+2194: Scale 2194
+2195: Zalitonic
+2196: Scale 2196
+2197: Raga Hamsadhvani
+2198: Scale 2198
+2199: Dyptimic
+2200: Scale 2200
+2201: Ionagitonic
+2202: Scale 2202
+2203: Dorimic
+2204: Scale 2204
+2205: Ionocrimic
+2206: Scale 2206
+2207: Mygian
+2208: Scale 2208
+2209: Scale 2209
+2210: Scale 2210
+2211: Raga Gauri
+2212: Scale 2212
+2213: Raga Desh
+2214: Scale 2214
+2215: Ranimic
+2216: Scale 2216
+2217: Kagitonic
+2218: Scale 2218
+2219: Phrydimic
+2220: Scale 2220
+2221: Raga Sindhura Kafi
+2222: Scale 2222
+2223: Konian
+2224: Scale 2224
+2225: Ionian Pentatonic
+2226: Scale 2226
+2227: Raga Gaula
+2228: Scale 2228
+2229: Raga Nalinakanti
+2230: Scale 2230
+2231: Macrian
+2232: Scale 2232
+2233: Donimic
+2234: Scale 2234
+2235: Bathian
+2236: Scale 2236
+2237: Epothian
+2238: Scale 2238
+2239: Dacryllic
+2240: Scale 2240
+2241: Scale 2241
+2242: Scale 2242
+2243: Scale 2243
+2244: Scale 2244
+2245: Raga Vaijayanti
+2246: Scale 2246
+2247: Raga Vijayasri
+2248: Scale 2248
+2249: Raga Multani
+2250: Scale 2250
+2251: Zodimic
+2252: Scale 2252
+2253: Raga Amarasenapriya
+2254: Scale 2254
+2255: Dylian
+2256: Scale 2256
+2257: Lydian Pentatonic
+2258: Scale 2258
+2259: Raga Mandari
+2260: Scale 2260
+2261: Raga Caturangini
+2262: Scale 2262
+2263: Lycrian
+2264: Scale 2264
+2265: Raga Rasamanjari
+2266: Scale 2266
+2267: Padian
+2268: Scale 2268
+2269: Pygian
+2270: Scale 2270
+2271: Poptyllic
+2272: Scale 2272
+2273: Scale 2273
+2274: Scale 2274
+2275: Messiaen Mode 5
+2276: Scale 2276
+2277: Kagimic
+2278: Scale 2278
+2279: Dyrian
+2280: Scale 2280
+2281: Rathimic
+2282: Scale 2282
+2283: Aeolyptian
+2284: Scale 2284
+2285: Aerogian
+2286: Scale 2286
+2287: Lodyllic
+2288: Scale 2288
+2289: Mocrimic
+2290: Scale 2290
+2291: Zydian
+2292: Scale 2292
+2293: Gorian
+2294: Scale 2294
+2295: Kogyllic
+2296: Scale 2296
+2297: Thylian
+2298: Scale 2298
+2299: Phraptyllic
+2300: Scale 2300
+2301: Bydyllic
+2302: Scale 2302
+2303: Stanygic
+2304: Scale 2304
+2305: Scale 2305
+2306: Scale 2306
+2307: Scale 2307
+2308: Scale 2308
+2309: Scale 2309
+2310: Scale 2310
+2311: Raga Kumarapriya
+2312: Scale 2312
+2313: Scale 2313
+2314: Scale 2314
+2315: Scale 2315
+2316: Scale 2316
+2317: Scale 2317
+2318: Scale 2318
+2319: Scale 2319
+2320: Scale 2320
+2321: Zyphic
+2322: Scale 2322
+2323: Doptitonic
+2324: Scale 2324
+2325: Pynitonic
+2326: Scale 2326
+2327: Epalimic
+2328: Scale 2328
+2329: Styditonic
+2330: Scale 2330
+2331: Dylimic
+2332: Scale 2332
+2333: Stynimic
+2334: Scale 2334
+2335: Epydian
+2336: Scale 2336
+2337: Scale 2337
+2338: Scale 2338
+2339: Raga Kshanika
+2340: Scale 2340
+2341: Raga Priyadharshini
+2342: Scale 2342
+2343: Tharimic
+2344: Scale 2344
+2345: Raga Chandrakauns
+2346: Scale 2346
+2347: Raga Viyogavarali
+2348: Scale 2348
+2349: Raga Ghantana
+2350: Scale 2350
+2351: Gynian
+2352: Scale 2352
+2353: Raga Girija
+2354: Scale 2354
+2355: Raga Lalita
+2356: Scale 2356
+2357: Raga Sarasanana
+2358: Scale 2358
+2359: Gadian
+2360: Scale 2360
+2361: Docrimic
+2362: Scale 2362
+2363: Kataptian
+2364: Scale 2364
+2365: Sythian
+2366: Scale 2366
+2367: Laryllic
+2368: Scale 2368
+2369: Scale 2369
+2370: Scale 2370
+2371: Scale 2371
+2372: Scale 2372
+2373: Dyptitonic
+2374: Scale 2374
+2375: Aeolaptimic
+2376: Scale 2376
+2377: Bartók Gamma Chord
+2378: Scale 2378
+2379: Raga Gurjari Todi
+2380: Scale 2380
+2381: Takemitsu Linea Mode 1
+2382: Scale 2382
+2383: Katorian
+2384: Scale 2384
+2385: Aeolanitonic
+2386: Scale 2386
+2387: Paptimic
+2388: Scale 2388
+2389: Eskimo Hexatonic 2
+2390: Scale 2390
+2391: Molian
+2392: Scale 2392
+2393: Zathimic
+2394: Scale 2394
+2395: Zoptian
+2396: Scale 2396
+2397: Stagian
+2398: Scale 2398
+2399: Zanyllic
+2400: Scale 2400
+2401: Scale 2401
+2402: Scale 2402
+2403: Lycrimic
+2404: Scale 2404
+2405: Katalimic
+2406: Scale 2406
+2407: Zylian
+2408: Scale 2408
+2409: Zacrimic
+2410: Scale 2410
+2411: Aeolorian
+2412: Scale 2412
+2413: Locrian Natural 2
+2414: Scale 2414
+2415: Lothyllic
+2416: Scale 2416
+2417: Kanimic
+2418: Scale 2418
+2419: Raga Lalita
+2420: Scale 2420
+2421: Malian
+2422: Scale 2422
+2423: Scale 2423
+2424: Scale 2424
+2425: Rorian
+2426: Scale 2426
+2427: Katoryllic
+2428: Scale 2428
+2429: Kadyllic
+2430: Scale 2430
+2431: Gythygic
+2432: Scale 2432
+2433: Scale 2433
+2434: Scale 2434
+2435: Raga Deshgaur
+2436: Scale 2436
+2437: Scale 2437
+2438: Scale 2438
+2439: Scale 2439
+2440: Scale 2440
+2441: Kyritonic
+2442: Scale 2442
+2443: Panimic
+2444: Scale 2444
+2445: Zadimic
+2446: Scale 2446
+2447: Thagian
+2448: Scale 2448
+2449: Zacritonic
+2450: Scale 2450
+2451: Raga Bauli
+2452: Scale 2452
+2453: Raga Latika
+2454: Scale 2454
+2455: Bothian
+2456: Scale 2456
+2457: Augmented
+2458: Scale 2458
+2459: Ionocrian
+2460: Scale 2460
+2461: Sagian
+2462: Scale 2462
+2463: Ionathyllic
+2464: Scale 2464
+2465: Raga Devaranjani
+2466: Scale 2466
+2467: Raga Padi
+2468: Scale 2468
+2469: Raga Bhinna Pancama
+2470: Scale 2470
+2471: Mela Ganamurti
+2472: Scale 2472
+2473: Raga Takka
+2474: Scale 2474
+2475: Neapolitan Minor
+2476: Scale 2476
+2477: Harmonic Minor
+2478: Scale 2478
+2479: Harmonic and Neapolitan Minor Mixed
+2480: Scale 2480
+2481: Raga Paraju
+2482: Scale 2482
+2483: Double Harmonic
+2484: Scale 2484
+2485: Harmonic Major
+2486: Scale 2486
+2487: Dothyllic
+2488: Scale 2488
+2489: Mela Gangeyabhusani
+2490: Scale 2490
+2491: Layllic
+2492: Scale 2492
+2493: Manyllic
+2494: Scale 2494
+2495: Aeolocrygic
+2496: Scale 2496
+2497: Scale 2497
+2498: Scale 2498
+2499: Scale 2499
+2500: Scale 2500
+2501: Ralimic
+2502: Scale 2502
+2503: Mela Jhalavarali
+2504: Scale 2504
+2505: Mydimic
+2506: Scale 2506
+2507: Todi That
+2508: Scale 2508
+2509: Double Harmonic Minor
+2510: Scale 2510
+2511: Aeroptyllic
+2512: Scale 2512
+2513: Aerycrimic
+2514: Scale 2514
+2515: Chromatic Hypolydian
+2516: Scale 2516
+2517: Harmonic Lydian
+2518: Scale 2518
+2519: Dathyllic
+2520: Scale 2520
+2521: Mela Dhatuvardhani
+2522: Scale 2522
+2523: Mirage Scale
+2524: Scale 2524
+2525: Aeolaryllic
+2526: Scale 2526
+2527: Phradygic
+2528: Scale 2528
+2529: Scale 2529
+2530: Scale 2530
+2531: Danian
+2532: Scale 2532
+2533: Podian
+2534: Scale 2534
+2535: Messiaen Mode 4
+2536: Scale 2536
+2537: Laptian
+2538: Scale 2538
+2539: Half-Diminished Bebop
+2540: Scale 2540
+2541: Algerian
+2542: Scale 2542
+2543: Dydygic
+2544: Scale 2544
+2545: Thycrian
+2546: Scale 2546
+2547: Raga Ramkali
+2548: Scale 2548
+2549: Rydyllic
+2550: Scale 2550
+2551: Thocrygic
+2552: Scale 2552
+2553: Aeolaptyllic
+2554: Scale 2554
+2555: Bythygic
+2556: Scale 2556
+2557: Dothygic
+2558: Scale 2558
+2559: Zogyllian
+2560: Scale 2560
+2561: Scale 2561
+2562: Scale 2562
+2563: Scale 2563
+2564: Scale 2564
+2565: Scale 2565
+2566: Scale 2566
+2567: Scale 2567
+2568: Scale 2568
+2569: Scale 2569
+2570: Scale 2570
+2571: Scale 2571
+2572: Scale 2572
+2573: Scale 2573
+2574: Scale 2574
+2575: Scale 2575
+2576: Scale 2576
+2577: Scale 2577
+2578: Scale 2578
+2579: Scale 2579
+2580: Scale 2580
+2581: Raga Neroshta
+2582: Scale 2582
+2583: Scale 2583
+2584: Scale 2584
+2585: Scale 2585
+2586: Scale 2586
+2587: Scale 2587
+2588: Scale 2588
+2589: Scale 2589
+2590: Scale 2590
+2591: Scale 2591
+2592: Scale 2592
+2593: Scale 2593
+2594: Scale 2594
+2595: Rolitonic
+2596: Scale 2596
+2597: Raga Rasranjani
+2598: Scale 2598
+2599: Malimic
+2600: Scale 2600
+2601: Raga Chandrakauns
+2602: Scale 2602
+2603: Gadimic
+2604: Scale 2604
+2605: Rylimic
+2606: Scale 2606
+2607: Aerolian
+2608: Scale 2608
+2609: Raga Bhinna Shadja
+2610: Scale 2610
+2611: Raga Vasanta
+2612: Scale 2612
+2613: Raga Hamsa Vinodini
+2614: Scale 2614
+2615: Thoptian
+2616: Scale 2616
+2617: Pylimic
+2618: Scale 2618
+2619: Ionyrian
+2620: Scale 2620
+2621: Ionogian
+2622: Scale 2622
+2623: Aerylyllic
+2624: Scale 2624
+2625: Scale 2625
+2626: Scale 2626
+2627: Scale 2627
+2628: Scale 2628
+2629: Raga Shubravarni
+2630: Scale 2630
+2631: Macrimic
+2632: Scale 2632
+2633: Bartók Beta Chord
+2634: Scale 2634
+2635: Gocrimic
+2636: Scale 2636
+2637: Raga Ranjani
+2638: Scale 2638
+2639: Dothian
+2640: Scale 2640
+2641: Raga Hindol
+2642: Scale 2642
+2643: Raga Hamsanandi
+2644: Scale 2644
+2645: Raga Mruganandana
+2646: Scale 2646
+2647: Dadian
+2648: Scale 2648
+2649: Aeolythimic
+2650: Scale 2650
+2651: Panian
+2652: Scale 2652
+2653: Sygian
+2654: Scale 2654
+2655: Scale 2655
+2656: Scale 2656
+2657: Scale 2657
+2658: Scale 2658
+2659: Katynimic
+2660: Scale 2660
+2661: Stydimic
+2662: Scale 2662
+2663: Lalian
+2664: Scale 2664
+2665: Aeradimic
+2666: Scale 2666
+2667: Byrian
+2668: Scale 2668
+2669: Jeths' Mode
+2670: Scale 2670
+2671: Aerolyllic
+2672: Scale 2672
+2673: Mythimic
+2674: Scale 2674
+2675: Chromatic Lydian
+2676: Scale 2676
+2677: Thodian
+2678: Scale 2678
+2679: Rathyllic
+2680: Scale 2680
+2681: Aerycrian
+2682: Scale 2682
+2683: Thodyllic
+2684: Scale 2684
+2685: Ionoryllic
+2686: Scale 2686
+2687: Thacrygic
+2688: Scale 2688
+2689: Scale 2689
+2690: Scale 2690
+2691: Scale 2691
+2692: Scale 2692
+2693: Scale 2693
+2694: Scale 2694
+2695: Scale 2695
+2696: Scale 2696
+2697: Katagitonic
+2698: Scale 2698
+2699: Sythimic
+2700: Scale 2700
+2701: Hawaiian
+2702: Scale 2702
+2703: Galian
+2704: Scale 2704
+2705: Raga Mamata
+2706: Scale 2706
+2707: Banimic
+2708: Scale 2708
+2709: Raga Kumud
+2710: Scale 2710
+2711: Stolian
+2712: Scale 2712
+2713: Porimic
+2714: Scale 2714
+2715: Kynian
+2716: Scale 2716
+2717: Epygian
+2718: Scale 2718
+2719: Zocryllic
+2720: Scale 2720
+2721: Raga Puruhutika
+2722: Scale 2722
+2723: Raga Jivantika
+2724: Scale 2724
+2725: Raga Nagagandhari
+2726: Scale 2726
+2727: Mela Manavati
+2728: Scale 2728
+2729: Aeragimic
+2730: Scale 2730
+2731: Neapolitan Major
+2732: Scale 2732
+2733: Melodic Minor Ascending
+2734: Scale 2734
+2735: Gynyllic
+2736: Scale 2736
+2737: Raga Hari Nata
+2738: Scale 2738
+2739: Mela Suryakanta
+2740: Scale 2740
+2741: Major

@@ -4,7 +4,16 @@ from bs4 import BeautifulSoup
 import json
 import re
 
-with open("myfile.txt","w") as myfile:
+with open("dictionary.txt","w") as dictionary:
+    with open('myfile.txt') as readfile:
+        lines = readfile.readlines()
+
+        for line in lines:
+            result = re.findall(r'(\d+):\s(.+)', str(line))[0]
+            print(result)
+            dictionary.write(str(result[0]) + ": " + "\"" + str(result[1]) + "\",\n")
+
+    '''
     for i in range(0,2742):
         print(str(i))
         res = requests.get("https://ianring.com/musictheory/scales/" + str(i))
@@ -22,7 +31,8 @@ with open("myfile.txt","w") as myfile:
             scale_name = scale_name[0]
 
             data.append(scale_name)
+        '''
 
-        myfile.write(str(i) + ": " + str(scale_name) + "\n")
+        
     
 

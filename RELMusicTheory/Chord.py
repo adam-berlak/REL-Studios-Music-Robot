@@ -324,21 +324,21 @@ class Chord(Scale):
 			if extensions_quality in quality_tuple:
 				extensions_pitch_class = Chord_Qualities[p_system][quality_tuple][:]
 
-		# Loop through all altered intervals and apply them to the pitch class set
-		for altered_interval in altered_intervals:
-			accidental = altered_interval[0]
-			number = re.findall(r'\d+', altered_interval)[0]
-			match = [item for item in extensions_pitch_class if item.getNumeral() == int(number)]
-
-			if (len(match) != 0):
-				interval_to_be_altered = match[0]
-				extensions_pitch_class[extensions_pitch_class.index(interval_to_be_altered)] = Interval.stringToInterval(str(altered_interval))
-
 		# Return result with bass_triad_pitch class if it is defined
 		if (bass_triad_pitch_class != ""):
 			result = (bass_triad_pitch_class[:2] + extensions_pitch_class[2:])[:int((int(extensions_numeral) + 1) / 2)]
 		else:
 			result = extensions_pitch_class[:int((int(extensions_numeral) + 1) / 2)]
+
+		# Loop through all altered intervals and apply them to the pitch class set
+		for altered_interval in altered_intervals:
+			accidental = altered_interval[0]
+			number = re.findall(r'\d+', altered_interval)[0]
+			match = [item for item in result if item.getNumeral() == int(number)]
+
+			if (len(match) != 0):
+				interval_to_be_altered = match[0]
+				result[extensions_pitch_class.index(interval_to_be_altered)] = Interval.stringToInterval(str(altered_interval))
 
 		# Obtain sus components via RegEx *TODO: Generate this RegEx aswell so you can change what notation is used for sus*
 		sus_intervals = re.findall(r'sus[b,#]*\d+', p_quality)
