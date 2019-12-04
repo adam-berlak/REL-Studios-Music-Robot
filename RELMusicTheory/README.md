@@ -134,7 +134,7 @@ You can also transpose a Scale up by adding integers or intervals to it. My libr
 [Db, Eb, F, Gb, Ab, Bb, C]
 ```
 
-There is also scale Degree arithemtic. Adding a Scale Degree to another Scale Degree produces a new Scale. The leftmost Degree within the addition is treated as the Tonic of the new scale and its tone is the tone corresponding to the scale.
+There is also support for Scale Degree arithemtic. Adding a Scale Degree to another Scale Degree produces a new Scale. The leftmost Degree within the addition is treated as the Tonic of the new scale and its tone is the tone corresponding to the new scale.
 ```
 >>> C_Major_Scale[1] + C_Major_Scale[3]
 [C, E]
