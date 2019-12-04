@@ -209,12 +209,14 @@ You can print the quality of the chord in three different ways. It is derived th
 ```
 >>> AMelodicMinor = Scale("A", melodicMinor)
 >>> chord = AMelodicMinor[1].buildChord(6)
+>>> chord.printQuality(3)
+-Δ11
 >>> chord.printQuality(2)
-M11b3
+mM11
 >>> chord.printQuality(1)
-maj11b3
+minmaj11b3
 >>> chord.printQuality(0)
-major11b3
+minormajor11b3
 ```
 
 You can also slice chords in case you only want the quality of a certain part of the chord. Like with the scale, the indices start at 1 signifying the first degree of the chord. [1:4] will retrieve notes one through and including three of the chord.
