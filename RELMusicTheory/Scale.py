@@ -3,7 +3,7 @@ import collections
 import re
 
 from Interval import *
-from Constants import *
+from Configuration import *
 from HelperMethods import *
 from scalesDictionary import scale_names
 

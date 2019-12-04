@@ -31,7 +31,7 @@ import sys
 from Scale import *
 from Chord import *
 from Keyboard import *
-from Constants import *
+from Configuration import *
 from scalesDictionary import scale_names
 
 def main():
