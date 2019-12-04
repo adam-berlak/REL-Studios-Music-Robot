@@ -124,10 +124,10 @@ Build a scale on a scale degree using a specific pitch class set
 [D, E, F, G, A, B, C#]
 ```
 
-You can also transpose a Scale up by adding integers or intervals to it. My library assigns pitchs and accidentals to the scales automatically without any hardcoding. The proccess is identical to how its done by theorists ensuring minimal accidentals are used. As an example: Db Major notation will be used over C# Major despite the latter also being valid. This is because Db Major has less accidentals. Despite this you can still create a C# Major Scale. An integer is treated as a Generic Interval, meaning the value represents scale steps as opposed to semitones. To transpose a scale by semitones you must add an interval to it
+You can also transpose a Scale up by adding integers or intervals to it. My library assigns pitchs and accidentals to the scales automatically without any hardcoding. The proccess is identical to how its done by theorists ensuring minimal accidentals are used. As an example: Db Major notation will be used over C# Major despite the latter also being valid. This is because Db Major has less accidentals. Despite this you can still create a C# Major Scale. An integer is treated as a Generic Interval, meaning the value represents scale steps as opposed to semitones. To transpose a scale by semitones you must add an interval to it. Adding an Integer to a scale will rotate the scale. IE: Adding a Generic Interval of 2 to the C Major Scale will produce the Dorian mode.
 ```
 >>> D_Major_Scale = C_Major_Scale + 2
-[D, E, F#, G, A, B, C#]
+[D, E, F, G, A, B, C]
 >>> D_Major_Scale = C_Major_Scale + M2
 [D, E, F#, G, A, B, C#]
 >>> Db_Major_Scale = C_Major_Scale + m2
