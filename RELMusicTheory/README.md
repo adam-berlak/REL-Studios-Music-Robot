@@ -214,9 +214,9 @@ You can print the quality of the chord in three different ways. It is derived th
 >>> chord.printQuality(2)
 mM11
 >>> chord.printQuality(1)
-minmaj11b3
+minmaj11
 >>> chord.printQuality(0)
-minormajor11b3
+minormajor11
 ```
 
 You can also slice chords in case you only want the quality of a certain part of the chord. Like with the scale, the indices start at 1 signifying the first degree of the chord. [1:4] will retrieve notes one through and including three of the chord.
