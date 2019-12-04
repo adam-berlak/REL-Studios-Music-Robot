@@ -243,7 +243,7 @@ One problem I encountered was trying to figure out how to print the quality of q
 M13
 ```
 
-I also created a method called stringToPitchClass() which takes as input a string, and parses it with RegEx to generate a Pitch Class. There are not dictionaries for this besides the very basic naming conventions like "maj", "major". The pitch class is generated 100 percent logically. 
+I also created a method called stringToPitchClass() which takes as input a string, and parses it with RegEx to generate a Pitch Class. There are no dictionaries for this besides the very basic naming conventions like "maj", "major". The pitch class is generated 100 percent logically. 
 ```
 >>> Chord.StringToPitchClass("maj9b5#9")
 [1, 3, b5, 7, #9]
@@ -280,7 +280,7 @@ As a bonus you can even use sus for altered intervals.
 You can use "no" to omit certain intervals from the pitch class
 ```
 >>> Chord("C", Chord.stringToPitchClass("maj7b5no3"))
-[C, #F, Gb, B]
+[C, Gb, B]
 ```
 
 There is also support for Secondary Chords. Whenever you build a scale off of a degree, the degree is saved within the new scale object by reference. So you are able to print more accurate roman numeral symbols. EG
