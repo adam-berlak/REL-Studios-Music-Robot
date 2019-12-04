@@ -140,7 +140,7 @@ There is also support for Scale Degree arithemtic. Adding a Scale Degree to anot
 [C, E]
 ```
 
-If the two Scale Degrees come from different parent Scales both Degrees will be treated as if based on the leftmost Degrees tonic tone. As an example, the third Degree of the E Chromatic scale is an F# tone, but adding the third Degree to the first Degree of C major adds a D natural because that is the third degree of the C Cromatic Scale.
+If the two Scale Degrees come from different parent Scales both Degrees will be treated as if based on the leftmost Degrees tonic tone. As an example, the third Degree of the E Chromatic scale is an F# tone, but adding the third Degree to the first Degree of C major adds a D natural because that is the third degree of the C Chromatic Scale.
 ```
 >>> C_Major_Scale[1] + E_Cromatic_Scale[3]
 [C, D]
