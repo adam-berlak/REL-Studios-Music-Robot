@@ -142,6 +142,8 @@ True
 True
 >>> [P1, M3, P5] in C_Major_Scale
 True
+>>> P5 in C_Major_Scale
+True
 ```
 
 My Scale class also works with non-heptatonic scales. You can create a Chromatic scale of 12 notes, or a diminished scale of 8. There is no limitation to the scales you can create at this point.
