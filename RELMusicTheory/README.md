@@ -147,8 +147,10 @@ If the two Scale Degrees come from different parent Scales both Degrees will be 
 ```
 
 Scales also have support for arithmetic with Scale Degrees and behave similarly. This allows you to add multiple degrees at a time, giving us an easy way to create new Chords manually!
+```
 >>> C_Major_Scale[1] + E_Cromatic_Scale[3] + C_Major_Scale[4]
 [C, D, F]
+```
 
 You can also check if a Scale contains a Chord, another Scale, or a Pitch Class
 ```
