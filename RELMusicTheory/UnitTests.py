@@ -72,9 +72,13 @@ class TestScaleMethods(unittest.TestCase):
         self.assertEqual(Chord("C", Chord.stringToPitchClass("maj7")) in Scale("C", [P1, M2, M3, P4, P5, M6, M7]), True)
         self.assertEqual(Chord("C", Chord.stringToPitchClass("maj9b5")) in Scale("C", [P1, M2, M3, P4, P5, M6, M7]), False)
 
-    def test_pitch_class_to_scale_steps(self):
+    def test_scale_derived_attributes(self):
         self.assertEqual(Scale.pitchClassToScaleSteps([P1, M2, M3, P4, P5, M6, M7]), [2, 2, 1, 2, 2, 2, 1])
         self.assertEqual(Scale.pitchClassToScaleSteps([P1, M3, P5]), [4, 3, 5])
+
+        self.assertEqual(Scale.scaleStepsToPitchClass([2, 2, 1, 2, 2, 2, 1]), [P1, M2, M3, P4, P5, M6, M7])
+        self.assertEqual(Scale.scaleStepsToPitchClass([4, 3, 5]), [P1, M3, P5])
+        self.assertEqual(Scale.scaleStepsToPitchClass([4, 3, 5, 2]), [P1, M3, P5, M9])
 
     def test_build_chord(self):
         self.assertEqual(str(Scale("C", [P1, M2, M3, P4, P5, M6, M7])[1].build(Chord, 0)), "]")

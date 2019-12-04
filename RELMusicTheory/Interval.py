@@ -5,9 +5,9 @@ import re
 
 class Interval:
 
-	unaltered_intervals = [0, 2, 4, 5, 7, 9, 11]
+	unaltered_intervals = []
 
-	accidentals = {"b": -1, "bb": -2, "#": 1, "##": 2}
+	accidentals = {}
 
 	def __init__(self, p_semitones, p_numeral):
 		self.semitones = p_semitones
@@ -18,6 +18,9 @@ class Interval:
 
 	def __repr__(self):
 		return str(self)
+
+	def __hash__(self):
+		return hash((self.semitones, self.numeral))
 
 	##############
 	# Comparison #
@@ -146,7 +149,7 @@ class Interval:
 			if i not in p_unaltered_intervals:
 				result.append((Interval(i, degree_count - 1), Interval(i, degree_count)))
 			else:
-				result.append((Interval(i, degree_count), ""))
+				result.append((Interval(i, degree_count),))
 				degree_count = degree_count + 1
 
 		return result

@@ -120,6 +120,13 @@ class Scale:
 			if (isinstance(p_other, int)):
 				return (self[1] + p_other).build(type(self), len(self.getIntervals()), 2)
 
+			if (isinstance(p_other, type(self)._Degree)):
+				new_intervals = self.getIntervals()
+				new_intervals.append(self[1].distanceFromNext(p_other))
+				new_intervals.sort(key=lambda x: x.getSemitones())
+
+				return type(self)(self[1].getTone(), new_intervals)
+
 			if (isinstance(p_other, str)):
 				return str(self) + p_other
 
@@ -174,20 +181,21 @@ class Scale:
 	def scaleStepsToPitchClass(p_scale_steps, p_system = DEFAULT_SYSTEM):
 
 		try:
-			intervals = self.getInterval().generateIntervalList(Unaltered_Intervals[DEFAULT_SYSTEM])
-			result = []
+			intervals = Interval.generateIntervalList(UNALTERED_INTERVALS[DEFAULT_SYSTEM])
+			result = [P1]
 
 			# Counters
 			counter = 0
 
 			# Loop until scale steps list is traversed
-			for i in range(len(p_scale_steps)):
+			for i in range(len(p_scale_steps) - 1):
 				integer = p_scale_steps[i]
 				counter = counter + integer
 
 				# find the interval that matches semitones and degree
 				possible_intervals = intervals[counter]
-				matches = [item for item in possible_intervals if (i + 1) == item.getNumeral()]
+				matches = [item for item in possible_intervals if ((i + 2) == item.getNumeral())]
+
 
 				# If such a degree is found select it, otherwise select the one with the degree closest to the degree desired
 				if (len(matches) != 0):
@@ -382,7 +390,7 @@ class Scale:
 		return collections.Counter(self.pitchClassToScaleSteps(self.getIntervals()))[p_interval_size]
 
 	def getCardinality(self, p_system = DEFAULT_SYSTEM):
-		return cardinality[p_system][len(self.getDegrees())]
+		return CARDINALITY[p_system][len(self.getDegrees())]
 
 	def hasCohemitonia(self):
 		return (len(self.getCohemitonic()) != 0)
@@ -454,7 +462,7 @@ class Scale:
 				if (semitones > 11):
 					semitones = semitones - 12
 
-				all_pitch_classes.append(Interval_Spectrum[p_system][semitones])
+				all_pitch_classes.append(INTERVAL_SPECTRUM[p_system][semitones])
 
 			counter = collections.Counter(all_pitch_classes)
 			result = ""
@@ -630,6 +638,9 @@ class Scale:
 					return self
 
 				return self.next() + (p_other - 1)
+			
+			if (isinstance(p_other, type(self.getParentScale())._Degree)):
+				return type(self.getParentScale())(self.getTone(), [P1, self.distanceFromNext(p_other)])
 
 			if (isinstance(p_other, str)):
 				return str(self) + p_other
@@ -784,6 +795,12 @@ class Scale:
 		####################
 		# Courtesy methods #
 		####################
+
+		def getName(self, p_system = DEFAULT_SYSTEM):
+			try: 
+				return SCALE_DEGREE_NAMES[p_system][self.getInterval()]
+			except:
+				print("Error: Failed to print Degree name")
 
 		def getPosition(self):
 			return self.getParentScale().getDegrees().index(self) + 1

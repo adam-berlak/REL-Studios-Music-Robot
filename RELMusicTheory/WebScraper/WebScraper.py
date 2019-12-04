@@ -5,12 +5,12 @@ import json
 import re
 
 with open("myfile.txt","w") as myfile:
-    for i in range(2741,4096):
+    for i in range(1621,4096):
         print(str(i))
         res = requests.get("https://ianring.com/musictheory/scales/" + str(i))
         soup = BeautifulSoup(res.content,'lxml')
 
-        name = soup.find("div",attrs={"class":"container"}).findAll("h1")[0]
+        name = soup.find("div",attrs={"class":"container"}).find("d1")
         print(str(name))
         data = []
 

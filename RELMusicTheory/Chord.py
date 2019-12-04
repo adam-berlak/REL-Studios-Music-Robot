@@ -81,10 +81,10 @@ class Chord(Scale):
 			triad_qualities = []
 
 			# Loop through all naming conventions for bass triads
-			for key in Chord_Qualities[p_system].keys():
+			for key in CHORD_QUALITIES[p_system].keys():
 
 				# If bass triad in dictionary matches bass triad in parent chord add its name to the list
-				if (all(elem in chord_intervals[:2] for elem in Chord_Qualities[p_system][key][:2]) or chord_intervals[1] == None):
+				if (all(elem in chord_intervals[:2] for elem in CHORD_QUALITIES[p_system][key][:2]) or chord_intervals[1] == None):
 					triad_qualities.append(key)
 
 			# Retrieve extensions of parent chord
@@ -96,10 +96,10 @@ class Chord(Scale):
 			possible_extensions = []
 
 			# Loop through all naming conventions for extensions
-			for key in Chord_Qualities[p_system].keys():
+			for key in CHORD_QUALITIES[p_system].keys():
 
 				# Counters
-				temp_chord_quality_extensions = Chord_Qualities[p_system][key][2:]
+				temp_chord_quality_extensions = CHORD_QUALITIES[p_system][key][2:]
 				temp_accidentals = ""
 				count = 0
 				i = 0
@@ -282,7 +282,7 @@ class Chord(Scale):
 	def stringToPitchClass(p_quality, p_system = DEFAULT_SYSTEM):
 
 		# All quality identifiers flattened
-		qualities = [item for representations in Chord_Qualities[p_system] for item in representations]
+		qualities = [item for representations in CHORD_QUALITIES[p_system] for item in representations]
 
 		# Counters
 		qualities_regex = ""
@@ -312,17 +312,17 @@ class Chord(Scale):
 		altered_intervals = re.findall(r'[b,#]\d+', p_quality)
 
 		# Loop through each chord types names and find the matching type
-		for quality_tuple in Chord_Qualities[p_system].keys():
+		for quality_tuple in CHORD_QUALITIES[p_system].keys():
 
 			if (bass_triad_quality != ""):
 
 				# Copy types pitch class
 				if bass_triad_quality in quality_tuple:
-					bass_triad_pitch_class = Chord_Qualities[p_system][quality_tuple][:]
+					bass_triad_pitch_class = CHORD_QUALITIES[p_system][quality_tuple][:]
 
 			# Copy types pitch class
 			if extensions_quality in quality_tuple:
-				extensions_pitch_class = Chord_Qualities[p_system][quality_tuple][:]
+				extensions_pitch_class = CHORD_QUALITIES[p_system][quality_tuple][:]
 
 		# Return result with bass_triad_pitch class if it is defined
 		if (bass_triad_pitch_class != ""):

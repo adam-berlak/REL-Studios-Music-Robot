@@ -37,9 +37,15 @@ from scalesDictionary import scale_names
 def main():
 	# Create a C Major Scale
 	CMajorScale = Scale("C", major)
+	CChromaticScale = Scale("G", [P1, m2, M2, m3, M3, P4, aug4, P5, m6, M6, m7, M7])
 	print("The C Major Scale is: " + CMajorScale)
 
-	print(CMajorScale.getModeNames())
+	result = CMajorScale[1] + CMajorScale[2] + CChromaticScale[4]
+	print(CMajorScale[1].getName())
+
+	print(Scale("B", Scale.scaleStepsToPitchClass([2, 2, 1, 2, 2, 2, 1])))
+
+	print(Scale("C", [P1, m2, m3, M3, aug4, P5, M6, m7]).getModeNames())
 
 	Eb = CMajorScale[1] + m3
 	print("The first degree of the C Major Scale + m3 is: " + Eb)
