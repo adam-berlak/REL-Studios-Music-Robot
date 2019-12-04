@@ -134,6 +134,22 @@ You can also transpose a Scale up by adding integers or intervals to it. My libr
 [Db, Eb, F, Gb, Ab, Bb, C]
 ```
 
+There is also scale Degree arithemtic. Adding a Scale Degree to another Scale Degree produces a new Scale. The leftmost Degree within the addition is treated as the Tonic of the new scale and its tone is the tone corresponding to the scale.
+```
+>>> C_Major_Scale[1] + C_Major_Scale[3]
+[C, E]
+```
+
+If the two Scale Degrees come from different parent Scales both Degrees will be treated as if based on the leftmost Degrees tonic tone. As an example, the third Degree of the E Chromatic scale is an F# tone, but adding the third Degree to the first Degree of C major adds a D natural because that is the third degree of the C Cromatic Scale.
+```
+>>> C_Major_Scale[1] + E_Cromatic_Scale[3]
+[C, D]
+```
+
+Scales also have support for arithmetic with Scale Degrees and behave similarly. This allows you to add multiple degrees at a time, giving us an easy way to create new Chords manually!
+>>> C_Major_Scale[1] + E_Cromatic_Scale[3] + C_Major_Scale[4]
+[C, D, F]
+
 You can also check if a Scale contains a Chord, another Scale, or a Pitch Class
 ```
 >>> D_Dorian_Scale in C_Major_Scale
