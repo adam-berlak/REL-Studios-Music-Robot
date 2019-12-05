@@ -286,7 +286,7 @@ M13
 
 I also created a method called stringToPitchClass() which takes as input a string, and parses it with RegEx to generate a Pitch Class. There are no dictionaries for this besides the very basic naming conventions like "maj", "major". The pitch class is generated 100 percent logically. 
 ```
->>> Chord.StringToPitchClass("maj9b5#9")
+>>> Chord.stringToPitchClass("maj9b5#9")
 [1, 3, b5, 7, #9]
 ```
 
