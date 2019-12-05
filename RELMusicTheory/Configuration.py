@@ -1,25 +1,33 @@
 from Interval import *
+from Tone import *
+from ScalesDictionary import *
 
 # Configuration System
 DEFAULT_SYSTEM = "western"
 
-# Configuration Tonal Systems
-TONES = {"western": [("B#", "C", "Dbb"), ("B##", "C#", "Db"), ("C##", "D", "Ebb"), ("D#", "Eb", "Fbb"), ("D##", "E", "Fb"), ("E#", "F", "Gbb"), ("E##", "F#", "Gb"), ("F##", "G", "Abb"), ("G#", "Ab", "Bbbb"), ("G##", "A", "Bbb"), ("A#", "Bb", "Cbb"), ("A##", "B", "Cb")]}
+TONE_NAMES = {"western": ["C", None, "D", None, "E", "F", None, "G", None, "A", None, "B"]}
 
 # Configuration Interval Spectrum Systems
-INTERVAL_SPECTRUM = {"western": {1: "D",2: "S",3: "N",4: "M",5: "P",6: "T",7: "P",8: "M",9: "N",10: "S",11: "D"}}
+INTERVAL_SPECTRUM = {"western": {1: "D", 2: "S", 3: "N", 4: "M", 5: "P", 6: "T", 7: "P", 8: "M", 9: "N", 10: "S", 11: "D"}}
 
 # Configuration Cardinality Systems
-CARDINALITY = {"western": {1: "monotonic",2: "ditonic",3: "tritonic",4: "tetratonic",5: "pentatonic",6: "hexatonic",7: "heptatonic", 8: "octatonic",12: "chromatic"}}
+CARDINALITY = {"western": {1: "monotonic", 2: "ditonic", 3: "tritonic", 4: "tetratonic", 5: "pentatonic", 6: "hexatonic", 7: "heptatonic", 8: "octatonic", 12: "chromatic"}}
 
 # Configure Unaltered Intervals
 UNALTERED_INTERVALS = {"western": [0, 2, 4, 5, 7, 9, 11]}
 
-# Configure Accidental Notation Systems
-ACCIDENTALS = {"western": {"b": -1,"bb": -2,"#": +1, "##": +2}}
+# Configure Notation Systems
+ACCIDENTALS = {"western": {-1: "b", 0: "", 1: "#"}}
+
+SUSPENDED_NOTATION = {"western": "sus"}
+
+OMISSION_NOTATION = {"western": "no"}
 
 Interval.unaltered_intervals = UNALTERED_INTERVALS["western"]
 Interval.accidentals = ACCIDENTALS["western"]
+
+Tone.tone_names = TONE_NAMES["western"]
+Tone.accidentals = ACCIDENTALS["western"]
 
 # Variables #
 
@@ -62,6 +70,31 @@ aug12 = Interval(20, 12)
 aug13 = Interval(22, 13)
 aug14 = Interval(24, 14)
 
+# Configuration Tone Constants
+C = Tone("C")
+D = Tone("D")
+E = Tone("E")
+F = Tone("F")
+G = Tone("G")
+A = Tone("A")
+B = Tone("B")
+
+C_flat = Tone("C", -1)
+D_flat = Tone("D", -1)
+E_flat = Tone("E", -1)
+F_flat = Tone("F", -1)
+G_flat = Tone("G", -1)
+A_flat = Tone("A", -1)
+B_flat = Tone("B", -1)
+
+C_sharp = Tone("C", 1)
+D_sharp = Tone("D", 1)
+E_sharp = Tone("E", 1)
+F_sharp = Tone("F", 1)
+G_sharp = Tone("G", 1)
+A_sharp = Tone("A", 1)
+B_sharp = Tone("B", 1)
+
 # Configuration Heptatonic Scales Constants
 major = [P1, M2, M3, P4, P5, M6, M7]
 minor = [P1, M2, m3, P4, P5, m6, m7]
@@ -73,12 +106,12 @@ neopolitanMajor = [P1, m2, m3, P4, P5, M6, M7]
 CHORD_QUALITIES = {"western": {
         ("major", "maj", "M", "Δ"): [P1, M3, P5, M7, M9, P11, M13],
         ("minor", "min", "m", "-"): [P1, m3, P5, m7, M9, P11, m13],
-        ("dominant", "dom", "'", "'"): [P1, M3, P5, m7, M9, P11, M13],
+        ("dominant", "dom", "\"", "\""): [P1, M3, P5, m7, M9, P11, M13],
         ("half-diminished", "half-dim", "ø", "ø"): [P1, m3, dim5, m7, m9, P11, m13]}
 }
 
 # Configuration Scale Degree Naming Systems
-SCALE_DEGREE_NAMES = {"western": {P1: "tonic",m2: "supertonic",M2: "supertonic",m3: "mediant",M3: "mediant",P4: "subdominant",P5: "dominant",m6: "submediant",M6: "submediant",m7: "subtonic",M7: "leading tone"}}
+SCALE_DEGREE_NAMES = {"western": {P1: "tonic", m2: "supertonic", M2: "supertonic", m3: "mediant", M3: "mediant", P4: "subdominant", P5: "dominant", m6: "submediant", M6: "submediant", m7: "subtonic", M7: "leading tone"}}
 
 # Configuration Resolution Rules
 def circleOfFifths(p_chord):

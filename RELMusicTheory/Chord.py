@@ -5,6 +5,7 @@ from Scale import *
 # def getParallelChord(self):
 
 class Chord(Scale):
+	
 	def __init__(self, p_tone, p_pitch_class):
 		super().__init__(p_tone, p_pitch_class)
 		self.parent_chord = self.rearrangeIntervalsAsThirds(p_pitch_class)
@@ -59,7 +60,7 @@ class Chord(Scale):
 		result_scale = p_degree.getParentScale()
 
 		for degree in self.getDegrees():
-			interval_in_parent = (p_degree.getInterval() + degree.getInterval()).minimize()
+			interval_in_parent = (p_degree.getInterval() + degree.getInterval()).simplify()
 
 			if (interval_in_parent not in result_scale):
 				result_scale = result_scale.addInterval(interval_in_parent)
@@ -120,7 +121,7 @@ class Chord(Scale):
 
 					# If chord interval is None object indicate that the chord is missing this interval
 					else:
-						temp_accidentals = temp_accidentals + "no" + str((((2 + i) + 1) * 2) - 1)
+						temp_accidentals = temp_accidentals + OMISSION_NOTATION[p_system] + str((((2 + i) + 1) * 2) - 1)
 
 					i = i + 1
 
@@ -281,35 +282,21 @@ class Chord(Scale):
 	@staticmethod
 	def stringToPitchClass(p_quality, p_system = DEFAULT_SYSTEM):
 
-		# All quality identifiers flattened
-		qualities = [item for representations in CHORD_QUALITIES[p_system] for item in representations]
-
-		# Counters
-		qualities_regex = ""
-
-		# Create a RegEx string matching (quality1|quality2...)(quality1|quality2...)*(\d+)
-		for i in range(len(qualities)):
-
-			if (i == (len(qualities) - 1)):
-				qualities_regex = qualities_regex + qualities[i]
-			else:
-				qualities_regex = qualities_regex + qualities[i] + "|"
-
-		qualities_regex = (("(" + qualities_regex + ")") * 2) + "*(\d+)"
-
 		# Search input string for the qualities and numeral
-		quality_contents = re.search(re.compile(qualities_regex), p_quality)
+		regex = (("(" + str([item for representations in CHORD_QUALITIES[p_system] for item in representations]).replace('\'', "").replace(" ", "").replace(',', "|")[1:][:-1] + ")") * 2) + "*(\d+)"
+		quality_contents = re.search(re.compile(regex), p_quality)
 
-		if (len(quality_contents.groups()) == 3):
-			bass_triad_quality = quality_contents.group(1)
-			extensions_quality = quality_contents.group(2)
-			extensions_numeral = quality_contents.group(3)
+		bass_triad_quality = quality_contents.group(1)
+		extensions_quality = quality_contents.group(2)
+		extensions_numeral = quality_contents.group(3)
 
 		if (extensions_quality == None):
 			extensions_quality = bass_triad_quality
 
-		# Obtain accidental components via RegEx *TODO: Generate this RegEx aswell so you can change what b and # look like*
-		altered_intervals = re.findall(r'[b,#]\d+', p_quality)
+		# Obtain accidental components via RegEx
+		accidentals_regex = str([item for item in ACCIDENTALS[p_system].values()]).replace('\'', "").replace(' ', "").replace(',', "")[1:][:-1]
+		interval_regex = "[" + accidentals_regex + "]\d+"
+		altered_intervals = re.findall(re.compile(interval_regex), p_quality)
 
 		# Loop through each chord types names and find the matching type
 		for quality_tuple in CHORD_QUALITIES[p_system].keys():
@@ -340,33 +327,31 @@ class Chord(Scale):
 				interval_to_be_altered = match[0]
 				result[extensions_pitch_class.index(interval_to_be_altered)] = Interval.stringToInterval(str(altered_interval))
 
-		# Obtain sus components via RegEx *TODO: Generate this RegEx aswell so you can change what notation is used for sus*
-		sus_intervals = re.findall(r'sus[b,#]*\d+', p_quality)
+		# Obtain sus components via RegEx
+		interval_regex_optional_accidental = "[" + accidentals_regex + "]*\d+"
+		regex = SUSPENDED_NOTATION[p_system] + interval_regex_optional_accidental
+		sus_intervals = re.findall(re.compile(regex), p_quality)
 		list_of_sus_intervals = []
 
 		# Create a list of suspended intervals
-		if (len(sus_intervals) != 0):
-
-			for sus_interval in sus_intervals:
-				interval = str(re.findall(r'[b,#]*\d+', str(sus_interval)))
-				list_of_sus_intervals.append(Interval.stringToInterval(interval))
+		for sus_interval in sus_intervals:
+			interval = str(re.findall(re.compile(interval_regex_optional_accidental), str(sus_interval)))
+			list_of_sus_intervals.append(Interval.stringToInterval(interval))
 
 		result = result + list_of_sus_intervals
 		result.sort(key=lambda x: x.getSemitones())
 
-		# Obtain no components via RegEx *TODO: Generate this RegEx aswell so you can change what notation is used for no*
-		omitted_intervals = re.findall(r'no[b,#]*\d+', p_quality)
+		# Obtain no components via RegEx
+		regex = OMISSION_NOTATION[p_system] + interval_regex_optional_accidental
+		omitted_intervals = re.findall(re.compile(regex), p_quality)
 
 		# Remove every interval within omitted intervals from result
-		if (len(omitted_intervals) != 0):
+		for omitted_interval in omitted_intervals:
+			interval_string = str(re.findall(re.compile(interval_regex_optional_accidental), str(omitted_interval)))
+			interval = Interval.stringToInterval(interval_string)
 
-			# Remove every interval that is required
-			for omitted_interval in omitted_intervals:
-				interval_string = str(re.findall(r'[b,#]*\d+', str(omitted_interval)))
-				interval = Interval.stringToInterval(interval_string)
-
-				if (interval in result):
-					result.pop(result.index(interval))
+			if (interval in result):
+				result.pop(result.index(interval))
 
 		return result
 
@@ -464,11 +449,9 @@ class Chord(Scale):
 
 		def transform(self, p_accidental, p_system = DEFAULT_SYSTEM):
 			new_object = super().transform(p_accidental, p_system)
-
-			if (self.getParentScale().getParentDegree() != None):
 				
-				if (self.getParentScale().getParentDegree() != None):
-					new_parent = self.getParentScale().findDegreeInParent(self).transform(p_accidental, p_system)
-					new_object.setParentDegree(new_parent.getDegreeByInterval(self.getParentScale().getParentDegree().getInterval()))
+			if (self.getParentScale().getParentDegree() != None):
+				new_parent = self.getParentScale().findDegreeInParent(self).transform(p_accidental, p_system)
+				new_object.setParentDegree(new_parent.getDegreeByInterval(self.getParentScale().getParentDegree().getInterval()))
 
-				return new_object
+			return new_object

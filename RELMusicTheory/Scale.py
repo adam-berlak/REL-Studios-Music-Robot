@@ -2,10 +2,8 @@
 import collections
 import re
 
-from Interval import *
 from Configuration import *
 from HelperMethods import *
-from scalesDictionary import scale_names
 
 # Class Name: Scale
 # Parameters: p_tonic_tone (The tonic tone the scale will be built off of), p_intervals (the interval pattern of the scale)
@@ -77,21 +75,21 @@ class Scale:
 		if (issubclass(type(p_other), Scale)):
 			return all(elem in self.getTones() for elem in p_other.getTones())
 
-		if (isinstance(p_other, str)):
+		if (isinstance(p_other, Tone)):
 			return p_other in self.getTones()
 
 		if (isinstance(p_other, type(self)._Degree)):
 			return p_other in self.getDegrees()
 
 		if (isinstance(p_other, Interval)):
-			return p_other.minimize() in self.getIntervals()
+			return p_other.simplify() in self.getIntervals()
 
 		if (isinstance(p_other, list)):
 
 			if (isinstance(p_other[0], Interval)):
 
 				for degree in self.getDegrees():
-					if (all(elem.minimize() in degree.buildPitchClass() for elem in p_other)):
+					if (all(elem.simplify() in degree.buildPitchClass() for elem in p_other)):
 						return True
 
 				return False
@@ -120,10 +118,18 @@ class Scale:
 			if (isinstance(p_other, int)):
 				return (self[1] + p_other).build(type(self), len(self.getIntervals()), 2)
 
-			if (isinstance(p_other, type(self)._Degree)):
+			if (isinstance(p_other, Scale._Degree)):
 				new_intervals = self.getIntervals()
 				new_intervals.append(self[1].distanceFromNext(p_other))
 				new_intervals.sort(key=lambda x: x.getSemitones())
+
+				return type(self)(self[1].getTone(), new_intervals)
+
+			if (isinstance(p_other, type(self))):
+				new_intervals = self.getIntervals()
+				new_intervals = list(dict.fromkeys(new_intervals + p_other.getIntervals()))
+				new_intervals.sort(key=lambda x: x.getSemitones())
+				print(new_intervals)
 
 				return type(self)(self[1].getTone(), new_intervals)
 
@@ -263,49 +269,6 @@ class Scale:
 		except:
 			print("Error: Failed to order intervals")
 
-
-	@staticmethod
-	def intervalsToTones(p_tonic_tone, p_intervals, p_system = DEFAULT_SYSTEM):
-		
-		try:
-			result = []
-
-			# Counters
-			counter = 0
-
-			# Loop until interval list is traversed
-			for i in range(len(p_intervals)):
-				interval = p_intervals[i]
-
-				# find the tone that matches semitones and position with respect to the degree of the interval
-				next_tone = Scale.intervalToTone(p_tonic_tone, interval, p_system)
-
-				# add the resulting tone to the list
-				result.append(next_tone)
-
-				# keeps track of how many tones to skip in the white_tones list
-				if (i != len(p_intervals) - 1):
-					skip_size = p_intervals[i + 1].getNumeral() - interval.getNumeral()
-					counter = counter + skip_size
-
-			return result
-
-		except:
-			print("Something went wrong when assigning tones to your scale, ensure the intervals are sorted by increasing size")
-
-	@staticmethod
-	def intervalToTone(p_principle_tone, p_interval, p_system = DEFAULT_SYSTEM):
-
-		try:
-			white_tones = (p_principle_tone[0] + ("ABCDEFG"*2).split(p_principle_tone[0])[1])*4
-			possible_tones = (TONES.get(p_system)*4)[([TONES.get(p_system).index(item) for item in TONES.get(p_system) if p_principle_tone in item][0] + p_interval.getSemitones())]
-			next_tone = [item for item in possible_tones if white_tones[p_interval.getNumeral() - 1] in item][0]
-
-			return next_tone
-		
-		except:
-			print("Error: Failed to convert " + p_interval + " to a tone using a principle tone of " + p_principle_tone + " and the system " + p_system)
-
 	####################
 	# Courtesy Methods #
 	####################
@@ -359,7 +322,7 @@ class Scale:
 
 		for degree in parent_scale:
 
-			if (degree.getInterval() == (self.getParentDegree().getInterval() + p_degree.getInterval()).minimize()):
+			if (degree.getInterval() == (self.getParentDegree().getInterval() + p_degree.getInterval()).simplify()):
 				return degree	
 
 		return None
@@ -586,7 +549,7 @@ class Scale:
 			self.interval = p_interval
 			self.parent_scale = p_parent_scale
 
-			degree_tone = self.getParentScale().intervalToTone(self.getParentScale().getTonicTone(), p_interval, DEFAULT_SYSTEM)
+			degree_tone = self.getParentScale().getTonicTone() + self.getInterval()
 			self.setTone(degree_tone)
 
 		#####################################
@@ -598,7 +561,7 @@ class Scale:
 			return new_degree
 
 		def __str__(self):
-			return self.getTone()
+			return str(self.getTone())
 
 		##############
 		# Comparison #
@@ -620,7 +583,7 @@ class Scale:
 
 				try:
 
-					new_interval = (self.getInterval() + p_other).minimize()
+					new_interval = (self.getInterval() + p_other).simplify()
 
 					if not new_interval in self.getParentScale():
 						new_scale = self.getParentScale().addInterval(new_interval)
@@ -638,8 +601,11 @@ class Scale:
 					return self
 
 				return self.next() + (p_other - 1)
+
+			if (isinstance(p_other, Scale)):
+				return p_other + self
 			
-			if (isinstance(p_other, type(self.getParentScale())._Degree)):
+			if (isinstance(p_other, Scale._Degree)):
 				return type(self.getParentScale())(self.getTone(), [P1, self.distanceFromNext(p_other)])
 
 			if (isinstance(p_other, str)):
@@ -656,7 +622,7 @@ class Scale:
 
 				try:
 
-					new_interval = (self.getInterval() - p_other).minimize()
+					new_interval = (self.getInterval() - p_other).simplify()
 
 					while (new_interval < P1):
 						new_interval = new_interval + P8

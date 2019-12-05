@@ -6,8 +6,7 @@ import re
 class Interval:
 
 	unaltered_intervals = []
-
-	accidentals = {}
+	accidentals = []
 
 	def __init__(self, p_semitones, p_numeral):
 		self.semitones = p_semitones
@@ -75,17 +74,17 @@ class Interval:
 	def getOctaveRange(self):
 		return int(self.getSemitones() / 12)
 
-	def minimize(self):
-		return Interval(self.getMinSemitones(), self.getMinNumeral())
+	def simplify(self):
+		return Interval(self.getSimpleSemitones(), self.getSimpleNumeral())
 
-	def getMinNumeral(self):
+	def getSimpleNumeral(self):
 		numeral = self.getNumeral()
 		while (numeral > 7):
 			numeral -= 7
 
 		return numeral
 
-	def getMinSemitones(self):
+	def getSimpleSemitones(self):
 		semitones = self.getSemitones()
 		while (semitones > 11):
 			semitones -= 12
@@ -97,13 +96,15 @@ class Interval:
 	##########################
 
 	def getAccidental(self):
-		default_semitones = Interval.unaltered_intervals[self.getMinNumeral() - 1]
+		default_semitones = Interval.unaltered_intervals[self.getSimpleNumeral() - 1]
+		accidental = (self.getSimpleSemitones() - default_semitones)
 
-		for key in Interval.accidentals.keys():
-			if (Interval.accidentals[key] == (self.getMinSemitones() - default_semitones)):
-				return key
-
-		return ""
+		if (accidental < 0):
+			return Interval.accidentals[-1] * abs(accidental)
+		elif (accidental > 0):
+			return Interval.accidentals[1] * abs(accidental)
+		else:
+			return Interval.accidentals[0]
 
 	##########################
 	# Transformation Methods #
@@ -112,11 +113,10 @@ class Interval:
 	def transform(self, p_accidental):
 
 		try:
-			new_semitones = self.getSemitones() + Interval.accidentals[p_accidental]
-			interval_list = Interval.generateIntervalList(Interval.multiplySemitoneList(Interval.unaltered_intervals, 20))
-			interval = [item for item in interval_list[new_semitones] if self.getNumeral() == item.getNumeral()][0]
+			new_semitones = self.getSemitones() + list(Interval.accidentals.keys())[list(Interval.accidentals.values()).index(p_accidental)]
+			new_numeral = self.getNumeral()
 
-			return interval
+			return Interval(new_semitones, new_numeral)
 			
 		except:
 			print("Error: Trying to apply " + p_accidental + " to " + str(self) + "")
@@ -131,12 +131,13 @@ class Interval:
 	def stringToInterval(p_string):
 		intervals = Interval.multiplySemitoneList(Interval.unaltered_intervals, 20)
 		numeral = int(re.findall(r'\d+', p_string)[0])
-		accidentals = re.findall(r'[#,b]', p_string)
+		regex = "[" + str([item for item in Interval.accidentals.values()]).replace('\'', "").replace(' ', "").replace(',', "")[1:][:-1] + "]"
+		accidentals = re.findall(re.compile(regex), p_string)
 		semitones = intervals[numeral - 1]
 
 		if (len(accidentals) != 0):
 			accidental = accidentals[0]
-			semitones = semitones + Interval.accidentals[accidental]
+			semitones = semitones + list(Interval.accidentals.keys())[list(Interval.accidentals.values()).index(accidental)]
 
 		return Interval(semitones, numeral)
 
@@ -183,7 +184,7 @@ class Interval:
 	####################
 
 	def getIdenticalIntervals(self):
-		return Interval.generateIntervalList(Interval.unaltered_intervals)[self.getMinSemitones()]
+		return Interval.generateIntervalList(Interval.unaltered_intervals)[self.getSimpleSemitones()]
 
 	#######################
 	# Getters and Setters #
