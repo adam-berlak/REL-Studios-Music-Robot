@@ -105,7 +105,7 @@ You can simplify an Tone in case you want compare Tones.
 
 #### 2.2. Scales
 
-A Scale Object requires a note for the Tonic, and a list of Intervals organized as a Pitch Class Set
+A Scale Object requires a Tone for the Tonic, and a list of Intervals organized as a Pitch Class Set
 ```
 >>> major = [P1, M2, M3, P4, P5, M6, M7]
 >>> C_Major_Scale = Scale(C, major)
