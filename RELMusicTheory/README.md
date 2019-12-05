@@ -112,7 +112,7 @@ A Scale Object requires a Tone for the Tonic, and a list of Intervals organized 
 [C, D, E, F, G, A, B]
 ```
 
-You can also create a scale useing scale-steps using the Scale.scaleStepsToPitchClass() method in case Intervals are too tedious.
+You can also create a scale using scale-steps using the Scale.scaleStepsToPitchClass() method in case Intervals are too tedious.
 ```
 >>> C_Major_Scale = Scale(C, Scale.scaleStepsToPitchClass([2, 2, 1, 2, 2, 2, 1]))
 [C, D, E, F, G, A, B]
