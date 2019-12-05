@@ -292,11 +292,11 @@ I also created a method called stringToPitchClass() which takes as input a strin
 
 You have full freedom to use any notation you like, and even combine notations
 ```
->>> Chord.StringToPitchClass("-M11b9")
+>>> Chord.stringToPitchClass("-M11b9")
 [1, b3, 5, 7, b9, 11]
->>> Chord.StringToPitchClass("mmaj11b9")
+>>> Chord.stringToPitchClass("mmaj11b9")
 [1, b3, 5, 7, b9, 11]
->>> Chord.StringToPitchClass("minmaj11b9")
+>>> Chord.stringToPitchClass("minmaj11b9")
 [1, b3, 5, 7, b9, 11]
 ```
 
