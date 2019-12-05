@@ -8,8 +8,9 @@
 [**1 - About this project**](#about)<br>
 [**2 - How to use**](#usage)<br>
 [**2.0 - Intervals**](#intervals)<br>
-[**2.1 - Scales**](#scales)<br>
-[**2.2 - Chords**](#chords)<br>
+[**2.1 - Tones**](#tones)<br>
+[**2.2 - Scales**](#scales)<br>
+[**2.3 - Chords**](#chords)<br>
 [**3 - Goals**](#goals)<br>
 
 <a name="about"/>
