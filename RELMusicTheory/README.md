@@ -209,12 +209,14 @@ You can print the quality of the chord in three different ways. It is derived th
 ```
 >>> AMelodicMinor = Scale("A", melodicMinor)
 >>> chord = AMelodicMinor[1].buildChord(6)
+>>> chord.printQuality(3)
+-Δ11
 >>> chord.printQuality(2)
-M11b3
+mM11
 >>> chord.printQuality(1)
-maj11b3
+minmaj11
 >>> chord.printQuality(0)
-major11b3
+minormajor11
 ```
 
 You can also slice chords in case you only want the quality of a certain part of the chord. Like with the scale, the indices start at 1 signifying the first degree of the chord. [1:4] will retrieve notes one through and including three of the chord.
@@ -243,7 +245,7 @@ One problem I encountered was trying to figure out how to print the quality of q
 M13
 ```
 
-I also created a method called stringToPitchClass() which takes as input a string, and parses it with RegEx to generate a Pitch Class. There are not dictionaries for this besides the very basic naming conventions like "maj", "major". The pitch class is generated 100 percent logically. 
+I also created a method called stringToPitchClass() which takes as input a string, and parses it with RegEx to generate a Pitch Class. There are no dictionaries for this besides the very basic naming conventions like "maj", "major". The pitch class is generated 100 percent logically. 
 ```
 >>> Chord.StringToPitchClass("maj9b5#9")
 [1, 3, b5, 7, #9]
@@ -280,7 +282,7 @@ As a bonus you can even use sus for altered intervals.
 You can use "no" to omit certain intervals from the pitch class
 ```
 >>> Chord("C", Chord.stringToPitchClass("maj7b5no3"))
-[C, #F, Gb, B]
+[C, Gb, B]
 ```
 
 There is also support for Secondary Chords. Whenever you build a scale off of a degree, the degree is saved within the new scale object by reference. So you are able to print more accurate roman numeral symbols. EG
@@ -298,8 +300,11 @@ IIIM7/ii
 A lot of Chord functionality will be added. There is a lot of things I plan to add to this project. Scales and Chords are only the beginning. Some things I plan to create:
 ```
 - I am currently working on a Keyboard and Tone class to translate scale objects into midi recognizable tones
-- Motif, Sentance, Period, Phrase Objects for structural components of music
+- Motif, Sentence, Period, Phrase Objects for structural components of music
 - A more fleshed out Note object that keeps track of octaves
 - A progression object that keeps track of a pieces chord progression
-- Just as how many people manually create midi files based on sheet music, once I am complete this library I will translate many classical pieces into object form. The library should be able to reproduce a piece from scratch using the concepts within its library. Doing this manually will be tedious but after a decent quantity of pieces are described it might be sufficient to teach an AI to describe the pieces automatically.
+- Just as how many people manually create midi files based on sheet music, once I am complete this library I 
+  will translate many classical pieces into object form. The library should be able to reproduce a piece from 
+  scratch using the concepts within its library. Doing this manually will be tedious but after a decent 
+  quantity of pieces are described it might be sufficient to teach an AI to describe the pieces automatically.
 ```
