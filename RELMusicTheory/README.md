@@ -43,9 +43,9 @@ You can perform interval arithmetic
 #4
 ```
 
-An important method I created is called minimize(). This method takes any interval larger than a M7 and creates a simple interval as opposed to a compound interval.
+An important method I created is called simplify(). This method takes any interval larger than a M7 and creates a simple interval as opposed to a compound interval.
 ```
->>> M10.minimize()
+>>> M10.simplify()
 2
 ```
 
