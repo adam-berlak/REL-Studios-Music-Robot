@@ -239,11 +239,26 @@ The scale also has several methods for determining properties of scales. You can
 
 Build a chord off of a scale degree, the build chord method has two optional params, the amount of notes in the chord, and the generic interval between each degree, by default, chords are comprised of four notes with a generic interval of 3 (A third). In this case we are building a chord with five notes on the fifth scale degree of the C Major Scale. The succeeding chord is a quartal chord based off of the same degree.
 ```
->>> G9 = C_Major_Scale[5].buildChord(5)
+>>> G9 = C_Major_Scale[5].build(Chord, 5)
 [G, B, D, F, A]
->>> chord = C_Major_Scale[5].buildChord(5, 4)
+>>> chord = C_Major_Scale[5].build(Chord, 5, 4)
 [G, C, F, B, E]
 ```
+
+You can use buildWithIntervals() to build a chord object with a specific pitch class. If the resulting Chord contains Tones that are note included within the Parent Scale the Parent Scale is altered. If the Parent Scale's Intervals are Distinct, meaning there are no two Intervals that share the same numeral, the Scale intervals will be altered. Otherwise if the Parent Scale is not Distinct, new intervals will be added. This is useful for deriving Secondary Dominants.
+```
+>>> E7 = C_Major_Scale[3].buildWithIntervals(Chord, [P1, M3, P5, m7])
+[E, G#, B, D]
+>>> E7.getParentScale()
+[C, D, E, F, G#, A, B]
+```
+
+You can also build a Chord using Generic Intervals.
+```
+>>> E7 = C_Major_Scale[1].buildWithGenericIntervals(Chord, [1, 3, 4, 6])
+[C, E, F, A]
+```
+
 You can print the quality of the chord in three different ways. It is derived through an algorithm that emulates how music theorists derive chord qualities, so there is very little reliance on hardcoding and you can get the quality for almost any chord.
 ```
 >>> AMelodicMinor = Scale(A", melodicMinor)
@@ -330,6 +345,51 @@ There is also support for Secondary Chords. Whenever you build a scale off of a 
 >>> FM7 = D_Dorian_Scale[3].buildChord()
 >>> FM7.jazzNumeralNotation()
 IIIM7/ii
+```
+
+There are a lot of arithmetic options for a Chord. Adding an Interval to a Chord is just like adding one to a Scale. It shifts the Chord. However adding a generic interval to a Chord rotates it along its parent Scale, assuming a parent Scale is defined.
+```
+>>> CM7 + 2
+[D, F, A, C]
+```
+
+Deciding how to build and represent the Chord object was very difficult. Traditionally a Chord is thought of as a Scale nested within another Scale, built on generic intervals. As an example, the Cmaj7 chord is the result of applying the generic intervals 1-3-5-7 to the major scale. Applying the same generic intervals to the minor scale produces a Cmin7 chord. Givin this, it wouldnt be unreasonable to think that the Chord object should have a strict dependancy on the Scale object, IE every Chord has a parent Scale. Despite this many people like to implement their libraries in such a way that the Chord is a distinct object from the Scale and has no reference or direct relationship with any Scale object. There are bennifits and drawbacks to both approaches. In the former approach you are givin context for the Chord in the form of a position within a Scale. This is useful for printing roman numerals and deriving related Chords. However in the latter implementation you have the freedom to build any Chord without first instantiating a parent Scale. How can we achieve both? 
+
+My Chord object uses polymorphism to achieve both capabilities. The Chord object is a Subclass of the scale object and inherits all of its methods and attributes. When you create a Chord object without a parent Scale the Chord behaves like a normal Scale, but with some added methods like printQuality(). However if you build a Chord object off of a Scale Degree or you assign a parent Degree to a Scale the Chord object behaves differently. Some Examples:
+
+Ex. 1: Generic intervals behave differently. A generic interval is typically thought of as the number of Scale Degrees between two Degrees. IE the distance between C and E in the C Major Scale is a Generic interval of 3. For a Chord without context, in which there is no assigned parent Scale, there are no hidden degrees between each Chord Degree and the Chord object is treated like a Scale. IE:
+```
+>>> CM7 = Chord(C, Chord.stringToPitchClass("maj7"))
+>>> CM7[1] + 2
+E
+```
+
+However in a chord with context the object understands that there is a D between the C and the E Tones.
+```
+>>> CM7 = CMajorScale[1].build(Chord)
+>>> CM7[1] + 2
+D
+```
+
+Ex. 2: Many methods within the Scale._Degree Class are overridden. An example includes the build() Method.
+```
+>>> CM7 = Chord(C, Chord.stringToPitchClass("maj7"))
+>>> CM7[2].build(Chord, 4, 2)
+[E, G, B, D]
+```
+
+For a chord with context:
+```
+>>> CM7 = CMajorScale[1].build(Chord)
+>>> CM7[2].build(Chord, 4, 2)
+[D, F, A, C]
+```
+
+In case you want a Chord with context to behave like a Scale you can access super() methods.
+```
+>>> CM7 = CMajorScale[1].build(Chord)
+>>> super(type(CM7[2]), CM7[2]).build(Chord, 4, 2)
+[E, G, B, D]
 ```
 
 <a name="goals"/>
