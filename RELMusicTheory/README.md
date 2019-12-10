@@ -345,6 +345,14 @@ There is also support for Secondary Chords. Whenever you build a scale off of a 
 IIIM7/ii
 ```
 
+This can also be useful for creating Secondary Chords. There are many ways you can achieve this.
+```
+>>> A7 = C_Major_Scale[2].buildScaleWithIntervals(decimalToPitchClass(harmonic_minor_ascending))[5].build(Chord)
+[A, C#, E, G]
+>>> A7 = C_Major_Scale[2].buildScale()[5].buildWithIntervals(Chord, [P1, M3, P5, m7])
+[A, C#, E, G]
+```
+
 There are a lot of arithmetic options for a Chord. Adding an Interval to a Chord is just like adding one to a Scale. It shifts the Chord. However adding a generic interval to a Chord rotates it along its parent Scale, assuming a parent Scale is defined.
 ```
 >>> CM7 + 2
