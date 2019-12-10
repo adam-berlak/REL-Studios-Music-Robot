@@ -275,15 +275,13 @@ minormajor11
 
 You can also slice chords in case you only want the quality of a certain part of the chord. Like with the scale, the indices start at 1 signifying the first degree of the chord. [1:4] will retrieve notes one through and including three of the chord.
 ```
->>> chord[1:3].printQuality(0)
+>>> chord[1:2].printQuality(0)
 minor3
 ```
 
-You can also print the Jazz Numeral Notation or just the Numeral of the chord by itself
+You can also print the Jazz Numeral Notation
 ```
->>> Scale(A, minor)[6].buildChord(7).printNumeral()
-bVI
->>> Scale(A, minor)[6].buildChord(7).jazzNumeralNotation()
+>>> Scale(A, minor)[6].build(Chord, 7).printNumeral()
 bVIM13#11
 ```
 
@@ -295,7 +293,7 @@ You can resolve a chord using a certain rule
 
 One problem I encountered was trying to figure out how to print the quality of quartal/quintal harmony and beyond that. The solution I found was to rearrange the intervals of said chords so that they are built on thirds and indicate the missing notes. 
 ```
->>> C_Major_Scale[1].buildChord(7, 3).printQuality()
+>>> C_Major_Scale[1].buildChord(7, 4).printQuality()
 M13
 ```
 
