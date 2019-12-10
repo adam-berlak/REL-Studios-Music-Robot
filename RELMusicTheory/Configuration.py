@@ -5,7 +5,23 @@ from ScalesDictionary import *
 # Configuration System
 DEFAULT_SYSTEM = "western"
 
-TONE_NAMES = {"western": ["C", None, "D", None, "E", "F", None, "G", None, "A", None, "B"]}
+ACCIDENTAL_LIMIT = 2
+
+TONE_NAMES = {
+        "western": ["C", None, "D", None, "E", "F", None, "G", None, "A", None, "B"],
+        "german": ["C", None, "D", None, "E", "F", None, "G", None, "A", None, "H"],
+        "dutch": ["C", None, "D", None, "E", "F", None, "G", None, "A", None, "B"],
+        "japanese": ["ha", None, "ni", None, "ho", "he", None, "to", None, "i", None, "ro"],
+        "chinese": ["C", None, "D", None, "E", "F", None, "G", None, "A", None, "B"],
+        "arabic": ["Do", None, "Re", None, "Mi", "Fa", None, "Sol", None, "la", None, "Si"],
+        "italian": ["Do", None, "Re", None, "Mi", "Fa", None, "Sol", None, "la", None, "Si"],
+        "french": ["Do", None, "Re", None, "Mi", "Fa", None, "Sol", None, "la", None, "Si"],
+        "spanish": ["Do", None, "Re", None, "Mi", "Fa", None, "Sol", None, "la", None, "Si"],
+        "portuguese": ["Do", None, "Re", None, "Mi", "Fa", None, "Sol", None, "la", None, "Si"],
+        "russian": ["Do", None, "Re", None, "Mi", "Fa", None, "Sol", None, "la", None, "Si"],
+        "romanian": ["Do", None, "Re", None, "Mi", "Fa", None, "Sol", None, "la", None, "Si"],
+        "dutch/belgium": ["Do", None, "Re", None, "Mi", "Fa", None, "Sol", None, "la", None, "Si"],
+        "greek": ["Do", None, "Re", None, "Mi", "Fa", None, "Sol", None, "la", None, "Si"]}
 
 # Configuration Interval Spectrum Systems
 INTERVAL_SPECTRUM = {"western": {1: "D", 2: "S", 3: "N", 4: "M", 5: "P", 6: "T", 7: "P", 8: "M", 9: "N", 10: "S", 11: "D"}}
@@ -17,7 +33,21 @@ CARDINALITY = {"western": {1: "monotonic", 2: "ditonic", 3: "tritonic", 4: "tetr
 UNALTERED_INTERVALS = {"western": [0, 2, 4, 5, 7, 9, 11]}
 
 # Configure Notation Systems
-ACCIDENTALS = {"western": {-1: "b", 0: "", 1: "#"}}
+ACCIDENTALS = {
+        "western": {-1: "b", 0: "", 1: "#"},
+        "german": {-1: "es", 0: "", 1: "is"},
+        "dutch": {-1: "mol", 0: "", 1: "kruis"},
+        "japanese": {-1: "hen", 0: "", 1: "ei"},
+        "chinese": {-1: "jiang", 0: "", 1: "sheng"},
+        "arabic": {-1: "bemol", 0: "", 1: "diez"},
+        "italian": {-1: "bemolle", 0: "", 1: "diesis"},
+        "french": {-1: "bemol", 0: "", 1: "diese"},
+        "spanish": {-1: "bemol", 0: "", 1: "sostenido"},
+        "portuguese": {-1: "bemol", 0: "", 1: "sustenido"},
+        "russian": {-1: "bemol", 0: "", 1: "diez"},
+        "romanian": {-1: "mol", 0: "", 1: "kruis"},
+        "dutch/belgium": {-1: "mol", 0: "", 1: "kruis"},
+        "greek": {-1: "hyphesis", 0: "", 1: "diesis"}}
 
 SUSPENDED_NOTATION = {"western": "sus"}
 
@@ -103,12 +133,53 @@ harmonicMinor = [P1, M2, m3, P4, P5, m6, M7]
 neopolitanMajor = [P1, m2, m3, P4, P5, M6, M7]
 
 # Configuration Chord Quality Systems
-CHORD_QUALITIES = {"western": {
-        ("major", "maj", "M", "Δ"): [P1, M3, P5, M7, M9, P11, M13],
-        ("minor", "min", "m", "-"): [P1, m3, P5, m7, M9, P11, m13],
-        ("dominant", "dom", "\"", "\""): [P1, M3, P5, m7, M9, P11, M13],
-        ("half-diminished", "half-dim", "ø", "ø"): [P1, m3, dim5, m7, m9, P11, m13]}
-}
+CHORD_QUALITIES = {
+        "western": {
+                ("major", "maj", "M", "Δ"): [P1, M3, P5, M7, M9, P11, M13],
+                ("minor", "min", "m", "-"): [P1, m3, P5, m7, M9, P11, m13],
+                ("dominant", "dom", "\"", "\""): [P1, M3, P5, m7, M9, P11, M13],
+                ("half-diminished", "half-dim", "ø", "ø"): [P1, m3, dim5, m7, m9, P11, m13],
+                ("augmented", "aug", "+", "+"): [P1, M3, aug5, M7, aug9, aug11.transform("#"), P15],
+                ("diminished", "dim", "o", "o"): [P1, m3, dim5, m7.transform("b"), P8, m10, dim12]},
+        "german": {
+                ("dur"): [P1, M3, P5, M7, M9, P11, M13],
+                ("moll"): [P1, m3, P5, m7, M9, P11, m13]},
+        "dutch": { 
+                ("groot"): [P1, M3, P5, M7, M9, P11, M13],
+                ("klien"): [P1, m3, P5, m7, M9, P11, m13]},
+        "japanese": { 
+                ("chōchō"): [P1, M3, P5, M7, M9, P11, M13],
+                ("tanchō"): [P1, m3, P5, m7, M9, P11, m13]},
+        "chinese": { 
+                ("dà diào"): [P1, M3, P5, M7, M9, P11, M13],
+                ("xiǎo diào"): [P1, m3, P5, m7, M9, P11, m13]},
+        "korean": { 
+                ("jangjo"): [P1, M3, P5, M7, M9, P11, M13],
+                ("danjo"): [P1, m3, P5, m7, M9, P11, m13]},
+        "arabic": { 
+                ("major"): [P1, M3, P5, M7, M9, P11, M13],
+                ("minor"): [P1, m3, P5, m7, M9, P11, m13]},
+        "Italian": { 
+                ("maggiore"): [P1, M3, P5, M7, M9, P11, M13],
+                ("minore"): [P1, m3, P5, m7, M9, P11, m13]},
+        "french": { 
+                ("majeur"): [P1, M3, P5, M7, M9, P11, M13],
+                ("mineur"): [P1, m3, P5, m7, M9, P11, m13]},
+        "spanish": { 
+                ("mayor"): [P1, M3, P5, M7, M9, P11, M13],
+                ("menor"): [P1, m3, P5, m7, M9, P11, m13]},
+        "portuguese": { 
+                ("maior"): [P1, M3, P5, M7, M9, P11, M13],
+                ("menor"): [P1, m3, P5, m7, M9, P11, m13]},
+        "russian": { 
+                ("мажор"): [P1, M3, P5, M7, M9, P11, M13],
+                ("минор"): [P1, m3, P5, m7, M9, P11, m13]},
+        "romanian": { 
+                ("major"): [P1, M3, P5, M7, M9, P11, M13],
+                ("minor"): [P1, m3, P5, m7, M9, P11, m13]},
+        "greek": { 
+                ("μείζονα"): [P1, M3, P5, M7, M9, P11, M13],
+                ("ελάσσονα"): [P1, m3, P5, m7, M9, P11, m13]}}
 
 # Configuration Scale Degree Naming Systems
 SCALE_DEGREE_NAMES = {"western": {P1: "tonic", m2: "supertonic", M2: "supertonic", m3: "mediant", M3: "mediant", P4: "subdominant", P5: "dominant", m6: "submediant", M6: "submediant", m7: "subtonic", M7: "leading tone"}}
@@ -119,4 +190,3 @@ def circleOfFifths(p_chord):
 def circleOfFourths(p_chord):
 	return p_chord - 4
 
-# ("augmented", "aug", "+"): [P1, M3, aug5, M7, aug9, P12, None], # Fix issue with index being out of range

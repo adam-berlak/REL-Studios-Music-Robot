@@ -17,17 +17,29 @@
 # COMPLETED: Fix Degree addition problem
 # COMPLETED: Add support for sus chords in stringToPitchClass method
 # COMPLETED: Create a Scale.Dictionary.py file for holding thousands of Scale definitions
+# COMPLETED: Create simplify method for Tone and change minimize to simplify in Interval
+# COMPLETED: Add full support for sub for Tone class
+# COMPLETED: Fix [Interval] in Scale method. It should check each rotation of the Scale
+# COMPLETED Add support for buildWithGenericIntervals
+# COMPLETED If you call a super method in chord, and that super method uses a method thats overridden super is ineffective (Check if class is a subclass)
+# COMPLETED: If you build a chord on a Scale Degree that contains Tones not in the principle degree, they should ONLY be added if parent scale degree are not distinct, otherwise they should be transformed
+# COMPLETED: All Degree objects should have a parent degree when a parent degree is established for the Root Degree *Added findInParent method*
+# COMPLETED: Simplify invert method
 
-# STRETCH GOAL: Get parallel key of scale
-# STRETCH GOAL: Get Negative Harmony of a Chord
-# STRETCH GOAL: Add full support for sub for all classes
-# STRETCH GOAL: Add support for chord inversions and sus notes
+# LONG-TERM GOAL: Create and fix issues in UnitTest
+# LONG-TERM GOAL: Add try-catch statements of invalid inputs 
 
-# IMPORTANT: Add try-catch statements of invalid inputs 
-# IMPORTANT: Fix issue with using Dominant as extension in printQuality()
-# IMPORTANT: Create and fix issues in UnitTest
-# IMPORTANT: Create simplify method for Tone and change minimize to simplify in Interval
-# IMPORTANT: Change name for the Tone class within the Keyboard object to Key, allow it to play sounds
+# NEW FEATURES: Should be able to get a version of an interval with minimal accidentals IE: bb4 = b3
+# NEW FEATURES: Change name for the Tone class within the Keyboard object to Key, allow it to play sounds
+# NEW FEATURES: Get parallel key of scale
+# NEW FEATURES: Get Negative Harmony of a Chord
+# NEW FEATURES: Add support for chord inversions and sus notes in printQuality()
+# NEW FEATURES: Support voice leading rules in configuration
+
+# BUGS TO FIX: If you build a Chord on a Chord degree with specific intervals how does it behave
+# BUGS TO FIX: Check if sub-setting Chords and rotating/added maintains the parent degree
+# BUGS TO FIX: Diminished and Augmented chords arent neccissarily built on Thirds so I need to find a new way to identify qualities
+# BUGS TO FIX: Retrieving numeral relative to parent should go down the chain of all parents
 
 import random
 import sys
@@ -40,11 +52,20 @@ def main():
 
 	# Create a C Major Scale
 	CMajorScale = Scale(C, major)
+
+	print(CMajorScale[2].buildScale()[2].findInParent().getInterval())
+
+	print(Scale(C, Scale.decimalToPitchClass(Diminished_Seventh)))
+
+	print(CMajorScale[3].build(Chord) - 3)
 	
 	CChromaticScale = Scale(G, [P1, m2, M2, m3, M3, P4, aug4, P5, m6, M6, m7, M7])
+
+	Dorian = CMajorScale + 2
+	print((Dorian.addInterval(m2))[3].buildWithIntervals(Chord, [P1, M3, P5, m7]).getParentScale().getParentScale())
 	
-	CM7 = CMajorScale[1].build(Chord)
-	print(type(CM7[3] + (CMajorScale[1] + CM7[2])))
+	CM7 = CMajorScale[1].buildWithIntervals(Chord, [P1, M3, aug5, M7, aug9, aug11.transform("#")])
+	print(CM7.printQuality())
 	
 	print(Scale(B, Scale.scaleStepsToPitchClass([2, 2, 1, 2, 2, 2, 1])))
 
@@ -71,6 +92,7 @@ def main():
 
 	# Build a chord off of a scale degree
 	G9 = DDorianScale[4].build(Chord)
+	print("G9 IS: " + G9)
 	print("The G Dominant chord is: " + G9)
 
 	print("Converting the string #3 to an interval produces: " + Interval.stringToInterval("#3"))
@@ -133,7 +155,7 @@ def main():
 	print(Chord.stringToPitchClass("half-dimmaj7"))
 
 	# Build chord on non-heptatonic scales
-	CDimScale = Scale(C, [P1, M2, m3, P4, aug4, m6, M6, M7])
+	CDimScale = Scale(C, [P1, M2, m3, P4, dim5, m6, m7.transform("b"), M7])
 	print("The first chord of the C Diminished Scale is: " + CDimScale[1].build(Chord))
 
 	# build a chord on the c dim scale

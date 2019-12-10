@@ -45,6 +45,27 @@ class Tone:
 
             return Tone(new_tone_name, new_accidental)
 
+    def __sub__(self, p_other):
+
+        if (isinstance(p_other, Interval)):
+            index = Tone.tone_names.index(self.getToneName()) + 12
+
+            numeral_count = 0
+            semitones_count = (-1 * self.getAccidental())
+
+            while(numeral_count != p_other.getNumeral()):
+                
+                if ((Tone.tone_names * 20)[index] != None):
+                    numeral_count = numeral_count + 1
+
+                semitones_count = semitones_count + 1
+                index = index - 1
+
+            new_tone_name = (Tone.tone_names * 20)[index + 1]
+            new_accidental = (p_other.getSemitones() - (semitones_count - 1)) * -1
+
+            return Tone(new_tone_name, new_accidental)
+
     def simplify(self):
         index = Tone.tone_names.index(self.getToneName()) + 12
         

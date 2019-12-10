@@ -96,8 +96,8 @@ class Interval:
 	##########################
 
 	def getAccidental(self):
-		default_semitones = Interval.unaltered_intervals[self.getSimpleNumeral() - 1]
-		accidental = (self.getSimpleSemitones() - default_semitones)
+		default_semitones = Interval.multiplySemitoneList(Interval.unaltered_intervals, 20)[self.getNumeral() - 1]
+		accidental = (self.getSemitones() - default_semitones)
 
 		if (accidental < 0):
 			return Interval.accidentals[-1] * abs(accidental)
@@ -120,7 +120,7 @@ class Interval:
 			
 		except:
 			print("Error: Trying to apply " + p_accidental + " to " + str(self) + "")
-
+			
 			return self
 
 	##################
@@ -179,9 +179,9 @@ class Interval:
 
 		return result
 
-	####################
-	# Courtesy Methods #
-	####################
+	#################
+	# Sugar Methods #
+	#################
 
 	def getIdenticalIntervals(self):
 		return Interval.generateIntervalList(Interval.unaltered_intervals)[self.getSimpleSemitones()]

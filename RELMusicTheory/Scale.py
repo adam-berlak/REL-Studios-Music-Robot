@@ -184,7 +184,56 @@ class Scale:
 			print("Error: Failed to retrieve scale steps")
 
 	@staticmethod
-	def scaleStepsToPitchClass(p_scale_steps, p_system = DEFAULT_SYSTEM):
+	def pitchClassToDecimal(p_intervals):
+		return int(Scale.pitchClassToBinary(p_intervals), 2)
+
+	@staticmethod
+	def pitchClassToBinary(p_intervals):
+
+		try:
+			result = ""
+
+			for i in range(12):
+
+				if (len([item for item in p_intervals if i == item.getSemitones()]) == 0):
+					result = result + "0"
+				else:
+					result = result + "1"
+
+			return result[::-1]
+
+		except:
+			print("Error: Failed to convert pitch class " + p_intervals + " to decimal")
+
+	@staticmethod
+	def decimalToPitchClass(p_integer, p_use_distinct_intervals = False):
+		return Scale.binaryToPitchClass('{0:012b}'.format(p_integer))
+
+	@staticmethod
+	def binaryToPitchClass(p_binary):
+		return Scale.scaleStepsToDistinctPitchClass(Scale.binaryToScaleSteps(p_binary))
+
+	@staticmethod
+	def binaryToScaleSteps(p_binary):
+		
+		binary = p_binary[len(p_binary)::-1]
+		binary = (binary + binary[0])[1:]
+		scale_steps = []
+		semitones = 0
+
+		for i in range(len(binary)):
+
+			if (binary[i] == '0'):
+				semitones = semitones + 1
+			else:
+				semitones = semitones + 1
+				scale_steps.append(semitones)
+				semitones = 0
+		
+		return scale_steps
+
+	@staticmethod
+	def scaleStepsToPitchClass(p_scale_steps):
 
 		try:
 			intervals = Interval.generateIntervalList(UNALTERED_INTERVALS[DEFAULT_SYSTEM])
@@ -217,37 +266,23 @@ class Scale:
 			print("Error: Failed to retrieve pitch class")
 
 	@staticmethod
-	def pitchClassToBinary(p_intervals):
+	def scaleStepsToDistinctPitchClass(p_scale_steps):
 
-		try:
-			result = ""
-
-			for i in range(12):
-
-				if (len([item for item in p_intervals if i == item.getSemitones()]) == 0):
-					result = result + "0"
-				else:
-					result = result + "1"
-
-			return result[::-1]
-
-		except:
-			print("Error: Failed to convert pitch class " + p_intervals + " to decimal")
-
-	@staticmethod
-	def pitchClassToDecimal(p_intervals):
-		return int(Scale.pitchClassToBinary(p_intervals), 2)
-
-	'''
-	def decimalToPitchClass(p_integer):
-		binary = '{0:012b}'.format(p_integer)
-
-		for i in range(12):
+		try: 
+			result = [P1]
 			semitones = 0
 
-			for j in range(i + 1):
-				semitones = semitones + int(binary[j])
-	'''
+			for i in range(len(p_scale_steps) - 1):
+				semitones = semitones + p_scale_steps[i]
+				result.append(Interval(semitones, i + 2))
+
+			if (len([item for item in result if len(item.getAccidental()) > ACCIDENTAL_LIMIT]) > 0):
+				return Scale.scaleStepsToPitchClass(p_scale_steps)
+
+			return result
+
+		except:
+			print("Error: Failed to create list of distinct intervals")
 
 	@staticmethod
 	def scaleIntervalsByOrder(p_intervals):
@@ -269,19 +304,26 @@ class Scale:
 		except:
 			print("Error: Failed to order intervals")
 
-	####################
-	# Courtesy Methods #
-	####################
+	################################
+	# Methods concerned with names #
+	################################
 
-	def printQuality(self):
+	def getName(self):
 		return scale_names[Scale.pitchClassToDecimal(self.getIntervals())]
 
 	def getModeNames(self):
 		result = []
 		for i in range(len(self.getIntervals())):
-			result.append((self + (i + 1)).printQuality())
+			result.append((self + (i + 1)).getName())
 
 		return result
+
+	#################
+	# Sugar Methods #
+	#################
+
+	def isDistinct(self):
+		return (len([item.getNumeral() for item in self.getIntervals()]) == len(set([item.getNumeral() for item in self.getIntervals()])))
 
 	def getParentScale(self):
 		return self.getParentDegree().getParentScale()
@@ -291,6 +333,12 @@ class Scale:
 	
 	def getRoot(self):
 		return self[1]
+
+	def getNumerals(self):
+		return [item.getNumeral() for item in self.getIntervals()]
+
+	def getSemitones(self):
+		return [item.getSemitones() for item in self.getIntervals()]
 
 	def getIntervals(self):
 		result = []
@@ -307,7 +355,7 @@ class Scale:
 			result.append(degree.getTone())
 
 		return result
-
+	
 	def getDegreeByInterval(self, p_interval):
 
 		for degree in self.getDegrees():
@@ -336,6 +384,7 @@ class Scale:
 		new_pitch_class.append(p_interval)
 		new_pitch_class.sort(key=lambda x: x.getSemitones())
 		new_scale = type(self)(self[1].getTone(), new_pitch_class)
+		new_scale.setParentDegree(self.getParentDegree())
 
 		return new_scale
 
@@ -508,12 +557,6 @@ class Scale:
 	# Getters and Setters #
 	#######################
    
-	def getIntervals(self):
-		result = []
-		for degree in self.getDegrees():
-			result.append(degree.getInterval())
-
-		return result
 	def getDegrees(self):
 		return self.degrees
 	def getTonicTone(self):
@@ -669,16 +712,19 @@ class Scale:
 
 		def build(self, object_type, p_num_tones = 4, p_leap_size = 3, *args):
 
-			#try:
-				child_intervals = self.buildPitchClass(p_leap_size)[:p_num_tones]
+			try:
+				if (type(self) != Scale._Degree):
+					child_intervals = super(type(self), self).buildPitchClass(p_leap_size)[:p_num_tones]
+				else:
+					child_intervals = self.buildPitchClass(p_leap_size)[:p_num_tones]
 
 				child_object = object_type(self.getTone(), child_intervals, *args)
 				child_object.setParentDegree(self)
 
 				return child_object
 
-			#except:
-			# 	print("Error: Failed to build chord")
+			except:
+			 	print("Error: Failed to build chord")
 
 		def buildWithIntervals(self, object_type, p_pitch_class, *args):
 
@@ -691,12 +737,33 @@ class Scale:
 			#except:
 			#	print("Error: Failed to build chord")
 
+		def buildWithGenericIntervals(self, object_type, p_generic_intervals, *args):
+
+			try:
+				pitch_class = []
+
+				for i in range(len(p_generic_intervals)):
+					pitch_class.append((self.distanceFromNext(self + p_generic_intervals[i])).simplify())
+
+				child_object = object_type(self.getTone(), pitch_class, *args)
+				child_object.setParentDegree(self)
+
+				return child_object
+
+			except:
+				print("Error: Failed to build chord")
+
 		def buildScale(self):
 
 			try:
-				child_intervals = self.buildPitchClass()
+				if (type(self) != Scale._Degree):
+					child_intervals = super(type(self), self).buildPitchClass()
+				else:
+					child_intervals = self.buildPitchClass()
+
 				child_scale = Scale(self.getTone(), child_intervals)
 				child_scale.setParentDegree(self)
+
 				return child_scale
 
 			except:
@@ -722,7 +789,7 @@ class Scale:
 				p_leap_size = p_leap_size - 1
 
 				# Counters
-				i = parent_degrees.index(self) + p_leap_size		
+				i = parent_degrees.index(self) + p_leap_size
 
 				# Loop until we have reached the starting degree
 				while (parent_degrees[i] != self):
@@ -761,6 +828,15 @@ class Scale:
 		####################
 		# Courtesy methods #
 		####################
+
+		def findInParent(self):
+
+			if (self.getParentScale().getParentDegree() != None):
+				parent_scale = self.getParentScale().getParentDegree().getParentScale()
+
+				return parent_scale.getDegreeByInterval((self.getParentScale().getParentDegree().getInterval() + self.getInterval()).simplify())
+
+			return self
 
 		def getName(self, p_system = DEFAULT_SYSTEM):
 			try: 
