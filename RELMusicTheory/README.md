@@ -6,10 +6,11 @@
 
 ## 0. Table of Contents
 [**1 - About this project**](#about)<br>
-[**2 - How to use**](#usage)<br>
+[**2 - Usage**](#usage)<br>
 [**2.0 - Intervals**](#intervals)<br>
-[**2.1 - Scales**](#scales)<br>
-[**2.2 - Chords**](#chords)<br>
+[**2.1 - Tones**](#tones)<br>
+[**2.2 - Scales**](#scales)<br>
+[**2.3 - Chords**](#chords)<br>
 [**3 - Goals**](#goals)<br>
 
 <a name="about"/>
@@ -22,7 +23,7 @@ when they should be derived using logical formulas within a Scale object. As a r
 
 <a name="usage"/>
 
-## 2. How to use this library:
+## 2. Usage:
 
 <a name="intervals"/>
 
@@ -42,9 +43,9 @@ You can perform interval arithmetic
 #4
 ```
 
-An important method I created is called minimize(). This method takes any interval larger than a M7 and creates a simple interval as opposed to a compound interval.
+An important method I created is called simplify(). This method takes any interval larger than a M7 and creates a simple interval as opposed to a compound interval.
 ```
->>> M10.minimize()
+>>> M10.simplify()
 2
 ```
 
@@ -68,14 +69,52 @@ You can convert a string into an Interval object using the static stringToInterv
 3
 ```
 
+<a name="tones"/>
+
+#### 2.1. Tones
+
+The Tone object is purely an abstraction and cannot be played, this functionality will be added to my Key object within the Keyboard class. The tones object allows you to deal with representation of Tones more accurately. 
+
+You can create a Tone by simply establishing a Tone name.
+```
+>>> Tone("C")
+"C"
+```
+
+You can apply accidentals in the second parameter by inputing a positive or negative integer. Positive = Sharp and Negative = Flat.
+```
+>>> Tone("C", 1)
+"C#"
+```
+
+You can also do arithmetic with Tones and Intervals
+```
+>>> Tone("C") + m3
+"Eb"
+```
+
+You can simplify an Tone in case you want compare Tones.
+```
+>>> Tone("G", 2)
+"G##"
+>>> Tone("G", 2).simplify()
+"A#"
+```
+
 <a name="scales"/>
 
-#### 2.1. Scales
+#### 2.2. Scales
 
-A Scale Object requires a note for the Tonic, and a list of Intervals organized as a Pitch Class Set
+A Scale Object requires a Tone for the Tonic, and a list of Intervals organized as a Pitch Class Set
 ```
 >>> major = [P1, M2, M3, P4, P5, M6, M7]
->>> C_Major_Scale = Scale("C", major)
+>>> C_Major_Scale = Scale(C, major)
+[C, D, E, F, G, A, B]
+```
+
+You can also create a scale using scale-steps using the Scale.scaleStepsToPitchClass() method in case Intervals are too tedious.
+```
+>>> C_Major_Scale = Scale(C, Scale.scaleStepsToPitchClass([2, 2, 1, 2, 2, 2, 1]))
 [C, D, E, F, G, A, B]
 ```
 
@@ -166,7 +205,7 @@ True
 
 My Scale class also works with non-heptatonic scales. You can create a Chromatic scale of 12 notes, or a diminished scale of 8. There is no limitation to the scales you can create at this point.
 ```
->>> C_Chromatic_Scale = Scale("C", [P1, m2, M2, m3, M3, P4, aug4, P5, aug5, M6, aug6, M7])
+>>> C_Chromatic_Scale = Scale(C, [P1, m2, M2, m3, M3, P4, aug4, P5, aug5, M6, aug6, M7])
 [C, Db, D, Eb, E, F, F#, G, G#, A, A#, B]
 ```
 
@@ -196,7 +235,7 @@ The scale also has several methods for determining properties of scales. You can
 
 <a name="chords"/>
 
-#### 2.2. Chords
+#### 2.3. Chords
 
 Build a chord off of a scale degree, the build chord method has two optional params, the amount of notes in the chord, and the generic interval between each degree, by default, chords are comprised of four notes with a generic interval of 3 (A third). In this case we are building a chord with five notes on the fifth scale degree of the C Major Scale. The succeeding chord is a quartal chord based off of the same degree.
 ```
@@ -207,7 +246,7 @@ Build a chord off of a scale degree, the build chord method has two optional par
 ```
 You can print the quality of the chord in three different ways. It is derived through an algorithm that emulates how music theorists derive chord qualities, so there is very little reliance on hardcoding and you can get the quality for almost any chord.
 ```
->>> AMelodicMinor = Scale("A", melodicMinor)
+>>> AMelodicMinor = Scale(A", melodicMinor)
 >>> chord = AMelodicMinor[1].buildChord(6)
 >>> chord.printQuality(3)
 -Δ11
@@ -227,9 +266,9 @@ minor3
 
 You can also print the Jazz Numeral Notation or just the Numeral of the chord by itself
 ```
->>> Scale("A", minor)[6].buildChord(7).printNumeral()
+>>> Scale(A, minor)[6].buildChord(7).printNumeral()
 bVI
->>> Scale("A", minor)[6].buildChord(7).jazzNumeralNotation()
+>>> Scale(A, minor)[6].buildChord(7).jazzNumeralNotation()
 bVIM13#11
 ```
 
@@ -247,41 +286,41 @@ M13
 
 I also created a method called stringToPitchClass() which takes as input a string, and parses it with RegEx to generate a Pitch Class. There are no dictionaries for this besides the very basic naming conventions like "maj", "major". The pitch class is generated 100 percent logically. 
 ```
->>> Chord.StringToPitchClass("maj9b5#9")
+>>> Chord.stringToPitchClass("maj9b5#9")
 [1, 3, b5, 7, #9]
 ```
 
 You have full freedom to use any notation you like, and even combine notations
 ```
->>> Chord.StringToPitchClass("-M11b9")
+>>> Chord.stringToPitchClass("-M11b9")
 [1, b3, 5, 7, b9, 11]
->>> Chord.StringToPitchClass("mmaj11b9")
+>>> Chord.stringToPitchClass("mmaj11b9")
 [1, b3, 5, 7, b9, 11]
->>> Chord.StringToPitchClass("minmaj11b9")
+>>> Chord.stringToPitchClass("minmaj11b9")
 [1, b3, 5, 7, b9, 11]
 ```
 
 This can be very useful for creating chord objects with a specific pitch class
 ```
->>> Chord("C", Chord.stringToPitchClass("maj7b5"))
+>>> Chord(C, Chord.stringToPitchClass("maj7b5"))
 [C, E, Gb, B]
 ```
 
 There is also support for sus chords. 
 ```
->>> Chord("C", Chord.stringToPitchClass("maj7b5sus4"))
+>>> Chord(C, Chord.stringToPitchClass("maj7b5sus4"))
 [C, E, F, Gb, B]
 ```
 
 As a bonus you can even use sus for altered intervals.
 ```
->>> Chord("C", Chord.stringToPitchClass("maj7b5sus#4"))
+>>> Chord(C, Chord.stringToPitchClass("maj7b5sus#4"))
 [C, E, #F, Gb, B]
 ```
 
 You can use "no" to omit certain intervals from the pitch class
 ```
->>> Chord("C", Chord.stringToPitchClass("maj7b5no3"))
+>>> Chord(C, Chord.stringToPitchClass("maj7b5no3"))
 [C, Gb, B]
 ```
 
