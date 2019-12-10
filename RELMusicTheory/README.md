@@ -217,6 +217,12 @@ Major
 Dorian
 ```
 
+I also created a Static method called decimalToPitchClass() that converts a decimal number into a pitch class. All pitch classes have an associated decimal representation. As an example; Major = 2741. This is very useful for creating scales by name! You can create every scale that is named in the dictionary. 
+```
+>>> C_Major_Scale = Scale(C, Scale.decimalToPitchClass(major))
+[C, D, E, F, G, A, B]
+```
+
 The scale also has several methods for determining properties of scales. You can read about what these algorithms do at https://ianring.com/musictheory/scales/. Currently the properties supported are:
 ```
 >>> Scale.getPrimeMode()
@@ -347,9 +353,9 @@ IIIM7/ii
 
 This can also be useful for creating Secondary Chords. There are many ways you can achieve this.
 ```
->>> A7 = C_Major_Scale[2].buildScaleWithIntervals(decimalToPitchClass(harmonic_minor_ascending))[5].build(Chord)
+>>> C_Major_Scale[2].buildScaleWithIntervals(decimalToPitchClass(harmonic_minor_ascending))[5].build(Chord)
 [A, C#, E, G]
->>> A7 = C_Major_Scale[2].buildScale()[5].buildWithIntervals(Chord, [P1, M3, P5, m7])
+>>> C_Major_Scale[2].buildScale()[5].buildWithIntervals(Chord, [P1, M3, P5, m7])
 [A, C#, E, G]
 ```
 
@@ -372,7 +378,7 @@ E
 
 However in a chord with context the object understands that there is a D between the C and the E Tones.
 ```
->>> CM7 = CMajorScale[1].build(Chord)
+>>> CM7 = C_Major_Scale[1].build(Chord)
 >>> CM7[1] + 2
 D
 ```
@@ -386,14 +392,14 @@ Ex. 2: Many methods within the Scale._Degree Class are overridden. An example in
 
 For a chord with context, the generic interval of 2 is interpreted differently:
 ```
->>> CM7 = CMajorScale[1].build(Chord)
+>>> CM7 = C_Major_Scale[1].build(Chord)
 >>> CM7[2].build(Chord, 4, 2)
 [E, F, G, A]
 ```
 
 In case you want a Chord with context to behave like a Scale you can access super() methods.
 ```
->>> CM7 = CMajorScale[1].build(Chord)
+>>> CM7 = C_Major_Scale[1].build(Chord)
 >>> super(type(CM7[2]), CM7[2]).build(Chord, 4, 2)
 [E, G, B, D]
 ```
