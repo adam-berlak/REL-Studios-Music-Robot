@@ -384,11 +384,11 @@ Ex. 2: Many methods within the Scale._Degree Class are overridden. An example in
 [E, G, B, D]
 ```
 
-For a chord with context:
+For a chord with context, the generic interval of 2 is interpreted differently:
 ```
 >>> CM7 = CMajorScale[1].build(Chord)
 >>> CM7[2].build(Chord, 4, 2)
-[D, F, A, C]
+[E, F, G, A]
 ```
 
 In case you want a Chord with context to behave like a Scale you can access super() methods.
