@@ -136,7 +136,7 @@ I think its worth emphasizing that adding a interval to a degree, which produces
 # The second degree of the C Major Scale is D, and the result of adding a M3 Interval to it is F#
 >>> new_degree = C_Major_Scale[2] + M3 
 >>> new_degree.getParentScale()
-[C, D, E, F, F#, G, A, B]
+[C, D, E, F#, G, A, B]
 ```
 
 You can modify an existing scale to produce a new scale by using the addInterval() method.
