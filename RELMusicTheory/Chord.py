@@ -60,7 +60,7 @@ class Chord(Scale):
 	# Methods concerning string representaton of a chord #
 	######################################################
 
-	def getParentChordQuality(self, style = 2, p_system = DEFAULT_SYSTEM):
+	def getParentChordQuality(self, p_style = 2, p_system = DEFAULT_SYSTEM):
 
 		try: 
 			# Arrange parent chord intervals as thirds
@@ -139,13 +139,13 @@ class Chord(Scale):
 						final_extensions_quality = ("", "", "")
 
 						# Append the following to the possible names of the chord
-						possible_qualities.append(final_triad_quality[style] + final_extensions_quality[style] + str(max([x.getNumeral() for x in chord_intervals if x])) + extensions_quality_and_accidentals[1])
+						possible_qualities.append(final_triad_quality[p_style] + final_extensions_quality[p_style] + str(max([x.getNumeral() for x in chord_intervals if x])) + extensions_quality_and_accidentals[1])
 
 					# If the bass triad and the extensions dont have the same quality the only valid extension qualities are Major and Minor (In order to prevent using Dominant or other extension qualities)
 					elif (("major" in final_extensions_quality[0]) or ("minor" in final_extensions_quality[0])):
 
 						# Append the following to the possible names of the chord
-						possible_qualities.append(final_triad_quality[style] + final_extensions_quality[style] + str(max([x.getNumeral() for x in chord_intervals if x])) + extensions_quality_and_accidentals[1])
+						possible_qualities.append(final_triad_quality[p_style] + final_extensions_quality[p_style] + str(max([x.getNumeral() for x in chord_intervals if x])) + extensions_quality_and_accidentals[1])
 			
 			# Return the shortest name
 			return min(possible_qualities, key=len)
@@ -153,9 +153,9 @@ class Chord(Scale):
 		except: 
 			print("Error: Failed to create string represention of the chord")
 
-	def getQuality(self, p_system = DEFAULT_SYSTEM):
+	def getQuality(self, p_style = 2, p_system = DEFAULT_SYSTEM):
 
-		parent_chord_quality = self.getParentChordQuality()
+		parent_chord_quality = self.getParentChordQuality(p_style, p_system)
 
 		# Get quality of chord for bass triad and extensions
 		regex = (("(" + str([item for representations in CHORD_QUALITIES[p_system] for item in representations]).replace('\'', "").replace(" ", "").replace(',', "|").replace('+', "\+")[1:][:-1] + ")") * 2) + "*(\d+)"
