@@ -34,7 +34,7 @@ UNALTERED_INTERVALS = {"western": [0, 2, 4, 5, 7, 9, 11]}
 
 # Configure Notation Systems
 ACCIDENTALS = {
-        "western": {-1: "b", 0: "", 1: "#"},
+        "western": {-1: "b", 0: "n", 1: "#"},
         "german": {-1: "es", 0: "", 1: "is"},
         "dutch": {-1: "mol", 0: "", 1: "kruis"},
         "japanese": {-1: "hen", 0: "", 1: "ei"},

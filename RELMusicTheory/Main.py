@@ -20,11 +20,15 @@
 # COMPLETED: Create simplify method for Tone and change minimize to simplify in Interval
 # COMPLETED: Add full support for sub for Tone class
 # COMPLETED: Fix [Interval] in Scale method. It should check each rotation of the Scale
-# COMPLETED Add support for buildWithGenericIntervals
-# COMPLETED If you call a super method in chord, and that super method uses a method thats overridden super is ineffective (Check if class is a subclass)
+# COMPLETED: Add support for buildWithGenericIntervals
+# COMPLETED: If you call a super method in chord, and that super method uses a method thats overridden super is ineffective (Check if class is a subclass)
 # COMPLETED: If you build a chord on a Scale Degree that contains Tones not in the principle degree, they should ONLY be added if parent scale degree are not distinct, otherwise they should be transformed
 # COMPLETED: All Degree objects should have a parent degree when a parent degree is established for the Root Degree *Added findInParent method*
 # COMPLETED: Simplify invert method
+# COMPLETED: Created getParallelChord() and transformChordTo() methods
+# COMPLETED: Adding a specific interval to a scale degree should not add a new interval to the scale unless it is not distinct
+# COMPLETED: Fixed getSecondaryDominant()
+# COMPLETED: Get Numeral should return only the numeral
 
 # LONG-TERM GOAL: Create and fix issues in UnitTest
 # LONG-TERM GOAL: Add try-catch statements of invalid inputs 
@@ -36,6 +40,8 @@
 # NEW FEATURES: Add support for chord inversions and sus notes in printQuality()
 # NEW FEATURES: Support voice leading rules in configuration
 
+# BUGS TO FIX: getFirstInversion() is not consistant 
+# BUGS TO FIX: Remove hardcoded chord quality names from Chord class
 # BUGS TO FIX: If you build a Chord on a Chord degree with specific intervals how does it behave
 # BUGS TO FIX: Check if sub-setting Chords and rotating/added maintains the parent degree
 # BUGS TO FIX: Diminished and Augmented chords arent neccissarily built on Thirds so I need to find a new way to identify qualities
@@ -50,22 +56,34 @@ from Configuration import *
 
 def main():
 
+	print(Scale(C, [P1, M2, M3, P4, P5, M6, M7])[1].build(Chord, 7, 8))
+
 	# Create a C Major Scale
 	CMajorScale = Scale(C, major)
+
+	print(Chord(C, [P1, m3, aug4, M7]).getQuality())
+
+	print(Chord(C, [P1, M3, P4, M6]).getFirstInversion())
+
+	print(Scale.scaleIntervalsByOrder([P1, M3, P5, M7, M2, P4, m6]))
 
 	print(CMajorScale[2].buildScale()[2].findInParent().getInterval())
 
 	print(Scale(C, Scale.decimalToPitchClass(Diminished_Seventh)))
 
-	print(CMajorScale[3].build(Chord) - 3)
+	print((CMajorScale[1].build(Chord)[1] + m3).getParentScale().getParentScale())
 	
 	CChromaticScale = Scale(G, [P1, m2, M2, m3, M3, P4, aug4, P5, m6, M6, m7, M7])
 
+	print(CMajorScale[7] + CChromaticScale[3])
+
+	print("result: " + Chord(C, [P1, M3, P5, M7])[2].build(Chord).getParentScale())
+
 	Dorian = CMajorScale + 2
-	print((Dorian.addInterval(m2))[3].buildWithIntervals(Chord, [P1, M3, P5, m7]).getParentScale().getParentScale())
+	print(CMajorScale[7].build(Chord).getSecondaryDominant())
 	
 	CM7 = CMajorScale[1].buildWithIntervals(Chord, [P1, M3, aug5, M7, aug9, aug11.transform("#")])
-	print(CM7.printQuality())
+	print(CM7.getParentChordQuality())
 	
 	print(Scale(B, Scale.scaleStepsToPitchClass([2, 2, 1, 2, 2, 2, 1])))
 
@@ -84,7 +102,7 @@ def main():
 	print("The root of the major scale - 4 is " + result)
 
 	print(Chord(C, Chord.stringToPitchClass("min7")))
-	print(CMajorScale[1].build(Chord)[2].buildPitchClass(2))
+	print(CMajorScale[1].build(Chord)[2].buildPitchClass(-1, 2))
 	
 	# Build a scale off of a scale degree
 	DDorianScale = CMajorScale[2].buildScale()
@@ -118,11 +136,11 @@ def main():
 	print("The D Major Scale is: " + DMajorScale)
 
 	# Print the quality of a subset of a chord
-	print("The chord resulting from subsetting G9 by 2-5 are: " + G9[2:4])
+	print("The chord resulting from subsetting G9 by 2-5 are: " + G9[2:3])
 
 	# Properly print quality of a chord with accidentals
 	Bhalfdim9 = CMajorScale[7].build(Chord)
-	print("The quality of the 7th chord of the C major scale is: " + Bhalfdim9.printQuality())
+	print("The quality of the 7th chord of the C major scale is: " + Bhalfdim9.getParentChordQuality())
 
 	# Properly assign notes to non-major heptatonic scales
 	AMelodicMinor = Scale(A, melodicMinor)
@@ -133,10 +151,10 @@ def main():
 	print("The first chord of the melodic minor scale is: " + AM11b3)
 
 	# Properly print the quality of non-major diatonic chord
-	print("The quality of this chord is: " + AM11b3.printQuality())
+	print("The quality of this chord is: " + AM11b3.getParentChordQuality())
 
 	# Print Roman Numerals with the Correct quality
-	print("The jazz numeral notation of the 6th chord of A minor, with 7 notes is: " + Scale("A", minor)[6].build(Chord, 7).printNumeral(True, 2))
+	print("The jazz numeral notation of the 6th chord of A minor, with 7 notes is: " + Scale(A, minor)[6].build(Chord, 7).printNumeral(True, 2))
 
 	print(CMajorScale[1].buildWithIntervals(Chord, Chord.stringToPitchClass("half-dimmaj7")).getParentDegree().getParentScale())
 
@@ -150,7 +168,7 @@ def main():
 
 	# build a chord on the chromatic scale
 	chord = CChromaticScale[1].build(Chord, 5)
-	print("the quality of the first chord in the C chromatic scale is: " + chord.printQuality() + chord)
+	print("the quality of the first chord in the C chromatic scale is: " + chord.getParentChordQuality() + chord)
 
 	print(Chord.stringToPitchClass("half-dimmaj7"))
 
@@ -160,7 +178,7 @@ def main():
 
 	# build a chord on the c dim scale
 	chord = CDimScale[1].build(Chord, 5)
-	print("the quality of the first chord in the C Dim scale is: " + chord.printQuality() + chord)
+	print("the quality of the first chord in the C Dim scale is: " + chord.getParentChordQuality() + chord)
 
 	# Check if chord exists in a scale
 	if G9 in CMajorScale:

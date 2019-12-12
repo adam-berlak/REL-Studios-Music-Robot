@@ -89,7 +89,8 @@ class TestScaleMethods(unittest.TestCase):
         self.assertEqual(str(Scale(C, [P1, M2, M3, P4, P5, M6, M7])[1].build(Chord, 7, 1)), "[C, C, C, C, C, C, C]")
         self.assertEqual(str(Scale(C, [P1, M2, M3, P4, P5, M6, M7])[1].build(Chord, 7, 2)), "[C, D, E, F, G, A, B]")
         self.assertEqual(str(Scale(C, [P1, M2, M3, P4, P5, M6, M7])[1].build(Chord, 7, 7)), "[C, B, A, G, F, E, D]")
-        self.assertEqual(str(Scale(C, [P1, M2, M3, P4, P5, M6, M7])[1].build(Chord, 7, 8)), "[C, B, A, G, F, E, D, C]")
+        self.assertEqual(str(Scale(C, [P1, M2, M3, P4, P5, M6, M7])[1].build(Chord, 8, 7)), "[C, B, A, G, F, E, D, C]")
+        self.assertEqual(str(Scale(C, [P1, M2, M3, P4, P5, M6, M7])[1].build(Chord, 7, 8)), "[C, C, C, C, C, C, C]")
 
     def test_string_to_pitch_class(self):
         self.assertEqual(str(Chord.stringToPitchClass("maj7")), "[1, 3, 5, 7]")
