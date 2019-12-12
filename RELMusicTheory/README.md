@@ -267,8 +267,8 @@ You can also build a Chord using Generic Intervals.
 
 You can print the quality of the chord in three different ways. It is derived through an algorithm that emulates how music theorists derive chord qualities, so there is very little reliance on hardcoding and you can get the quality for almost any chord. The Parent Chord is the chord in question based exclusively off thirds, ignoring sus numerals. As a result the getParentChordQuality() method does not support sus.
 ```
->>> AMelodicMinor = Scale(A", melodicMinor)
->>> chord = AMelodicMinor[1].buildChord(6)
+>>> A_Melodic_Minor = Scale(A, Scale.demicalToPitchClass(melodic_minor_ascending))
+>>> chord = A_Melodic_Minor[1].buildChord(6)
 >>> chord.getParentChordQuality(3)
 -Δ11
 >>> chord.getParentChordQuality(2)
@@ -365,7 +365,7 @@ IIIM7/ii
 
 This can also be useful for creating Secondary Chords. There are many ways you can achieve this.
 ```
->>> C_Major_Scale[2].buildScaleWithIntervals(decimalToPitchClass(harmonic_minor_ascending))[5].build(Chord)
+>>> C_Major_Scale[2].buildScaleWithIntervals(Scale.decimalToPitchClass(harmonic_minor_ascending))[5].build(Chord)
 [A, C#, E, G]
 >>> C_Major_Scale[2].buildScale()[5].buildWithIntervals(Chord, [P1, M3, P5, m7])
 [A, C#, E, G]
