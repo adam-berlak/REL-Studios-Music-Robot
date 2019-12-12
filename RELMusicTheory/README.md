@@ -10,7 +10,6 @@
 [**2.0 - Intervals**](#intervals)<br>
 [**2.1 - Tones**](#tones)<br>
 [**2.2 - Scales**](#scales)<br>
-  [**2.2.0 - Representation**](#scales)<br>
 [**2.3 - Chords**](#chords)<br>
 [**3 - Goals**](#goals)<br>
 
