@@ -207,11 +207,11 @@ My Scale class also works with Non-heptatonic Scales. You can create a Chromatic
 [C, Db, D, Eb, E, F, F#, G, G#, A, A#, B]
 ```
 
-You can also print the Quality of a Scale. Since Scale names cannot be derived logically in contrast to Chord names, the names of all Scales are kept in scalesDictionary. My algorithm converts the scale to its decimal representation then accesses the dictionary and retrieves the name associated with that number. 
+You can also print the name of a Scale. Since Scale names cannot be derived logically in contrast to Chord names, the names of all Scales are kept in scalesDictionary. My algorithm converts the scale to its decimal representation then accesses the dictionary and retrieves the name associated with that number. 
 ```
->>> C_Major_Scale.printQuality()
+>>> C_Major_Scale.getName()
 Major
->>> (C_Major_Scale + 2).printQuality()
+>>> (C_Major_Scale + 2).getName()
 Dorian
 ```
 
