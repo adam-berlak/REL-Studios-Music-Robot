@@ -265,30 +265,42 @@ You can also build a Chord using Generic Intervals.
 [C, E, F, A]
 ```
 
-You can print the quality of the chord in three different ways. It is derived through an algorithm that emulates how music theorists derive chord qualities, so there is very little reliance on hardcoding and you can get the quality for almost any chord.
+You can print the quality of the chord in three different ways. It is derived through an algorithm that emulates how music theorists derive chord qualities, so there is very little reliance on hardcoding and you can get the quality for almost any chord. The Parent Chord is the chord in question based exclusively off thirds, ignoring sus numerals. As a result the getParentChordQuality() method does not support sus.
 ```
 >>> AMelodicMinor = Scale(A", melodicMinor)
 >>> chord = AMelodicMinor[1].buildChord(6)
->>> chord.printQuality(3)
+>>> chord.getParentChordQuality(3)
 -Δ11
->>> chord.printQuality(2)
+>>> chord.getParentChordQuality(2)
 mM11
->>> chord.printQuality(1)
+>>> chord.getParentChordQuality(1)
 minmaj11
->>> chord.printQuality(0)
+>>> chord.getParentChordQuality(0)
 minormajor11
 ```
 
 You can also slice chords in case you only want the quality of a certain part of the chord. Like with the scale, the indices start at 1 signifying the first degree of the chord. [1:4] will retrieve notes one through and including three of the chord.
 ```
->>> chord[1:2].printQuality(0)
+>>> chord[1:2].getParentChordQuality(0)
 minor3
+```
+
+If you want to print the exact quality of the Chord with support of sus intervals, you must use the getQuality() method.
+```
+>>> Chord(C, [P1, m3, aug4, M7]).getQuality()
+mM7sus#4no5
 ```
 
 You can also print the Jazz Numeral Notation
 ```
 >>> Scale(A, minor)[6].build(Chord, 7).printNumeral()
 bVIM13#11
+```
+
+You can also print the Figured bass of a Chord. This method uses a method I created called getFirstInversion() to derive the most likely first inversion of the chord, and uses that chords numeral. 
+```
+>>> Chord(C, [P1, M3, P5]).invert(3).getFiguredBass()
+I6/4
 ```
 
 You can resolve a chord using a certain rule
