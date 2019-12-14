@@ -50,11 +50,32 @@ when they should be derived using logical formulas within a Scale object. As a r
 
 ### 2.0. Intervals
 
+<a name="interval-initialization"/>
+
+#### 2.0.0. Initialization
+
 Intervals require a numeral, and semitones. The Interval object can determine if the interval should be printed with an accidental automatically depending on what the user defined as the "unaltered intervals". In our case it is the Intervals of the Major Scale. Since an Interval with the numeral '5' and semitones '7' does not exist in the 'unaltered intervals' list, it is treated as an altered interval. You can change however which Intervals are considered altered.
 ```
 >>> Interval(7, 5)
 b5
 ```
+
+<a name="interval-representation"/>
+
+#### 2.0.1. Representation
+
+You can convert a string into an Interval object using the static stringToInterval() method within the Interval object.
+```
+>>> m3 = Interval.stringToInterval("b3")
+>>> m3.getSemitones()
+3
+>>> m3.getNumeral()
+3
+```
+
+<a name="interval-arithmetic"/>
+
+#### 2.0.2. Arithmetic
 
 You can perform Interval arithmetic
 ```
@@ -64,30 +85,25 @@ You can perform Interval arithmetic
 #4
 ```
 
+While the size of Intervals you can create is unlimited, the constants are limited to a P15. To use intervals beyond this you can just use arithmetic.
+```
+>>> M16 = P15 + M2
+```
+
 An important method I created is called simplify(). This method takes any Interval larger than a M7 and creates a simple Interval as opposed to a compound Interval.
 ```
 >>> M10.simplify()
 2
 ```
 
+<a name="interval-transformation"/>
+
+#### 2.0.3. Transformation
+
 You can transform an Interval with accidentals.
 ```
 >>> P5.transform(#)
 #5
-```
-
-While the size of Intervals you can create is unlimited, the constants are limited to a P15. To use intervals beyond this you can just use arithmetic.
-```
->>> M16 = P15 + M2
-```
-
-You can convert a string into an Interval object using the static stringToInterval() method within the Interval object.
-```
->>> m3 = Interval.stringToInterval("b3")
->>> m3.getSemitones()
-3
->>> m3.getNumeral()
-3
 ```
 
 <a name="tones"/>
