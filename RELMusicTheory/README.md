@@ -29,13 +29,13 @@ when they should be derived using logical formulas within a Scale object. As a r
 
 #### 2.0. Intervals
 
-Intervals require a numeral, and semitones. The Interval object can determine if the interval should be printed with an accidental automatically depending on what the user defined as the "unaltered intervals". In our case it is the intervals of the major scale. Since an interval with the numeral '5' and semitones '7' does not exist in the 'unaltered intervals' list, it is treated as an altered interval. You can change however which intervals are considered altered.
+Intervals require a numeral, and semitones. The Interval object can determine if the interval should be printed with an accidental automatically depending on what the user defined as the "unaltered intervals". In our case it is the Intervals of the Major Scale. Since an Interval with the numeral '5' and semitones '7' does not exist in the 'unaltered intervals' list, it is treated as an altered interval. You can change however which Intervals are considered altered.
 ```
 >>> Interval(7, 5)
 b5
 ```
 
-You can perform interval arithmetic
+You can perform Interval arithmetic
 ```
 >>> P5 + M3
 7
@@ -43,19 +43,19 @@ You can perform interval arithmetic
 #4
 ```
 
-An important method I created is called simplify(). This method takes any interval larger than a M7 and creates a simple interval as opposed to a compound interval.
+An important method I created is called simplify(). This method takes any Interval larger than a M7 and creates a simple Interval as opposed to a compound Interval.
 ```
 >>> M10.simplify()
 2
 ```
 
-You can transform an interval with accidentals. However currently you are limited to one flat or sharp. If you try and apply an accidental to an Interval that already has one an exception is thrown. This might be changed in the future.
+You can transform an Interval with accidentals.
 ```
 >>> P5.transform(#)
 #5
 ```
 
-While the size of intervals you can create is unlimited, the constants are limited to a P15. To use intervals beyond this you can just use arithmetic.
+While the size of Intervals you can create is unlimited, the constants are limited to a P15. To use intervals beyond this you can just use arithmetic.
 ```
 >>> M16 = P15 + M2
 ```
@@ -105,10 +105,9 @@ You can simplify an Tone in case you want compare Tones.
 
 #### 2.2. Scales
 
-A Scale Object requires a Tone for the Tonic, and a list of Intervals organized as a Pitch Class Set
+A Scale Object requires a Tone for the Tonic, and a list of Intervals organized as a pitch-class-set
 ```
->>> major = [P1, M2, M3, P4, P5, M6, M7]
->>> C_Major_Scale = Scale(C, major)
+>>> C_Major_Scale = Scale(C, [P1, M2, M3, P4, P5, M6, M7])
 [C, D, E, F, G, A, B]
 ```
 
@@ -118,12 +117,12 @@ You can also create a scale using scale-steps using the Scale.scaleStepsToPitchC
 [C, D, E, F, G, A, B]
 ```
 
-You can access any of the scale degrees by using an index. The indices start at 1 as opposed to 0
+You can access any of the Scale-Degrees by using an index. The indices start at 1 as opposed to 0
 ```
 >>> C_Major_Scale[1]
 C
 ```
-If you add an integer to a scale degree it is treated as a generic interval while adding an interval is treated like adding a specific interval.
+If you add an integer to a Scale-Degree it is treated as a Generic Interval while adding an Interval is treated like adding a Specific Interval.
 ```
 >>> C_Major_Scale[1] + 4
 F
@@ -131,33 +130,32 @@ F
 Eb
 ```
 
-I think its worth emphasizing that adding a interval to a degree, which produces a degree that is not contained in the principle scale will create a new parent scale for the resulting degree. EG:
+I think its worth emphasizing that adding a Interval to a Degree, which produces a Degree that is not contained in the Principle-Scale will create a new Parent-Scale for the resulting Degree. EG: The second Degree of the C Major Scale is D, and the result of adding a M3 Interval to it is F#
 ```
-# The second degree of the C Major Scale is D, and the result of adding a M3 Interval to it is F#
 >>> new_degree = C_Major_Scale[2] + M3 
 >>> new_degree.getParentScale()
 [C, D, E, F#, G, A, B]
 ```
 
-You can modify an existing scale to produce a new scale by using the addInterval() method.
+You can modify an existing Scale to produce a new Scale by using the addInterval() method.
 ```
 >>> new_scale = C_Major_Scale.addInterval(aug5)
 [C, D, E, F, G, G#, A, B]
 ```
 
-The scale degrees can also be altered to produce new scales
+The Scale-Degrees can also be altered to produce new Scales
 ```
 >>> C_Harmonic_Major_Scale = C_Major_Scale[6].transform("b")
 [C, D, E, F, G, Ab, B]
 ```
 
-From a scale degree you can build a new Scale or Chord
+From a Scale-Degree you can build a new Scale or Chord
 ```
 >>> D_Dorian_Scale = C_Major_Scale[2].buildScale()
 [D, E, F, G, A, B, C]
 ```
 
-Build a scale on a scale degree using a specific pitch class set
+Build a Scale on a Scale-Degree using a specific pitch-class-set
 ```
 >>> D_Melodic_Minor = C_Major_Scale[2].buildScaleWithIntervals([P1, M2, m3, P4, P5, M6, M7])
 [D, E, F, G, A, B, C#]
@@ -173,25 +171,25 @@ You can also transpose a Scale up by adding integers or intervals to it. My libr
 [Db, Eb, F, Gb, Ab, Bb, C]
 ```
 
-There is also support for Scale Degree arithemtic. Adding a Scale Degree to another Scale Degree produces a new Scale. The leftmost Degree within the addition is treated as the Tonic of the new scale and its tone is the tone corresponding to the new scale.
+There is also support for Scale-Degree arithemtic. Adding a Scale-Degree to another Scale-Degree produces a new Scale. The leftmost Degree within the addition is treated as the Tonic of the new Scale and its tone is the tone corresponding to the new Scale.
 ```
 >>> C_Major_Scale[1] + C_Major_Scale[3]
 [C, E]
 ```
 
-If the two Scale Degrees come from different parent Scales both Degrees will be treated as if based on the leftmost Degrees tonic tone. As an example, the third Degree of the E Chromatic scale is an F# tone, but adding the third Degree to the first Degree of C major adds a D natural because that is the third degree of the C Chromatic Scale.
+If the two Scale-Degrees come from different parent Scales both Degrees will be treated as if based on the leftmost Degrees Tonic Tone. As an example, the third Degree of the E Chromatic Scale is an F# Tone, but adding the third Degree to the first Degree of the C Major Scale adds a D natural Tone because that is the third Degree of the C Chromatic Scale.
 ```
 >>> C_Major_Scale[1] + E_Chromatic_Scale[3]
 [C, D]
 ```
 
-Scales also have support for arithmetic with Scale Degrees and behave similarly. This allows you to add multiple degrees at a time, giving us an easy way to create new Chords manually!
+Scales also have support for arithmetic with Scale-Degrees and behave similarly. This allows you to add multiple Degrees at a time, giving us an easy way to create new Chords manually!
 ```
 >>> C_Major_Scale[1] + E_Chromatic_Scale[3] + C_Major_Scale[4]
 [C, D, F]
 ```
 
-You can also check if a Scale contains a Chord, another Scale, or a Pitch Class
+You can also check if a Scale contains a Chord, another Scale, or a pitch-class-set.
 ```
 >>> D_Dorian_Scale in C_Major_Scale
 True
@@ -203,21 +201,21 @@ True
 True
 ```
 
-My Scale class also works with non-heptatonic scales. You can create a Chromatic scale of 12 notes, or a diminished scale of 8. There is no limitation to the scales you can create at this point.
+My Scale class also works with Non-heptatonic Scales. You can create a Chromatic Scale of 12 notes, or a Diminished Scale of 8. There is no limitation to the Scales you can create at this point.
 ```
 >>> C_Chromatic_Scale = Scale(C, [P1, m2, M2, m3, M3, P4, aug4, P5, aug5, M6, aug6, M7])
 [C, Db, D, Eb, E, F, F#, G, G#, A, A#, B]
 ```
 
-You can also print the quality of a Scale. Since Scale names cannot be derived logical in contrast to Chord names, the names of all Scales are kept in scalesDictionary. My algorithm converts the scale to its decimal representation then accesses the dictionary and retrieves the name associated with that number. 
+You can also print the name of a Scale. Since Scale names cannot be derived logically in contrast to Chord names, the names of all Scales are kept in scalesDictionary. My algorithm converts the scale to its decimal representation then accesses the dictionary and retrieves the name associated with that number. 
 ```
->>> C_Major_Scale.printQuality()
+>>> C_Major_Scale.getName()
 Major
->>> (C_Major_Scale + 2).printQuality()
+>>> (C_Major_Scale + 2).getName()
 Dorian
 ```
 
-I also created a Static method called decimalToPitchClass() that converts a decimal number into a pitch class. All pitch classes have an associated decimal representation. As an example; Major = 2741. This is very useful for creating scales by name! You can create every scale that is named in the dictionary. 
+I also created a Static method called decimalToPitchClass() that converts a decimal number into a pitch-class-set. All pitch-class-sets have an associated decimal representation. As an example; Major = 2741. This is very useful for creating scales by name! You can create every scale that is named in the dictionary. 
 ```
 >>> C_Major_Scale = Scale(C, Scale.decimalToPitchClass(major))
 [C, D, E, F, G, A, B]
@@ -267,8 +265,8 @@ You can also build a Chord using Generic Intervals.
 
 You can print the quality of the chord in three different ways. It is derived through an algorithm that emulates how music theorists derive chord qualities, so there is very little reliance on hardcoding and you can get the quality for almost any chord. The Parent Chord is the chord in question based exclusively off thirds, ignoring sus numerals. As a result the getParentChordQuality() method does not support sus.
 ```
->>> AMelodicMinor = Scale(A", melodicMinor)
->>> chord = AMelodicMinor[1].buildChord(6)
+>>> A_Melodic_Minor = Scale(A, Scale.demicalToPitchClass(melodic_minor_ascending))
+>>> chord = A_Melodic_Minor[1].buildChord(6)
 >>> chord.getParentChordQuality(3)
 -Δ11
 >>> chord.getParentChordQuality(2)
@@ -365,7 +363,7 @@ IIIM7/ii
 
 This can also be useful for creating Secondary Chords. There are many ways you can achieve this.
 ```
->>> C_Major_Scale[2].buildScaleWithIntervals(decimalToPitchClass(harmonic_minor_ascending))[5].build(Chord)
+>>> C_Major_Scale[2].buildScaleWithIntervals(Scale.decimalToPitchClass(harmonic_minor_ascending))[5].build(Chord)
 [A, C#, E, G]
 >>> C_Major_Scale[2].buildScale()[5].buildWithIntervals(Chord, [P1, M3, P5, m7])
 [A, C#, E, G]
