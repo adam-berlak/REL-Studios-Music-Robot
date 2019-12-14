@@ -295,18 +295,6 @@ You can also print the Jazz Numeral Notation
 bVIM13#11
 ```
 
-You can also print the Figured bass of a Chord. This method uses a method I created called getFirstInversion() to derive the most likely first inversion of the chord, and uses that chords numeral. 
-```
->>> Chord(C, [P1, M3, P5]).invert(3).getFiguredBass()
-I6/4
-```
-
-You can resolve a chord using a certain rule
-```
->>> G7.resolveChord(circleOfFifths)
-[C, E, G, B]
-```
-
 One problem I encountered was trying to figure out how to print the quality of quartal/quintal harmony and beyond that. The solution I found was to rearrange the intervals of said chords so that they are built on thirds and indicate the missing notes. 
 ```
 >>> C_Major_Scale[1].buildChord(7, 4).printQuality()
@@ -385,7 +373,7 @@ CM7[2].transformWithGenericInterval(2)
 [C, F, G, B]
 ```
 
-My Chord class has several methods useful for dealing with Chord Inversions, including invert(), getInversion(), getFirstInversion() and for the Chord-Degrees there is a getPositionInFirstInversion()
+My Chord class has several methods useful for dealing with Chord Inversions, including invert(), getInversion(), getFirstInversion(), getFiguredBass() and for the Chord-Degrees there is a getPositionInFirstInversion()
 ```
 >>> inverted_chord = CM7.invert(3)
 [G, B, C, E]
@@ -395,6 +383,8 @@ My Chord class has several methods useful for dealing with Chord Inversions, inc
 [C, E, G, B]
 >>> inverted_chord[2].getPositionInFirstInversion()
 4
+>>> Chord(C, [P1, M3, P5]).invert(3).getFiguredBass()
+I6/4
 ```
 
 There is also some support for voice-leading even with unique Chord voicings. 
