@@ -375,6 +375,36 @@ There are a lot of arithmetic options for a Chord. Adding an Interval to a Chord
 [D, F, A, C]
 ```
 
+You can transform a Chord just like a Scale with either an Accidental or ontop of that you can use a generic interval. When you alter a Chord with an interval, if there is a parent scale assigned to the Chord, the Parent-Scale will also be altered.
+```
+>>> CmM7 = CM7[2].transform("b")
+[C, Eb, G, B]
+>>> CmM7.getParentScale()
+[C, D, Eb, F, G, A, B]
+CM7[2].transformWithGenericInterval(2)
+[C, F, G, B]
+```
+
+My Chord class has several methods useful for dealing with Chord Inversions, including invert(), getInversion(), getFirstInversion() and for the Chord-Degrees there is a getPositionInFirstInversion()
+```
+>>> inverted_chord = CM7.invert(3)
+[G, B, C, E]
+>>> inverted_chord.getInversion()
+3
+>>> inverted_chord.getFirstInversion()
+[C, E, G, B]
+>>> inverted_chord[2].getPositionInFirstInversion()
+4
+```
+
+There is also some support for voice-leading even with unique Chord voicings. 
+```
+>>> Dm7 = C_Major_Scale[2].buildWithGenericIntervals(Chord, [1, 5, 7, 10])
+[D, A, C, F]
+>>> Dm7.resolveChord()
+[D, G, B, F]
+```
+
 Deciding how to build and represent the Chord object was very difficult. Traditionally a Chord is thought of as a Scale nested within another Scale, built on generic intervals. As an example, the Cmaj7 chord is the result of applying the generic intervals 1-3-5-7 to the major scale. Applying the same generic intervals to the minor scale produces a Cmin7 chord. Givin this, it wouldnt be unreasonable to think that the Chord object should have a strict dependancy on the Scale object, IE every Chord has a parent Scale. Despite this many people like to implement their libraries in such a way that the Chord is a distinct object from the Scale and has no reference or direct relationship with any Scale object. There are bennifits and drawbacks to both approaches. In the former approach you are givin context for the Chord in the form of a position within a Scale. This is useful for printing roman numerals and deriving related Chords. However in the latter implementation you have the freedom to build any Chord without first instantiating a parent Scale. How can we achieve both? 
 
 My Chord object uses polymorphism to achieve both capabilities. The Chord object is a Subclass of the scale object and inherits all of its methods and attributes. When you create a Chord object without a parent Scale the Chord behaves like a normal Scale, but with some added methods like printQuality(). However if you build a Chord object off of a Scale Degree or you assign a parent Degree to a Chord the Chord object behaves differently. Some Examples:
