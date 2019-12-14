@@ -463,7 +463,7 @@ You can very easily create secondary Chords from scratch
 Despite this I have created some Sugar Methods for creating certain Secondary Chords including:
 ```
 >>> Chord.getSecondaryDominant()
->>> Chord.getSubDominant()
+>>> Chord.getSecondarySubDominant()
 >>> Chord.getSecondaryTonic()
 >>> Chord.getSecondaryNeopolitan()
 >>> Chord.getSecondaryAugmentedSix()
