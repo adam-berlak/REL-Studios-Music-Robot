@@ -6,6 +6,7 @@
 
 ## 0. Table of Contents
 - [**1 - About this project**](#about)<br>
+  - test
 - [**2 - Usage**](#usage)<br>
 - [**2.0 - Intervals**](#intervals)<br>
 - [**2.1 - Tones**](#tones)<br>
