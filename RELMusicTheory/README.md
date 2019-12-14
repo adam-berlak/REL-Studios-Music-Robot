@@ -426,14 +426,6 @@ There is also support for Secondary Chords. Whenever you build a scale off of a 
 IIIM7/ii
 ```
 
-This can also be useful for creating Secondary Chords. There are many ways you can achieve this.
-```
->>> C_Major_Scale[2].buildScaleWithIntervals(Scale.decimalToPitchClass(harmonic_minor_ascending))[5].build(Chord)
-[A, C#, E, G]
->>> C_Major_Scale[2].buildScale()[5].buildWithIntervals(Chord, [P1, M3, P5, m7])
-[A, C#, E, G]
-```
-
 <a name="chord-arithmetic"/>
 
 #### 2.3.2. Arithmetic
@@ -458,9 +450,29 @@ CM7[2].transformWithGenericInterval(2)
 [C, F, G, B]
 ```
 
+<a name="chord-secondary"/>
+
+#### 2.3.4. Secondary Chords
+
+You can very easily create secondary Chords from scratch
+```
+>>> C_Major_Scale[2].buildScale()[5].buildWithIntervals(Chord, [P1, M3, P5, m7])
+[A, C#, E, G]
+```
+
+Despite this I have created some Sugar Methods for creating certain Secondary Chords including:
+```
+>>> Chord.getSecondaryDominant()
+>>> Chord.getSubDominant()
+>>> Chord.getSecondaryTonic()
+>>> Chord.getSecondaryNeopolitan()
+>>> Chord.getSecondaryAugmentedSix()
+>>> Chord.getSecondaryTritoneSubstitution()
+```
+
 <a name="chord-inversions"/>
 
-#### 2.3.3. Inversions
+#### 2.3.5. Inversions
 
 My Chord class has several methods useful for dealing with Chord Inversions, including invert(), getInversion(), getFirstInversion(), getFiguredBass() and for the Chord-Degrees there is a getPositionInFirstInversion()
 ```
@@ -478,7 +490,7 @@ I6/4
 
 <a name="chord-voice-leading"/>
 
-#### 2.3.4. Voice Leading
+#### 2.3.6. Voice Leading
 
 There is also some support for voice-leading even with unique Chord voicings. 
 ```
@@ -490,7 +502,7 @@ There is also some support for voice-leading even with unique Chord voicings.
 
 <a name="chord-polymorphism"/>
 
-#### 2.3.4. Polymorphism
+#### 2.3.7. Polymorphism
 
 Deciding how to build and represent the Chord object was very difficult. Traditionally a Chord is thought of as a Scale nested within another Scale, built on generic intervals. As an example, the Cmaj7 chord is the result of applying the generic intervals 1-3-5-7 to the major scale. Applying the same generic intervals to the minor scale produces a Cmin7 chord. Givin this, it wouldnt be unreasonable to think that the Chord object should have a strict dependancy on the Scale object, IE every Chord has a parent Scale. Despite this many people like to implement their libraries in such a way that the Chord is a distinct object from the Scale and has no reference or direct relationship with any Scale object. There are bennifits and drawbacks to both approaches. In the former approach you are givin context for the Chord in the form of a position within a Scale. This is useful for printing roman numerals and deriving related Chords. However in the latter implementation you have the freedom to build any Chord without first instantiating a parent Scale. How can we achieve both? 
 
