@@ -310,6 +310,10 @@ The scale also has several methods for determining properties of scales. You can
 
 ### 2.3. Chords
 
+<a name="chord-initialization"/>
+
+#### 2.3.0. Initialization
+
 Build a chord off of a scale degree, the build chord method has two optional params, the amount of notes in the chord, and the generic interval between each degree, by default, chords are comprised of four notes with a generic interval of 3 (A third). In this case we are building a chord with five notes on the fifth scale degree of the C Major Scale. The succeeding chord is a quartal chord based off of the same degree.
 ```
 >>> G9 = C_Major_Scale[5].build(Chord, 5)
@@ -331,6 +335,10 @@ You can also build a Chord using Generic Intervals.
 >>> E7 = C_Major_Scale[1].buildWithGenericIntervals(Chord, [1, 3, 4, 6])
 [C, E, F, A]
 ```
+
+<a name="chord-representation"/>
+
+#### 2.3.1. Representation
 
 You can print the quality of the chord in three different ways. It is derived through an algorithm that emulates how music theorists derive chord qualities, so there is very little reliance on hardcoding and you can get the quality for almost any chord. The Parent Chord is the chord in question based exclusively off thirds, ignoring sus numerals. As a result the getParentChordQuality() method does not support sus.
 ```
@@ -426,11 +434,19 @@ This can also be useful for creating Secondary Chords. There are many ways you c
 [A, C#, E, G]
 ```
 
+<a name="chord-arithmetic"/>
+
+#### 2.3.2. Arithmetic
+
 There are a lot of arithmetic options for a Chord. Adding an Interval to a Chord is just like adding one to a Scale. It shifts the Chord. However adding a generic interval to a Chord rotates it along its parent Scale, assuming a parent Scale is defined.
 ```
 >>> CM7 + 2
 [D, F, A, C]
 ```
+
+<a name="chord-transformation"/>
+
+#### 2.3.3. Transformation
 
 You can transform a Chord just like a Scale with either an Accidental or ontop of that you can use a generic interval. When you alter a Chord with an interval, if there is a parent scale assigned to the Chord, the Parent-Scale will also be altered.
 ```
@@ -441,6 +457,10 @@ You can transform a Chord just like a Scale with either an Accidental or ontop o
 CM7[2].transformWithGenericInterval(2)
 [C, F, G, B]
 ```
+
+<a name="chord-inversions"/>
+
+#### 2.3.3. Inversions
 
 My Chord class has several methods useful for dealing with Chord Inversions, including invert(), getInversion(), getFirstInversion(), getFiguredBass() and for the Chord-Degrees there is a getPositionInFirstInversion()
 ```
@@ -456,6 +476,10 @@ My Chord class has several methods useful for dealing with Chord Inversions, inc
 I6/4
 ```
 
+<a name="chord-voice-leading"/>
+
+#### 2.3.4. Voice Leading
+
 There is also some support for voice-leading even with unique Chord voicings. 
 ```
 >>> Dm7 = C_Major_Scale[2].buildWithGenericIntervals(Chord, [1, 5, 7, 10])
@@ -463,6 +487,10 @@ There is also some support for voice-leading even with unique Chord voicings.
 >>> Dm7.resolveChord()
 [D, G, B, F]
 ```
+
+<a name="chord-polymorphism"/>
+
+#### 2.3.4. Polymorphism
 
 Deciding how to build and represent the Chord object was very difficult. Traditionally a Chord is thought of as a Scale nested within another Scale, built on generic intervals. As an example, the Cmaj7 chord is the result of applying the generic intervals 1-3-5-7 to the major scale. Applying the same generic intervals to the minor scale produces a Cmin7 chord. Givin this, it wouldnt be unreasonable to think that the Chord object should have a strict dependancy on the Scale object, IE every Chord has a parent Scale. Despite this many people like to implement their libraries in such a way that the Chord is a distinct object from the Scale and has no reference or direct relationship with any Scale object. There are bennifits and drawbacks to both approaches. In the former approach you are givin context for the Chord in the form of a position within a Scale. This is useful for printing roman numerals and deriving related Chords. However in the latter implementation you have the freedom to build any Chord without first instantiating a parent Scale. How can we achieve both? 
 
@@ -502,6 +530,10 @@ In case you want a Chord with context to behave like a Scale you can access supe
 >>> super(type(CM7[2]), CM7[2]).build(Chord, 4, 2)
 [E, G, B, D]
 ```
+
+<a name="configuration"/>
+
+### 2.4. Configuration [WIP]:
 
 <a name="goals"/>
 
