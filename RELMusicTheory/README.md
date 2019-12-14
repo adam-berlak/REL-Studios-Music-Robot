@@ -8,11 +8,29 @@
 - [**1 - About this project**](#about)<br>
 - [**2 - Usage**](#usage)<br>
 - [**2.0 - Intervals**](#intervals)<br>
+  - [**2.0.0 - Initialization**](#interval-initialization)<br>
+  - [**2.0.1 - Representation**](#interval-representation)<br>
+  - [**2.0.2 - Arithmetic**](#interval-arithmetic)<br>
+  - [**2.0.3 - Transformation**](#interval-transformation)<br>
 - [**2.1 - Tones**](#tones)<br>
+  - [**2.1.0 - Initialization**](#tone-initialization)<br>
+  - [**2.1.1 - Representation**](#tone-representation)<br>
+  - [**2.1.2 - Arithmetic**](#tone-arithmetic)<br>
 - [**2.2 - Scales**](#scales)<br>
+  - [**2.2.0 - Initialization**](#scale-initialization)<br>
+  - [**2.2.1 - Representation**](#scale-representation)<br>
+  - [**2.2.2 - Arithmetic**](#scale-arithmetic)<br>
+  - [**2.2.3 - Transformation**](#scale-transformation)<br>
+  - [**2.2.4 - Building Chords/Scales**](#scale-building)<br>
+  - [**2.2.5 - Scale Properties**](#scale-propterties)<br>
 - [**2.3 - Chords**](#chords)<br>
-  - [**2.3.0 - Initialization**](#initialization)<br>
-  - [**2.3.1 - Representation**](#representation)<br>
+  - [**2.3.0 - Initialization**](#chord-initialization)<br>
+  - [**2.3.1 - Representation**](#chord-representation)<br>
+  - [**2.3.2 - Arithmetic**](#chord-arithmetic)<br>
+  - [**2.3.3 - Transformation**](#chord-transformation)<br>
+  - [**2.3.4 - Secondary Chords**](#chord-secondary)<br>
+  - [**2.3.5 - Inversions**](#chord-inversions)<br>
+  - [**2.3.6 - Polymorphism**](#chord-polymorphism)<br>
 - [**3 - Goals**](#goals)<br>
 
 <a name="about"/>
