@@ -110,6 +110,10 @@ You can transform an Interval with accidentals.
 
 ### 2.1. Tones
 
+<a name="tone-initialization"/>
+
+#### 2.1.0. Initialization
+
 The Tone object is purely an abstraction and cannot be played, this functionality will be added to my Key object within the Keyboard class. The tones object allows you to deal with representation of Tones more accurately. 
 
 You can create a Tone by simply establishing a Tone name.
@@ -124,18 +128,22 @@ You can apply accidentals in the second parameter by inputing a positive or nega
 "C#"
 ```
 
-You can also do arithmetic with Tones and Intervals
-```
->>> Tone("C") + m3
-"Eb"
-```
-
 You can simplify an Tone in case you want compare Tones.
 ```
 >>> Tone("G", 2)
 "G##"
 >>> Tone("G", 2).simplify()
 "A#"
+```
+
+<a name="tone-arithmetic"/>
+
+#### 2.1.1. Arithmetic
+
+You can also do arithmetic with Tones and Intervals
+```
+>>> Tone("C") + m3
+"Eb"
 ```
 
 <a name="scales"/>
