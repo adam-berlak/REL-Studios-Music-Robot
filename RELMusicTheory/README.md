@@ -48,7 +48,7 @@ when they should be derived using logical formulas within a Scale object. As a r
 
 <a name="intervals"/>
 
-#### 2.0. Intervals
+### 2.0. Intervals
 
 Intervals require a numeral, and semitones. The Interval object can determine if the interval should be printed with an accidental automatically depending on what the user defined as the "unaltered intervals". In our case it is the Intervals of the Major Scale. Since an Interval with the numeral '5' and semitones '7' does not exist in the 'unaltered intervals' list, it is treated as an altered interval. You can change however which Intervals are considered altered.
 ```
