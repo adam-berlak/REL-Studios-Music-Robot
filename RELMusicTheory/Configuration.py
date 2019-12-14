@@ -32,9 +32,12 @@ CARDINALITY = {"western": {1: "monotonic", 2: "ditonic", 3: "tritonic", 4: "tetr
 # Configure Unaltered Intervals
 UNALTERED_INTERVALS = {"western": [0, 2, 4, 5, 7, 9, 11]}
 
+# Configure Voice Leading for Chords
+HARMONIC_VOICE_LEADING = {"western": {1: 1, 2: 1, 3: -2, 4: -2}}
+
 # Configure Notation Systems
 ACCIDENTALS = {
-        "western": {-1: "b", 0: "n", 1: "#"},
+        "western": {-1: "b", 0: "", 1: "#"},
         "german": {-1: "es", 0: "", 1: "is"},
         "dutch": {-1: "mol", 0: "", 1: "kruis"},
         "japanese": {-1: "hen", 0: "", 1: "ei"},

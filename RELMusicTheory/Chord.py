@@ -56,9 +56,9 @@ class Chord(Scale):
 		else:
 			return super().__sub__(p_other)
 		
-	######################################################
-	# Methods concerning string representaton of a chord #
-	######################################################
+	################################
+	# Methods concerned with names #
+	################################
 
 	def getParentChordQuality(self, p_style = 2, p_system = DEFAULT_SYSTEM):
 
@@ -121,6 +121,7 @@ class Chord(Scale):
 					possible_extensions = []
 					possible_extensions.append((key, temp_accidentals))
 
+				# If has similar differance as the closest match so far add it to possible extensions
 				elif (count == smallest_difference):
 					possible_extensions.append((key, temp_accidentals))
 			
@@ -151,102 +152,373 @@ class Chord(Scale):
 			return min(possible_qualities, key=len)
 
 		except: 
-			print("Error: Failed to create string represention of the chord")
+			print("Error: Failed to get quality of parent chord for chord: " + str(self))
 
 	def getQuality(self, p_style = 2, p_system = DEFAULT_SYSTEM):
 
-		parent_chord_quality = self.getParentChordQuality(p_style, p_system)
+		try:
+			# Get Quality of the Parent Chord
+			parent_chord_quality = self.getParentChordQuality(p_style, p_system)
 
-		# Get quality of chord for bass triad and extensions
-		regex = (("(" + str([item for representations in CHORD_QUALITIES[p_system] for item in representations]).replace('\'', "").replace(" ", "").replace(',', "|").replace('+', "\+")[1:][:-1] + ")") * 2) + "*(\d+)"
-		quality_contents = re.search(re.compile(regex), parent_chord_quality)
+			# Get the Quality names from the resulting string
+			regex = (("(" + str([item for representations in CHORD_QUALITIES[p_system] for item in representations]).replace('\'', "").replace(" ", "").replace(',', "|").replace('+', "\+")[1:][:-1] + ")") * 2) + "*(\d+)"
+			quality_contents = re.search(re.compile(regex), parent_chord_quality)
 
-		bass_triad_quality = quality_contents.group(1)
-		extensions_quality = quality_contents.group(2)
+			bass_triad_quality = quality_contents.group(1)
+			extensions_quality = quality_contents.group(2)
 
-		if (extensions_quality == None):
-			extensions_quality = bass_triad_quality
+			# If there is no extensions quality, set it as the same as the bass triad
+			if (extensions_quality == None):
+				extensions_quality = bass_triad_quality
 
-		# Get actually highest numeral in Chord
-		extensions_numeral = max([item.getNumeral() for item in self.getIntervals()])
+			# Get actually highest numeral in Chord
+			extensions_numeral = max([item.getNumeral() for item in self.getIntervals()])
 
-		# RegEx no and altered intervals in parent chord quality and only include those below highest numeral
-		modifications = []
+			# RegEx altered intervals in parent chord quality and only include those below highest numeral
+			accidentals_regex = str([item for item in ACCIDENTALS[p_system].values()]).replace('\'', "").replace(' ', "").replace(',', "")[1:][:-1]
+			interval_regex = "[" + accidentals_regex + "]\d+"
+			altered_intervals = re.findall(re.compile(interval_regex), parent_chord_quality)
 
-		accidentals_regex = str([item for item in ACCIDENTALS[p_system].values()]).replace('\'', "").replace(' ', "").replace(',', "")[1:][:-1]
-		interval_regex = "[" + accidentals_regex + "]\d+"
-		altered_intervals = re.findall(re.compile(interval_regex), parent_chord_quality)
+			# Counters
+			modifications = []
 
-		for altered_interval in altered_intervals:
+			# Retrieve all altered intervals from string
+			for altered_interval in altered_intervals:
 
-			if (Interval.stringToInterval(altered_interval).getNumeral() <= int(extensions_numeral)):
-				modifications.append((altered_interval, Interval.stringToInterval(altered_interval).getNumeral()))
+				if (Interval.stringToInterval(altered_interval).getNumeral() <= int(extensions_numeral)):
+					modifications.append((altered_interval, Interval.stringToInterval(altered_interval).getNumeral()))
 
-		interval_regex_optional_accidental = "[" + accidentals_regex + "]*\d+"
-		regex = OMISSION_NOTATION[p_system] + interval_regex_optional_accidental
-		omitted_intervals = re.findall(re.compile(regex), parent_chord_quality)
+			# RegEx no intervals in parent chord quality and only include those below highest numeral
+			interval_regex_optional_accidental = "[" + accidentals_regex + "]*\d+"
+			regex = OMISSION_NOTATION[p_system] + interval_regex_optional_accidental
+			omitted_intervals = re.findall(re.compile(regex), parent_chord_quality)
 
-		for omitted_interval in omitted_intervals:
+			# Retrieve all no intervals from string
+			for omitted_interval in omitted_intervals:
 
-			interval_string = re.findall(re.compile(interval_regex_optional_accidental), str(omitted_interval))[0]
+				interval_string = re.findall(re.compile(interval_regex_optional_accidental), str(omitted_interval))[0]
 
-			if (Interval.stringToInterval(interval_string).getNumeral() <= int(extensions_numeral)):
-				modifications.append((omitted_interval, Interval.stringToInterval(interval_string).getNumeral()))
+				if (Interval.stringToInterval(interval_string).getNumeral() <= int(extensions_numeral)):
+					modifications.append((omitted_interval, Interval.stringToInterval(interval_string).getNumeral()))
 
-		# Loop through tones and if not a third make it a sus
-		for interval in self.getIntervals():
+			# Loop through tones and if not a third make it a sus
+			for interval in self.getIntervals():
 
-			if (((interval.getNumeral() - 1) % 2) != 0):
-				string_form = "sus" + str(interval)
-				modifications.append((string_form, interval.getNumeral()))
+				if (((interval.getNumeral() - 1) % 2) != 0):
+					string_form = SUSPENDED_NOTATION[p_system] + str(interval)
+					modifications.append((string_form, interval.getNumeral()))
 
-		# Add all the alterations to the quality by order of numeral
-		modifications = sorted(modifications, key=lambda x: x[1])
+			# Add all the alterations to the quality by order of numeral
+			modifications = sorted(modifications, key=lambda x: x[1])
 
-		modifications_string = ""
+			# Counters
+			modifications_string = ""
 
-		for modification in modifications:
-			modifications_string = modifications_string + modification[0]
+			# Create string for the modifications of the bass chord
+			for modification in modifications:
+				modifications_string = modifications_string + modification[0]
 
-		if (bass_triad_quality == extensions_quality):
-			return bass_triad_quality + str(extensions_numeral) + modifications_string
-		else:
-			return bass_triad_quality + extensions_quality + str(extensions_numeral) + modifications_string
+			# If bass quality is the same as extensions quality return only the bass triad quality
+			if (bass_triad_quality == extensions_quality):
+				return bass_triad_quality + str(extensions_numeral) + modifications_string
+
+			# Otherwise return both
+			else:
+				return bass_triad_quality + extensions_quality + str(extensions_numeral) + modifications_string
+
+		except:
+			print("Error: Failed to get quality of chord: " + str(self))
 
 	def printNumeral(self, p_with_quality = False, p_style = 2, p_system = DEFAULT_SYSTEM):
 
-		# Convert numeral integer into roman numeral
-		numeral = intToRoman(self.getParentDegree().getInterval().getNumeral())
+		try:
+			result = self.getParentDegree().printNumeral()
 
-		# Check quality of triad built on this degree, and change numeral to lower if minor     
-		if (self[1:2].getIntervals() == [P1, m3]):
-			numeral = numeral.lower()
+			if (p_with_quality == True):
+				return result + self.getParentChordQuality(p_style, p_system)
 
-		# Obtain the accidental of the associated interval
-		accidental = self.getParentDegree().getInterval().getAccidental()
-
-		# If parent scale is based off a degree of another scale, print the following degree as a secondary chord
-		secondary_information = ""
-
-		if (p_with_quality == True):
-			return accidental + numeral + self.getParentChordQuality(p_style, p_system)
-
-		return accidental + numeral
+			return result
+		
+		except:
+			print("Error: Failed to print numeral of chord: " + str(self))
 
 	def printNumeralWithContext(self, p_with_quality = False, p_style = 2, p_system = DEFAULT_SYSTEM):
 
-		# Check if chord is a Secondary Chord
-		if (self.getParentScale().getParentDegree() != None):
-			secondary_information = "\\" + self.getParentScale().getParentDegree().build(Chord).printNumeral()
+		try:
+			if (self.getParentScale().getParentDegree() != None):
+				secondary_information = "\\" + self.getParentScale().getParentDegree().build(Chord).printNumeral()
 
-		return self.printNumeral(p_with_quality, p_style, p_system) + secondary_information
+			return self.printNumeral(p_with_quality, p_style, p_system) + secondary_information
+		
+		except:
+			print("Error: Failed to print numeral with context of chord: " + str(self))
 
 	def getFiguredBass(self):
 		return self.getFirstInversion().printNumeral(False) + Chord.pitchClassToFiguredBass(self.getIntervals())
 
+	##########################
+	# Transformation methods #
+	##########################
+
+	def transformChordTo(self, p_intervals):
+		return self.getParentDegree().buildWithIntervals(Chord, p_intervals)
+
+	def getParallelChord(self):
+
+		try:
+			if (self.getParentScale() != None):
+
+				parallel_scale = self.getParentScale().getParallelScale()
+				parallel_chord = parallel_scale[self[1].getPositionInParent()].buildWithGenericIntervals(Chord, self.getNumerals())
+
+				return parallel_chord
+			else:
+				print("Error: Unable to get parallel of Chord that does not have a Parent Scale")
+
+		except:
+			print("Error: Failed to get parallel Chord")
+
+	def getRelativeChord(self):
+
+		try:
+			if (self.getParentScale() != None):
+
+				relative_scale = self.getParentScale().getRelativeScale()
+				relative_chord = relative_scale[self[1].getPositionInParent()].buildWithGenericIntervals(Chord, self.getNumerals())
+
+				return relative_chord
+
+			else:
+				print("Error: Unable to get relative of Chord that does not have a Parent Scale")
+
+		except:
+			print("Error: Failed to get relative Chord")
+
+	########################
+	# Common Functionality #
+	########################
+
+	def resolveChord(self, p_system = DEFAULT_SYSTEM):
+
+		try:
+			position_vector = [item.getPositionInFirstInversion() for item in self.getDegrees()]
+			new_chord = self
+
+			for i in range(len(self.getDegrees())):
+				new_chord = new_chord[i + 1].transformWithGenericInterval(HARMONIC_VOICE_LEADING[p_system][position_vector[i]])
+
+			return new_chord
+		
+		except:
+			print("Error: Failed to resolve Chords: " + str(self))
+
+	def invert(self, p_inversion_number):
+
+		try:
+			new_chord = super(Chord._Degree, super(Chord, self).__getitem__(p_inversion_number)).build(Chord, len(self.getIntervals()), 2)
+			new_chord.setParentDegree(super(type(self[1]), self[1]).__add__(p_inversion_number).findInParent())
+			return new_chord
+
+		except:
+			print("Error: Failed to invert Chord: " + str(self) + " by " + str(p_inversion_number))
+
+	def getInversion(self):
+
+		try:
+			first_inversion = self.getFirstInversion()
+			next_inversion = first_inversion
+			counter = 1
+
+			while(next_inversion.simplify() != self.simplify()):
+				next_inversion = next_inversion.invert(2)
+				counter = counter + 1
+
+			return counter
+
+		except:
+			print("Error: Failed to get inversion number for Chord: " + str(self))
+
+	def getFirstInversion(self):
+
+		try:
+			duplicates_found = False
+			previous = self.buildOnThirds()
+			smallest_inversion = self.buildOnThirds()
+			min_interval_sum = sum([item.getSemitones() for item in smallest_inversion.getIntervals()])
+
+			for i in range(len(self.getIntervals()) - 1):
+				temp_chord = previous.invert(2).buildOnThirds()
+				temp_interval_sum = sum([item.getSemitones() for item in temp_chord.getIntervals()])
+
+				if (temp_interval_sum < min_interval_sum):
+					duplicates_found = False
+					smallest_inversion = temp_chord
+					min_interval_sum = temp_interval_sum
+
+				elif (temp_interval_sum < min_interval_sum):
+					duplicates_found = True
+
+				previous = temp_chord
+
+			if (duplicates_found):
+				print("Error: Failed to find first inversion as there are several possible candidates")
+				return self
+
+			return smallest_inversion
+
+		except:
+			print("Error: Failed to get first inversion of Chord: " + str(self))
+
+	def getSecondaryDominant(self):
+		return (self.getParentDegree().buildScale()[1] + P5).buildWithIntervals(Chord, [P1, M3, P5, m7])
+
+	def getSecondarySubDominant(self):
+		return (self.getParentDegree().buildScale()[1] + M2).buildWithGenericIntervals(Chord, [1, 3, 5, 7])
+
+	def getSecondaryTonic(self):
+		return (self.getParentDegree().buildScale()[1] + P1).buildWithGenericIntervals(Chord, [1, 3, 5])
+
+	def getSecondaryNeopolitan(self):
+		return (self.getParentDegree().buildScale()[1] + M2).buildWithGenericIntervals(Chord, [1, 3, 5, 7])[1].transform("b")
+
+	def getSecondaryAugmentedSix(self):
+		return (self.getParentDegree().buildScale()[1] + P5).buildWithIntervals(Chord, [P1, M3, P5, m7]).getSecondaryTritoneSubstitution()
+
+	def getSecondaryTritoneSubstitution(self):
+		return (self.getParentDegree().buildScale()[1] + P5).buildWithIntervals(Chord, [P1, M3, P5, m7])[3].transform("b")
+
+	#################
+	# Sugar Methods #
+	#################
+
+	def buildOnThirds(self):
+
+		try:
+			new_chord = Chord(self[1].getTone(), [item for item in Chord.rearrangeIntervalsAsThirds(self.getIntervals()) if item != None])
+			if (self.getParentDegree() != None): new_chord.setParentDegree(self.getParentDegree())
+			return new_chord
+
+		except:
+			print("Error: Failed to build Chord: " + str(self) + " on thirds")
+
+	def simplify(self):
+
+		try:
+			new_pitch_class = [item.simplify() for item in self.getIntervals()]
+			new_pitch_class.sort(key=lambda x: x.getSemitones())
+			return self.getParentDegree().buildWithIntervals(Chord, new_pitch_class)
+
+		except:
+			print("Error: Failed to simplify intervals of Chord: " + str(self))
+
+	def next(self):
+		return (self.getParentDegree().next()).buildWithGenericIntervals(Chord, self.getNumerals())
+
+	def previous(self):
+		return (self.getParentDegree().previous()).buildWithGenericIntervals(Chord, self.getNumerals())
+
 	##################
 	# Static Methods #
 	##################
+
+	@staticmethod
+	def stringToPitchClass(p_quality, p_system = DEFAULT_SYSTEM):
+
+		try:
+			# Search input string for the qualities and numeral
+			regex = (("(" + str([item for representations in CHORD_QUALITIES[p_system] for item in representations]).replace('\'', "").replace(" ", "").replace(',', "|").replace('+', "\+")[1:][:-1] + ")") * 2) + "*(\d+)"
+			quality_contents = re.search(re.compile(regex), p_quality)
+
+			bass_triad_quality = quality_contents.group(1)
+			extensions_quality = quality_contents.group(2)
+			extensions_numeral = quality_contents.group(3)
+
+			if (extensions_quality == None):
+				extensions_quality = bass_triad_quality
+
+			# Obtain accidental components via RegEx
+			accidentals_regex = str([item for item in ACCIDENTALS[p_system].values()]).replace('\'', "").replace(' ', "").replace(',', "")[1:][:-1]
+			interval_regex = "[" + accidentals_regex + "]\d+"
+			altered_intervals = re.findall(re.compile(interval_regex), p_quality)
+
+			# Loop through each chord types names and find the matching type
+			for quality_tuple in CHORD_QUALITIES[p_system].keys():
+
+				if (bass_triad_quality != ""):
+
+					# Copy types pitch class
+					if bass_triad_quality in quality_tuple:
+						bass_triad_pitch_class = CHORD_QUALITIES[p_system][quality_tuple][:]
+
+				# Copy types pitch class
+				if extensions_quality in quality_tuple:
+					extensions_pitch_class = CHORD_QUALITIES[p_system][quality_tuple][:]
+
+			# Return result with bass_triad_pitch class if it is defined
+			if (bass_triad_pitch_class != ""):
+				result = (bass_triad_pitch_class[:2] + extensions_pitch_class[2:])[:int((int(extensions_numeral) + 1) / 2)]
+			else:
+				result = extensions_pitch_class[:int((int(extensions_numeral) + 1) / 2)]
+
+			# Loop through all altered intervals and apply them to the pitch class set
+			for altered_interval in altered_intervals:
+				accidental = altered_interval[0]
+				number = re.findall(r'\d+', altered_interval)[0]
+				match = [item for item in result if item.getNumeral() == int(number)]
+
+				if (len(match) != 0):
+					interval_to_be_altered = match[0]
+					result[extensions_pitch_class.index(interval_to_be_altered)] = Interval.stringToInterval(str(altered_interval))
+
+			# Obtain sus components via RegEx
+			interval_regex_optional_accidental = "[" + accidentals_regex + "]*\d+"
+			regex = SUSPENDED_NOTATION[p_system] + interval_regex_optional_accidental
+			sus_intervals = re.findall(re.compile(regex), p_quality)
+			list_of_sus_intervals = []
+
+			# Create a list of suspended intervals
+			for sus_interval in sus_intervals:
+				interval = str(re.findall(re.compile(interval_regex_optional_accidental), str(sus_interval)))
+				list_of_sus_intervals.append(Interval.stringToInterval(interval))
+
+			result = result + list_of_sus_intervals
+			result.sort(key=lambda x: x.getSemitones())
+
+			# Obtain no components via RegEx
+			regex = OMISSION_NOTATION[p_system] + interval_regex_optional_accidental
+			omitted_intervals = re.findall(re.compile(regex), p_quality)
+
+			# Remove every interval within omitted intervals from result
+			for omitted_interval in omitted_intervals:
+				interval_string = str(re.findall(re.compile(interval_regex_optional_accidental), str(omitted_interval)))
+				interval = Interval.stringToInterval(interval_string)
+
+				if (interval in result):
+					result.pop(result.index(interval))
+
+			return result
+
+		except:
+			print("Error: Failed to convert string " + p_quality + " to pitch-class")
+
+	@staticmethod
+	def pitchClassToFiguredBass(p_pitch_class, p_slice = 2):
+		try:
+			# Invert pitch class
+			new_pitch_class = p_pitch_class[::-1]
+
+			# Counters
+			string = ""
+
+			# Create figured bass string from inverting pitch class and retrieving numerals
+			for numeral in [item.getNumeral() for item in new_pitch_class][:p_slice]:
+				string = string + str(numeral) + "/"
+
+			return string[:-1]
+		
+		except:
+			print("Error: Failed to calculate figured-bass for: " + p_pitch_class)
+
 
 	@staticmethod
 	def rearrangeIntervalsAsThirds(p_pitch_class, p_system = DEFAULT_SYSTEM):
@@ -299,178 +571,7 @@ class Chord(Scale):
 			return new_interval_list
 		
 		except:
-			print("Error: Failed to rearrange intervals of parent chord as thirds")
-
-	@staticmethod
-	def stringToPitchClass(p_quality, p_system = DEFAULT_SYSTEM):
-
-		# Search input string for the qualities and numeral
-		regex = (("(" + str([item for representations in CHORD_QUALITIES[p_system] for item in representations]).replace('\'', "").replace(" ", "").replace(',', "|").replace('+', "\+")[1:][:-1] + ")") * 2) + "*(\d+)"
-		quality_contents = re.search(re.compile(regex), p_quality)
-
-		bass_triad_quality = quality_contents.group(1)
-		extensions_quality = quality_contents.group(2)
-		extensions_numeral = quality_contents.group(3)
-
-		if (extensions_quality == None):
-			extensions_quality = bass_triad_quality
-
-		# Obtain accidental components via RegEx
-		accidentals_regex = str([item for item in ACCIDENTALS[p_system].values()]).replace('\'', "").replace(' ', "").replace(',', "")[1:][:-1]
-		interval_regex = "[" + accidentals_regex + "]\d+"
-		altered_intervals = re.findall(re.compile(interval_regex), p_quality)
-
-		# Loop through each chord types names and find the matching type
-		for quality_tuple in CHORD_QUALITIES[p_system].keys():
-
-			if (bass_triad_quality != ""):
-
-				# Copy types pitch class
-				if bass_triad_quality in quality_tuple:
-					bass_triad_pitch_class = CHORD_QUALITIES[p_system][quality_tuple][:]
-
-			# Copy types pitch class
-			if extensions_quality in quality_tuple:
-				extensions_pitch_class = CHORD_QUALITIES[p_system][quality_tuple][:]
-
-		# Return result with bass_triad_pitch class if it is defined
-		if (bass_triad_pitch_class != ""):
-			result = (bass_triad_pitch_class[:2] + extensions_pitch_class[2:])[:int((int(extensions_numeral) + 1) / 2)]
-		else:
-			result = extensions_pitch_class[:int((int(extensions_numeral) + 1) / 2)]
-
-		# Loop through all altered intervals and apply them to the pitch class set
-		for altered_interval in altered_intervals:
-			accidental = altered_interval[0]
-			number = re.findall(r'\d+', altered_interval)[0]
-			match = [item for item in result if item.getNumeral() == int(number)]
-
-			if (len(match) != 0):
-				interval_to_be_altered = match[0]
-				result[extensions_pitch_class.index(interval_to_be_altered)] = Interval.stringToInterval(str(altered_interval))
-
-		# Obtain sus components via RegEx
-		interval_regex_optional_accidental = "[" + accidentals_regex + "]*\d+"
-		regex = SUSPENDED_NOTATION[p_system] + interval_regex_optional_accidental
-		sus_intervals = re.findall(re.compile(regex), p_quality)
-		list_of_sus_intervals = []
-
-		# Create a list of suspended intervals
-		for sus_interval in sus_intervals:
-			interval = str(re.findall(re.compile(interval_regex_optional_accidental), str(sus_interval)))
-			list_of_sus_intervals.append(Interval.stringToInterval(interval))
-
-		result = result + list_of_sus_intervals
-		result.sort(key=lambda x: x.getSemitones())
-
-		# Obtain no components via RegEx
-		regex = OMISSION_NOTATION[p_system] + interval_regex_optional_accidental
-		omitted_intervals = re.findall(re.compile(regex), p_quality)
-
-		# Remove every interval within omitted intervals from result
-		for omitted_interval in omitted_intervals:
-			interval_string = str(re.findall(re.compile(interval_regex_optional_accidental), str(omitted_interval)))
-			interval = Interval.stringToInterval(interval_string)
-
-			if (interval in result):
-				result.pop(result.index(interval))
-
-		return result
-
-	@staticmethod
-	def pitchClassToFiguredBass(p_pitch_class, p_slice = 2):
-		new_pitch_class = p_pitch_class[::-1]
-
-		string = ""
-
-		for numeral in [item.getNumeral() for item in new_pitch_class][:p_slice]:
-			string = string + str(numeral) + "/"
-
-		return string[:-1]
-
-	##########################
-	# Transformation methods #
-	##########################
-
-	def transformChordTo(self, p_intervals):
-		return self.getParentDegree().buildWithIntervals(Chord, p_intervals)
-
-	def invert(self, p_inversion_number):
-		new_chord = super(Chord._Degree, super(Chord, self).__getitem__(p_inversion_number)).build(Chord, len(self.getIntervals()), 2)
-		new_chord.setParentDegree(super(type(self[1]), self[1]).__add__(p_inversion_number).findInParent())
-
-		return new_chord
-
-	def getFirstInversion(self):
-
-		previous = self
-		smallest_inversion = self
-		min_none_count = len([item for item in Chord.rearrangeIntervalsAsThirds(self.getIntervals()) if item == None])
-
-		for i in range(len(self.getIntervals())):
-			temp_chord = previous.invert(2)
-			intervals = Chord.rearrangeIntervalsAsThirds(temp_chord.getIntervals())
-			temp_count = len([item for item in intervals if item == None])
-
-			if (temp_count < min_none_count):
-				smallest_inversion = temp_chord
-				min_none_count = temp_count
-
-			previous = temp_chord
-
-		return smallest_inversion
-
-	def getParallelChord(self, p_rotation = 6):
-
-		try:
-			if (self.getParentScale() != None):
-
-				parallel_scale = self.getParentScale()[1].buildScaleWithIntervals((self.getParentScale() + p_rotation).getIntervals())
-				parallel_chord = parallel_scale[self[1].getPositionInParent()].buildWithGenericIntervals(Chord, self.getNumerals())
-
-				return parallel_chord
-			else:
-				print("Error: Unable to get parallel of Chord that does not have a Parent Scale")
-
-		except:
-			print("Error: Failed to get parallel Chord")
-
-	def getRelativeChord(self, p_rotation = 6):
-
-		try:
-			if (self.getParentScale() != None):
-
-				relative_scale = self.getParentScale() + p_rotation
-				relative_chord = relative_scale[self[1].getPositionInParent()].buildWithGenericIntervals(Chord, self.getNumerals())
-
-				return relative_chord
-
-			else:
-				print("Error: Unable to get relative of Chord that does not have a Parent Scale")
-
-		except:
-			print("Error: Failed to get relative Chord")
-
-	def getSecondaryDominant(self):
-		return (self.getParentDegree().buildScale()[1] + P5).buildWithIntervals(Chord, [P1, M3, P5, m7])
-
-	def resolveChord(self, p_voice_leading_rules = circleOfFifths):
-		return p_voice_leading_rules(self)
-
-	#################
-	# Sugar Methods #
-	#################
-
-	def next(self):
-		return (self.getParentDegree().next()).buildWithGenericIntervals(Chord, self.getNumerals())
-
-	def previous(self):
-		return (self.getParentDegree().previous()).buildWithGenericIntervals(Chord, self.getNumerals())
-
-	def getParentChord(self):
-		new_interval_list = [item for item in Chord.rearrangeIntervalsAsThirds(self.getIntervals()) if item != None]
-
-		return (self.getParentDegree().buildWithIntervals(Chord, new_interval_list))
+			print("Error: Failed to rearrange intervals " + p_pitch_class + "as thirds")
 
 	##################################
 	# Overridden Methods and Classes #
@@ -497,6 +598,34 @@ class Chord(Scale):
 		return result_scale.getDegreeByInterval(p_degree.getInterval())
 
 	class _Degree(Scale._Degree):
+
+		def __add__(self, p_other):
+
+			if (isinstance(p_other, int)):
+
+				if (p_other < 0):
+					return self - abs(p_other)
+				
+				if (p_other == 1):
+					return self
+
+				return self.next() + (p_other - 1)
+			else:
+				return super().__add__(p_other)
+
+		def __sub__(self, p_other):
+
+			if (isinstance(p_other, int)):
+
+				if (p_other < 0):
+					return self + abs(p_other)
+
+				if (p_other == 1):
+					return self
+
+				return self.previous() - (p_other - 1)
+			else:
+				return super().__add__(p_other)
 
 		def build(self, object_type, p_num_tones = 4, p_leap_size = 3, *args):
 			if (self.getParentScale().getParentDegree() != None):
@@ -546,11 +675,48 @@ class Chord(Scale):
 			else:
 				return super().previous()
 
-		def transform(self, p_accidental, p_system = DEFAULT_SYSTEM):
-			new_object = super().transform(p_accidental, p_system)
-				
-			if (self.getParentScale().getParentDegree() != None):
-				new_parent = self.findInParent().transform(p_accidental, p_system)
-				new_object.setParentDegree(new_parent.getDegreeByInterval(self.getParentScale().getParentDegree().getInterval()))
+		def transform(self, p_accidental):
 
-			return new_object
+			try: 
+				new_object = super().transform(p_accidental)
+
+				if (self.getParentScale().getParentDegree() != None):
+					new_parent = self.findInParent().transform(p_accidental)
+					new_object.setParentDegree(new_parent[self.getParentScale()[1].findInParent().getPosition()])
+
+				return new_object
+
+			except:
+				print("Error: Failed to transform: " + str(self) + " by the accidental " + str(p_accidental))
+
+		def transformWithGenericInterval(self, p_generic_interval):
+
+			try:
+				difference = p_generic_interval - int(p_generic_interval/abs(p_generic_interval))
+				new_generic_intervals = self.getParentScale().getNumerals()
+				new_generic_intervals = [item for item in new_generic_intervals if item != self.getInterval().getNumeral()]
+				new_generic_intervals.insert(self.getPosition() - 1, self.getInterval().getNumeral() + difference)
+
+				if (self.getPosition() == 1 and abs(p_generic_interval) != 1):
+					difference = (p_generic_interval * (-1)) + int(p_generic_interval/abs(p_generic_interval))
+					new_generic_intervals = [1] + [item + difference for item in new_generic_intervals][1:]
+					return (self + p_generic_interval).findInParent().buildWithGenericIntervals(Chord, new_generic_intervals)
+				
+				return self.getParentScale().getParentDegree().buildWithGenericIntervals(Chord, new_generic_intervals)
+
+			except:
+				print("Error: Failed to transform: " + str(self) + " by generic interval: " + str(p_generic_interval))
+
+		def getPositionInFirstInversion(self):
+
+			try:
+				first_inversion = self.getParentScale().getFirstInversion()
+
+				for degree in first_inversion.getDegrees():
+					if (degree.getInterval().simplify() == (first_inversion[self.getParentScale().getInversion()].getInterval() + self.getInterval()).simplify()):
+						return degree.getPosition()
+
+				return None
+			
+			except:
+				print("Error: Failed to get the position of: " + str(self) + " in first inversion")
