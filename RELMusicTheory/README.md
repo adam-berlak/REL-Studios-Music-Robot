@@ -31,6 +31,7 @@
   - [**2.3.4 - Secondary Chords**](#chord-secondary)<br>
   - [**2.3.5 - Inversions**](#chord-inversions)<br>
   - [**2.3.6 - Polymorphism**](#chord-polymorphism)<br>
+- [**2.4 - Configuration**](#configuration)<br>
 - [**3 - Goals**](#goals)<br>
 
 <a name="about"/>
