@@ -149,6 +149,10 @@ You can also do arithmetic with Tones and Intervals
 
 ### 2.2. Scales
 
+<a name="scale-initialization"/>
+
+#### 2.2.0. Initialization
+
 A Scale Object requires a Tone for the Tonic, and a list of Intervals organized as a pitch-class-set
 ```
 >>> C_Major_Scale = Scale(C, [P1, M2, M3, P4, P5, M6, M7])
@@ -166,6 +170,29 @@ You can access any of the Scale-Degrees by using an index. The indices start at 
 >>> C_Major_Scale[1]
 C
 ```
+
+<a name="scale-representation"/>
+
+#### 2.2.1. Representation
+
+You can also print the name of a Scale. Since Scale names cannot be derived logically in contrast to Chord names, the names of all Scales are kept in scalesDictionary. My algorithm converts the scale to its decimal representation then accesses the dictionary and retrieves the name associated with that number. 
+```
+>>> C_Major_Scale.getName()
+Major
+>>> (C_Major_Scale + 2).getName()
+Dorian
+```
+
+I also created a Static method called decimalToPitchClass() that converts a decimal number into a pitch-class-set. All pitch-class-sets have an associated decimal representation. As an example; Major = 2741. This is very useful for creating scales by name! You can create every scale that is named in the dictionary. 
+```
+>>> C_Major_Scale = Scale(C, Scale.decimalToPitchClass(major))
+[C, D, E, F, G, A, B]
+```
+
+<a name="scale-arithmetic"/>
+
+#### 2.2.2. Arithmetic
+
 If you add an integer to a Scale-Degree it is treated as a Generic Interval while adding an Interval is treated like adding a Specific Interval.
 ```
 >>> C_Major_Scale[1] + 4
@@ -179,30 +206,6 @@ I think its worth emphasizing that adding a Interval to a Degree, which produces
 >>> new_degree = C_Major_Scale[2] + M3 
 >>> new_degree.getParentScale()
 [C, D, E, F#, G, A, B]
-```
-
-You can modify an existing Scale to produce a new Scale by using the addInterval() method.
-```
->>> new_scale = C_Major_Scale.addInterval(aug5)
-[C, D, E, F, G, G#, A, B]
-```
-
-The Scale-Degrees can also be altered to produce new Scales
-```
->>> C_Harmonic_Major_Scale = C_Major_Scale[6].transform("b")
-[C, D, E, F, G, Ab, B]
-```
-
-From a Scale-Degree you can build a new Scale or Chord
-```
->>> D_Dorian_Scale = C_Major_Scale[2].buildScale()
-[D, E, F, G, A, B, C]
-```
-
-Build a Scale on a Scale-Degree using a specific pitch-class-set
-```
->>> D_Melodic_Minor = C_Major_Scale[2].buildScaleWithIntervals([P1, M2, m3, P4, P5, M6, M7])
-[D, E, F, G, A, B, C#]
 ```
 
 You can also transpose a Scale up by adding integers or intervals to it. My library assigns pitchs and accidentals to the scales automatically without any hardcoding. The proccess is identical to how its done by theorists ensuring minimal accidentals are used. As an example: Db Major notation will be used over C# Major despite the latter also being valid. This is because Db Major has less accidentals. Despite this you can still create a C# Major Scale. An integer is treated as a Generic Interval, meaning the value represents scale steps as opposed to semitones. To transpose a scale by semitones you must add an interval to it. Adding an Integer to a scale will rotate the scale. IE: Adding a Generic Interval of 2 to the C Major Scale will produce the Dorian mode.
@@ -233,6 +236,38 @@ Scales also have support for arithmetic with Scale-Degrees and behave similarly.
 [C, D, F]
 ```
 
+<a name="scale-transformation"/>
+
+#### 2.2.3. Transformation
+
+You can modify an existing Scale to produce a new Scale by using the addInterval() method.
+```
+>>> new_scale = C_Major_Scale.addInterval(aug5)
+[C, D, E, F, G, G#, A, B]
+```
+
+The Scale-Degrees can also be altered to produce new Scales
+```
+>>> C_Harmonic_Major_Scale = C_Major_Scale[6].transform("b")
+[C, D, E, F, G, Ab, B]
+```
+
+<a name="scale-building"/>
+
+#### 2.2.4. Building Chords/Scales
+
+From a Scale-Degree you can build a new Scale or Chord
+```
+>>> D_Dorian_Scale = C_Major_Scale[2].buildScale()
+[D, E, F, G, A, B, C]
+```
+
+Build a Scale on a Scale-Degree using a specific pitch-class-set
+```
+>>> D_Melodic_Minor = C_Major_Scale[2].buildScaleWithIntervals([P1, M2, m3, P4, P5, M6, M7])
+[D, E, F, G, A, B, C#]
+```
+
 You can also check if a Scale contains a Chord, another Scale, or a pitch-class-set.
 ```
 >>> D_Dorian_Scale in C_Major_Scale
@@ -251,19 +286,9 @@ My Scale class also works with Non-heptatonic Scales. You can create a Chromatic
 [C, Db, D, Eb, E, F, F#, G, G#, A, A#, B]
 ```
 
-You can also print the name of a Scale. Since Scale names cannot be derived logically in contrast to Chord names, the names of all Scales are kept in scalesDictionary. My algorithm converts the scale to its decimal representation then accesses the dictionary and retrieves the name associated with that number. 
-```
->>> C_Major_Scale.getName()
-Major
->>> (C_Major_Scale + 2).getName()
-Dorian
-```
+<a name="scale-propterties"/>
 
-I also created a Static method called decimalToPitchClass() that converts a decimal number into a pitch-class-set. All pitch-class-sets have an associated decimal representation. As an example; Major = 2741. This is very useful for creating scales by name! You can create every scale that is named in the dictionary. 
-```
->>> C_Major_Scale = Scale(C, Scale.decimalToPitchClass(major))
-[C, D, E, F, G, A, B]
-```
+#### 2.2.5. Scale Properties
 
 The scale also has several methods for determining properties of scales. You can read about what these algorithms do at https://ianring.com/musictheory/scales/. Currently the properties supported are:
 ```
