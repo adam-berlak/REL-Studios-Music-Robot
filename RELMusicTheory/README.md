@@ -6,12 +6,13 @@
 
 ## 0. Table of Contents
 - [**1 - About this project**](#about)<br>
-  - test
 - [**2 - Usage**](#usage)<br>
 - [**2.0 - Intervals**](#intervals)<br>
 - [**2.1 - Tones**](#tones)<br>
 - [**2.2 - Scales**](#scales)<br>
 - [**2.3 - Chords**](#chords)<br>
+  - [**2.3.0 - Initialization**](#initialization)<br>
+  - [**2.3.1 - Representation**](#representation)<br>
 - [**3 - Goals**](#goals)<br>
 
 <a name="about"/>
