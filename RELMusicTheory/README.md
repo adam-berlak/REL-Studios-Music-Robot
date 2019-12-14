@@ -92,7 +92,7 @@ You can convert a string into an Interval object using the static stringToInterv
 
 <a name="tones"/>
 
-#### 2.1. Tones
+### 2.1. Tones
 
 The Tone object is purely an abstraction and cannot be played, this functionality will be added to my Key object within the Keyboard class. The tones object allows you to deal with representation of Tones more accurately. 
 
@@ -124,7 +124,7 @@ You can simplify an Tone in case you want compare Tones.
 
 <a name="scales"/>
 
-#### 2.2. Scales
+### 2.2. Scales
 
 A Scale Object requires a Tone for the Tonic, and a list of Intervals organized as a pitch-class-set
 ```
@@ -260,7 +260,7 @@ The scale also has several methods for determining properties of scales. You can
 
 <a name="chords"/>
 
-#### 2.3. Chords
+### 2.3. Chords
 
 Build a chord off of a scale degree, the build chord method has two optional params, the amount of notes in the chord, and the generic interval between each degree, by default, chords are comprised of four notes with a generic interval of 3 (A third). In this case we are building a chord with five notes on the fifth scale degree of the C Major Scale. The succeeding chord is a quartal chord based off of the same degree.
 ```
