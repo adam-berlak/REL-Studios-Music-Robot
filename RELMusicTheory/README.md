@@ -14,8 +14,7 @@
   - [**2.0.3 - Transformation**](#interval-transformation)<br>
 - [**2.1 - Tones**](#tones)<br>
   - [**2.1.0 - Initialization**](#tone-initialization)<br>
-  - [**2.1.1 - Representation**](#tone-representation)<br>
-  - [**2.1.2 - Arithmetic**](#tone-arithmetic)<br>
+  - [**2.1.1 - Arithmetic**](#tone-arithmetic)<br>
 - [**2.2 - Scales**](#scales)<br>
   - [**2.2.0 - Initialization**](#scale-initialization)<br>
   - [**2.2.1 - Representation**](#scale-representation)<br>
