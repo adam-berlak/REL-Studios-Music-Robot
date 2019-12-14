@@ -5,13 +5,13 @@
 <br>
 
 ## 0. Table of Contents
-[**1 - About this project**](#about)<br>
-[**2 - Usage**](#usage)<br>
-[**2.0 - Intervals**](#intervals)<br>
-[**2.1 - Tones**](#tones)<br>
-[**2.2 - Scales**](#scales)<br>
-[**2.3 - Chords**](#chords)<br>
-[**3 - Goals**](#goals)<br>
+- [**1 - About this project**](#about)<br>
+- [**2 - Usage**](#usage)<br>
+- [**2.0 - Intervals**](#intervals)<br>
+- [**2.1 - Tones**](#tones)<br>
+- [**2.2 - Scales**](#scales)<br>
+- [**2.3 - Chords**](#chords)<br>
+- [**3 - Goals**](#goals)<br>
 
 <a name="about"/>
 
