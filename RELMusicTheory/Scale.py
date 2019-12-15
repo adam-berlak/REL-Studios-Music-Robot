@@ -2,6 +2,7 @@ import re
 
 from Configuration import *
 from HelperMethods import *
+
 class Scale:
 
 	def __init__(self, p_tonic_tone, p_item):
