@@ -5,13 +5,33 @@
 <br>
 
 ## 0. Table of Contents
-[**1 - About this project**](#about)<br>
-[**2 - Usage**](#usage)<br>
-[**2.0 - Intervals**](#intervals)<br>
-[**2.1 - Tones**](#tones)<br>
-[**2.2 - Scales**](#scales)<br>
-[**2.3 - Chords**](#chords)<br>
-[**3 - Goals**](#goals)<br>
+- [**1 - About this project**](#about)<br>
+- [**2 - Usage**](#usage)<br>
+- [**2.0 - Intervals**](#intervals)<br>
+  - [**2.0.0 - Initialization**](#interval-initialization)<br>
+  - [**2.0.1 - Representation**](#interval-representation)<br>
+  - [**2.0.2 - Arithmetic**](#interval-arithmetic)<br>
+  - [**2.0.3 - Transformation**](#interval-transformation)<br>
+- [**2.1 - Tones**](#tones)<br>
+  - [**2.1.0 - Initialization**](#tone-initialization)<br>
+  - [**2.1.1 - Arithmetic**](#tone-arithmetic)<br>
+- [**2.2 - Scales**](#scales)<br>
+  - [**2.2.0 - Initialization**](#scale-initialization)<br>
+  - [**2.2.1 - Representation**](#scale-representation)<br>
+  - [**2.2.2 - Arithmetic**](#scale-arithmetic)<br>
+  - [**2.2.3 - Transformation**](#scale-transformation)<br>
+  - [**2.2.4 - Building Chords/Scales**](#scale-building)<br>
+  - [**2.2.5 - Scale Properties**](#scale-propterties)<br>
+- [**2.3 - Chords**](#chords)<br>
+  - [**2.3.0 - Initialization**](#chord-initialization)<br>
+  - [**2.3.1 - Representation**](#chord-representation)<br>
+  - [**2.3.2 - Arithmetic**](#chord-arithmetic)<br>
+  - [**2.3.3 - Transformation**](#chord-transformation)<br>
+  - [**2.3.4 - Secondary Chords**](#chord-secondary)<br>
+  - [**2.3.5 - Inversions**](#chord-inversions)<br>
+  - [**2.3.6 - Polymorphism**](#chord-polymorphism)<br>
+- [**2.4 - Configuration**](#configuration)<br>
+- [**3 - Goals**](#goals)<br>
 
 <a name="about"/>
 
@@ -27,7 +47,11 @@ when they should be derived using logical formulas within a Scale object. As a r
 
 <a name="intervals"/>
 
-#### 2.0. Intervals
+### 2.0. Intervals
+
+<a name="interval-initialization"/>
+
+#### 2.0.0. Initialization
 
 Intervals require a numeral, and semitones. The Interval object can determine if the interval should be printed with an accidental automatically depending on what the user defined as the "unaltered intervals". In our case it is the Intervals of the Major Scale. Since an Interval with the numeral '5' and semitones '7' does not exist in the 'unaltered intervals' list, it is treated as an altered interval. You can change however which Intervals are considered altered.
 ```
@@ -35,30 +59,9 @@ Intervals require a numeral, and semitones. The Interval object can determine if
 b5
 ```
 
-You can perform Interval arithmetic
-```
->>> P5 + M3
-7
->>> P5 - m2
-#4
-```
+<a name="interval-representation"/>
 
-An important method I created is called simplify(). This method takes any Interval larger than a M7 and creates a simple Interval as opposed to a compound Interval.
-```
->>> M10.simplify()
-2
-```
-
-You can transform an Interval with accidentals.
-```
->>> P5.transform(#)
-#5
-```
-
-While the size of Intervals you can create is unlimited, the constants are limited to a P15. To use intervals beyond this you can just use arithmetic.
-```
->>> M16 = P15 + M2
-```
+#### 2.0.1. Representation
 
 You can convert a string into an Interval object using the static stringToInterval() method within the Interval object.
 ```
@@ -69,9 +72,46 @@ You can convert a string into an Interval object using the static stringToInterv
 3
 ```
 
+<a name="interval-arithmetic"/>
+
+#### 2.0.2. Arithmetic
+
+You can perform Interval arithmetic
+```
+>>> P5 + M3
+7
+>>> P5 - m2
+#4
+```
+
+While the size of Intervals you can create is unlimited, the constants are limited to a P15. To use intervals beyond this you can just use arithmetic.
+```
+>>> M16 = P15 + M2
+```
+
+An important method I created is called simplify(). This method takes any Interval larger than a M7 and creates a simple Interval as opposed to a compound Interval.
+```
+>>> M10.simplify()
+2
+```
+
+<a name="interval-transformation"/>
+
+#### 2.0.3. Transformation
+
+You can transform an Interval with accidentals.
+```
+>>> P5.transform(#)
+#5
+```
+
 <a name="tones"/>
 
-#### 2.1. Tones
+### 2.1. Tones
+
+<a name="tone-initialization"/>
+
+#### 2.1.0. Initialization
 
 The Tone object is purely an abstraction and cannot be played, this functionality will be added to my Key object within the Keyboard class. The tones object allows you to deal with representation of Tones more accurately. 
 
@@ -87,12 +127,6 @@ You can apply accidentals in the second parameter by inputing a positive or nega
 "C#"
 ```
 
-You can also do arithmetic with Tones and Intervals
-```
->>> Tone("C") + m3
-"Eb"
-```
-
 You can simplify an Tone in case you want compare Tones.
 ```
 >>> Tone("G", 2)
@@ -101,9 +135,23 @@ You can simplify an Tone in case you want compare Tones.
 "A#"
 ```
 
+<a name="tone-arithmetic"/>
+
+#### 2.1.1. Arithmetic
+
+You can also do arithmetic with Tones and Intervals
+```
+>>> Tone("C") + m3
+"Eb"
+```
+
 <a name="scales"/>
 
-#### 2.2. Scales
+### 2.2. Scales
+
+<a name="scale-initialization"/>
+
+#### 2.2.0. Initialization
 
 A Scale Object requires a Tone for the Tonic, and a list of Intervals organized as a pitch-class-set
 ```
@@ -111,9 +159,15 @@ A Scale Object requires a Tone for the Tonic, and a list of Intervals organized 
 [C, D, E, F, G, A, B]
 ```
 
-You can also create a scale using scale-steps using the Scale.scaleStepsToPitchClass() method in case Intervals are too tedious.
+You can also create a scale using scale-steps in case Intervals are too tedious.
 ```
->>> C_Major_Scale = Scale(C, Scale.scaleStepsToPitchClass([2, 2, 1, 2, 2, 2, 1]))
+>>> C_Major_Scale = Scale(C, [2, 2, 1, 2, 2, 2, 1])
+[C, D, E, F, G, A, B]
+```
+
+The easiest way to create a Scale is using a decimal number associated with a Scale. For the Major Scale this is the number 2741. However you don't need to worry about memorizing these numbers as they are all saved in constants and you can simply use the name "major". As of right now all 3000+ Scales are supported.
+```
+>>> C_Major_Scale = Scale(C, major)
 [C, D, E, F, G, A, B]
 ```
 
@@ -122,6 +176,29 @@ You can access any of the Scale-Degrees by using an index. The indices start at 
 >>> C_Major_Scale[1]
 C
 ```
+
+<a name="scale-representation"/>
+
+#### 2.2.1. Representation
+
+You can also print the name of a Scale. Since Scale names cannot be derived logically in contrast to Chord names, the names of all Scales are kept in ScalesDictionary.py. My algorithm converts the scale to its decimal representation then accesses the dictionary and retrieves the name associated with that number. 
+```
+>>> C_Major_Scale.getName()
+Ionian/Major
+>>> (C_Major_Scale + 2).getName()
+Dorian
+```
+
+I also created a Static method called decimalToPitchClass() that converts a decimal number into a pitch-class-set. All pitch-class-sets have an associated decimal representation. As an example; Major = 2741. This is very useful for creating scales by name! You can create every scale that is named in the dictionary. 
+```
+>>> C_Major_Scale = Scale(C, Scale.decimalToPitchClass(major))
+[C, D, E, F, G, A, B]
+```
+
+<a name="scale-arithmetic"/>
+
+#### 2.2.2. Arithmetic
+
 If you add an integer to a Scale-Degree it is treated as a Generic Interval while adding an Interval is treated like adding a Specific Interval.
 ```
 >>> C_Major_Scale[1] + 4
@@ -135,30 +212,6 @@ I think its worth emphasizing that adding a Interval to a Degree, which produces
 >>> new_degree = C_Major_Scale[2] + M3 
 >>> new_degree.getParentScale()
 [C, D, E, F#, G, A, B]
-```
-
-You can modify an existing Scale to produce a new Scale by using the addInterval() method.
-```
->>> new_scale = C_Major_Scale.addInterval(aug5)
-[C, D, E, F, G, G#, A, B]
-```
-
-The Scale-Degrees can also be altered to produce new Scales
-```
->>> C_Harmonic_Major_Scale = C_Major_Scale[6].transform("b")
-[C, D, E, F, G, Ab, B]
-```
-
-From a Scale-Degree you can build a new Scale or Chord
-```
->>> D_Dorian_Scale = C_Major_Scale[2].buildScale()
-[D, E, F, G, A, B, C]
-```
-
-Build a Scale on a Scale-Degree using a specific pitch-class-set
-```
->>> D_Melodic_Minor = C_Major_Scale[2].buildScaleWithIntervals([P1, M2, m3, P4, P5, M6, M7])
-[D, E, F, G, A, B, C#]
 ```
 
 You can also transpose a Scale up by adding integers or intervals to it. My library assigns pitchs and accidentals to the scales automatically without any hardcoding. The proccess is identical to how its done by theorists ensuring minimal accidentals are used. As an example: Db Major notation will be used over C# Major despite the latter also being valid. This is because Db Major has less accidentals. Despite this you can still create a C# Major Scale. An integer is treated as a Generic Interval, meaning the value represents scale steps as opposed to semitones. To transpose a scale by semitones you must add an interval to it. Adding an Integer to a scale will rotate the scale. IE: Adding a Generic Interval of 2 to the C Major Scale will produce the Dorian mode.
@@ -189,6 +242,38 @@ Scales also have support for arithmetic with Scale-Degrees and behave similarly.
 [C, D, F]
 ```
 
+<a name="scale-transformation"/>
+
+#### 2.2.3. Transformation
+
+You can modify an existing Scale to produce a new Scale by using the addInterval() method.
+```
+>>> new_scale = C_Major_Scale.addInterval(aug5)
+[C, D, E, F, G, G#, A, B]
+```
+
+The Scale-Degrees can also be altered to produce new Scales
+```
+>>> C_Harmonic_Major_Scale = C_Major_Scale[6].transform("b")
+[C, D, E, F, G, Ab, B]
+```
+
+<a name="scale-building"/>
+
+#### 2.2.4. Building Chords/Scales
+
+From a Scale-Degree you can build a new Scale or Chord
+```
+>>> D_Dorian_Scale = C_Major_Scale[2].buildScale()
+[D, E, F, G, A, B, C]
+```
+
+Build a Scale on a Scale-Degree using a specific pitch-class-set
+```
+>>> D_Melodic_Minor = C_Major_Scale[2].buildScaleWithIntervals([P1, M2, m3, P4, P5, M6, M7])
+[D, E, F, G, A, B, C#]
+```
+
 You can also check if a Scale contains a Chord, another Scale, or a pitch-class-set.
 ```
 >>> D_Dorian_Scale in C_Major_Scale
@@ -207,19 +292,9 @@ My Scale class also works with Non-heptatonic Scales. You can create a Chromatic
 [C, Db, D, Eb, E, F, F#, G, G#, A, A#, B]
 ```
 
-You can also print the name of a Scale. Since Scale names cannot be derived logically in contrast to Chord names, the names of all Scales are kept in scalesDictionary. My algorithm converts the scale to its decimal representation then accesses the dictionary and retrieves the name associated with that number. 
-```
->>> C_Major_Scale.getName()
-Major
->>> (C_Major_Scale + 2).getName()
-Dorian
-```
+<a name="scale-propterties"/>
 
-I also created a Static method called decimalToPitchClass() that converts a decimal number into a pitch-class-set. All pitch-class-sets have an associated decimal representation. As an example; Major = 2741. This is very useful for creating scales by name! You can create every scale that is named in the dictionary. 
-```
->>> C_Major_Scale = Scale(C, Scale.decimalToPitchClass(major))
-[C, D, E, F, G, A, B]
-```
+#### 2.2.5. Scale Properties
 
 The scale also has several methods for determining properties of scales. You can read about what these algorithms do at https://ianring.com/musictheory/scales/. Currently the properties supported are:
 ```
@@ -239,7 +314,11 @@ The scale also has several methods for determining properties of scales. You can
 
 <a name="chords"/>
 
-#### 2.3. Chords
+### 2.3. Chords
+
+<a name="chord-initialization"/>
+
+#### 2.3.0. Initialization
 
 Build a chord off of a scale degree, the build chord method has two optional params, the amount of notes in the chord, and the generic interval between each degree, by default, chords are comprised of four notes with a generic interval of 3 (A third). In this case we are building a chord with five notes on the fifth scale degree of the C Major Scale. The succeeding chord is a quartal chord based off of the same degree.
 ```
@@ -262,6 +341,10 @@ You can also build a Chord using Generic Intervals.
 >>> E7 = C_Major_Scale[1].buildWithGenericIntervals(Chord, [1, 3, 4, 6])
 [C, E, F, A]
 ```
+
+<a name="chord-representation"/>
+
+#### 2.3.1. Representation
 
 You can print the quality of the chord in three different ways. It is derived through an algorithm that emulates how music theorists derive chord qualities, so there is very little reliance on hardcoding and you can get the quality for almost any chord. The Parent Chord is the chord in question based exclusively off thirds, ignoring sus numerals. As a result the getParentChordQuality() method does not support sus.
 ```
@@ -293,18 +376,6 @@ You can also print the Jazz Numeral Notation
 ```
 >>> Scale(A, minor)[6].build(Chord, 7).printNumeral()
 bVIM13#11
-```
-
-You can also print the Figured bass of a Chord. This method uses a method I created called getFirstInversion() to derive the most likely first inversion of the chord, and uses that chords numeral. 
-```
->>> Chord(C, [P1, M3, P5]).invert(3).getFiguredBass()
-I6/4
-```
-
-You can resolve a chord using a certain rule
-```
->>> G7.resolveChord(circleOfFifths)
-[C, E, G, B]
 ```
 
 One problem I encountered was trying to figure out how to print the quality of quartal/quintal harmony and beyond that. The solution I found was to rearrange the intervals of said chords so that they are built on thirds and indicate the missing notes. 
@@ -361,19 +432,83 @@ There is also support for Secondary Chords. Whenever you build a scale off of a 
 IIIM7/ii
 ```
 
-This can also be useful for creating Secondary Chords. There are many ways you can achieve this.
-```
->>> C_Major_Scale[2].buildScaleWithIntervals(Scale.decimalToPitchClass(harmonic_minor_ascending))[5].build(Chord)
-[A, C#, E, G]
->>> C_Major_Scale[2].buildScale()[5].buildWithIntervals(Chord, [P1, M3, P5, m7])
-[A, C#, E, G]
-```
+<a name="chord-arithmetic"/>
+
+#### 2.3.2. Arithmetic
 
 There are a lot of arithmetic options for a Chord. Adding an Interval to a Chord is just like adding one to a Scale. It shifts the Chord. However adding a generic interval to a Chord rotates it along its parent Scale, assuming a parent Scale is defined.
 ```
 >>> CM7 + 2
 [D, F, A, C]
 ```
+
+<a name="chord-transformation"/>
+
+#### 2.3.3. Transformation
+
+You can transform a Chord just like a Scale with either an Accidental or ontop of that you can use a generic interval. When you alter a Chord with an interval, if there is a parent scale assigned to the Chord, the Parent-Scale will also be altered.
+```
+>>> CmM7 = CM7[2].transform("b")
+[C, Eb, G, B]
+>>> CmM7.getParentScale()
+[C, D, Eb, F, G, A, B]
+CM7[2].transformWithGenericInterval(2)
+[C, F, G, B]
+```
+
+<a name="chord-secondary"/>
+
+#### 2.3.4. Secondary Chords
+
+You can very easily create secondary Chords from scratch
+```
+>>> C_Major_Scale[2].buildScale()[5].buildWithIntervals(Chord, [P1, M3, P5, m7])
+[A, C#, E, G]
+```
+
+Despite this I have created some Sugar Methods for creating certain Secondary Chords including:
+```
+>>> Chord.getSecondaryDominant()
+>>> Chord.getSecondarySubDominant()
+>>> Chord.getSecondaryTonic()
+>>> Chord.getSecondaryNeopolitan()
+>>> Chord.getSecondaryAugmentedSix()
+>>> Chord.getSecondaryTritoneSubstitution()
+```
+
+<a name="chord-inversions"/>
+
+#### 2.3.5. Inversions
+
+My Chord class has several methods useful for dealing with Chord Inversions, including invert(), getInversion(), getFirstInversion(), getFiguredBass() and for the Chord-Degrees there is a getPositionInFirstInversion()
+```
+>>> inverted_chord = CM7.invert(3)
+[G, B, C, E]
+>>> inverted_chord.getInversion()
+3
+>>> inverted_chord.getFirstInversion()
+[C, E, G, B]
+>>> inverted_chord[2].getPositionInFirstInversion()
+4
+>>> Chord(C, [P1, M3, P5]).invert(3).getFiguredBass()
+I6/4
+```
+
+<a name="chord-voice-leading"/>
+
+#### 2.3.6. Voice Leading
+
+There is also some support for voice-leading even with unique Chord voicings. 
+```
+>>> Dm7 = C_Major_Scale[2].buildWithGenericIntervals(Chord, [1, 5, 7, 10])
+[D, A, C, F]
+>>> Dm7.resolveChord()
+[D, G, B, F]
+```
+
+<a name="chord-polymorphism"/>
+
+#### 2.3.7. Polymorphism
 
 Deciding how to build and represent the Chord object was very difficult. Traditionally a Chord is thought of as a Scale nested within another Scale, built on generic intervals. As an example, the Cmaj7 chord is the result of applying the generic intervals 1-3-5-7 to the major scale. Applying the same generic intervals to the minor scale produces a Cmin7 chord. Givin this, it wouldnt be unreasonable to think that the Chord object should have a strict dependancy on the Scale object, IE every Chord has a parent Scale. Despite this many people like to implement their libraries in such a way that the Chord is a distinct object from the Scale and has no reference or direct relationship with any Scale object. There are bennifits and drawbacks to both approaches. In the former approach you are givin context for the Chord in the form of a position within a Scale. This is useful for printing roman numerals and deriving related Chords. However in the latter implementation you have the freedom to build any Chord without first instantiating a parent Scale. How can we achieve both? 
 
@@ -413,6 +548,10 @@ In case you want a Chord with context to behave like a Scale you can access supe
 >>> super(type(CM7[2]), CM7[2]).build(Chord, 4, 2)
 [E, G, B, D]
 ```
+
+<a name="configuration"/>
+
+### 2.4. Configuration [WIP]:
 
 <a name="goals"/>
 
