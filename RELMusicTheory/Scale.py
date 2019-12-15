@@ -423,6 +423,7 @@ class Scale:
 	def setDegrees(self, p_degrees): self.degrees = p_degrees
 	def setTonicTone(self, p_tonic_tone): self.tonic_tone = p_tonic_tone
 	def setParentDegree(self, p_parent_degree): self.parent_degree = p_parent_degree
+	
 	class _Degree:
 		def __init__(self, p_interval, p_parent_scale, p_octaves = 0):
 			self.interval = p_interval
@@ -483,7 +484,6 @@ class Scale:
 
 				try:
 					new_interval = (self.getInterval() - p_other).simplify()
-
 					while (new_interval < P1): new_interval = new_interval + P8
 
 					if not new_interval in self.getParentScale():
@@ -495,7 +495,6 @@ class Scale:
 				except: print("Error: Failed to assign tones to the new scale")
 
 			if (isinstance(p_other, int)):
-
 				if (p_other < 0): return self + abs(p_other)
 				if (p_other == 1): return self
 				if (type(self) != Scale._Degree): return super(type(self), self).previous() - (p_other - 1)

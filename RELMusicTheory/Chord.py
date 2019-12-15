@@ -327,43 +327,37 @@ class Chord(Scale):
 		except: print("Error: Failed to get first inversion of Chord: " + str(self))
 
 	def getSecondaryDominant(self):
-		if (self.getParentDegree() != None):
-			return (self.getParentDegree().buildScale()[1] + P5).buildWithIntervals(Chord, [P1, M3, P5, m7])
+		if (self.getParentDegree() != None): return (self.getParentDegree().buildScale()[1] + P5).buildWithIntervals(Chord, [P1, M3, P5, m7])
 		else:
 			self.setParentDegree(Scale(self[1].getTone(), [P1, M2, M3, P4, P5, M6, M7])[1])
 			return (self.getParentDegree().buildScale()[1] + P5).buildWithIntervals(Chord, [P1, M3, P5, m7])
 
 	def getSecondarySubDominant(self):
-		if (self.getParentDegree() != None):
-			return (self.getParentDegree().buildScale()[1] + M2).buildWithGenericIntervals(Chord, [1, 3, 5, 7])
+		if (self.getParentDegree() != None): return (self.getParentDegree().buildScale()[1] + M2).buildWithGenericIntervals(Chord, [1, 3, 5, 7])
 		else:
 			self.setParentDegree(Scale(self[1].getTone(), [P1, M2, M3, P4, P5, M6, M7])[1])
 			return (self.getParentDegree().buildScale()[1] + M2).buildWithGenericIntervals(Chord, [1, 3, 5, 7])
 
 	def getSecondaryTonic(self):
-		if (self.getParentDegree() != None):
-			return (self.getParentDegree().buildScale()[1] + P1).buildWithGenericIntervals(Chord, [1, 3, 5])
+		if (self.getParentDegree() != None): return (self.getParentDegree().buildScale()[1] + P1).buildWithGenericIntervals(Chord, [1, 3, 5])
 		else:
 			self.setParentDegree(Scale(self[1].getTone(), [P1, M2, M3, P4, P5, M6, M7])[1])
 			return (self.getParentDegree().buildScale()[1] + P1).buildWithGenericIntervals(Chord, [1, 3, 5])
 
 	def getSecondaryNeopolitan(self):
-		if (self.getParentDegree() != None):
-			return (self.getParentDegree().buildScale()[1] + M2).buildWithGenericIntervals(Chord, [1, 3, 5, 7])[1].transform("b")
+		if (self.getParentDegree() != None): return (self.getParentDegree().buildScale()[1] + M2).buildWithGenericIntervals(Chord, [1, 3, 5, 7])[1].transform("b")
 		else:
 			self.setParentDegree(Scale(self[1].getTone(), [P1, M2, M3, P4, P5, M6, M7])[1])
 			return (self.getParentDegree().buildScale()[1] + M2).buildWithGenericIntervals(Chord, [1, 3, 5, 7])[1].transform("b")
 
 	def getSecondaryAugmentedSix(self):
-		if (self.getParentDegree() != None):
-			return (self.getParentDegree().buildScale()[1] + P5).buildWithIntervals(Chord, [P1, M3, P5, m7]).getSecondaryTritoneSubstitution()
+		if (self.getParentDegree() != None): return (self.getParentDegree().buildScale()[1] + P5).buildWithIntervals(Chord, [P1, M3, P5, m7]).getSecondaryTritoneSubstitution()
 		else:
 			self.setParentDegree(Scale(self[1].getTone(), [P1, M2, M3, P4, P5, M6, M7])[1])
 			return (self.getParentDegree().buildScale()[1] + P5).buildWithIntervals(Chord, [P1, M3, P5, m7]).getSecondaryTritoneSubstitution()
 
 	def getSecondaryTritoneSubstitution(self):
-		if (self.getParentDegree() != None):
-			return (self.getParentDegree().buildScale()[1] + P5).buildWithIntervals(Chord, [P1, M3, P5, m7])[3].transform("b")
+		if (self.getParentDegree() != None): return (self.getParentDegree().buildScale()[1] + P5).buildWithIntervals(Chord, [P1, M3, P5, m7])[3].transform("b")
 		else:
 			self.setParentDegree(Scale(self[1].getTone(), [P1, M2, M3, P4, P5, M6, M7])[1])
 			return (self.getParentDegree().buildScale()[1] + P5).buildWithIntervals(Chord, [P1, M3, P5, m7])[3].transform("b")
@@ -428,8 +422,6 @@ class Chord(Scale):
 			for quality_tuple in CHORD_QUALITIES[p_system].keys():
 
 				if (bass_triad_quality != ""):
-
-					# Copy types pitch class
 					if bass_triad_quality in quality_tuple: bass_triad_pitch_class = CHORD_QUALITIES[p_system][quality_tuple][:]
 
 				# Copy types pitch class
