@@ -159,9 +159,15 @@ A Scale Object requires a Tone for the Tonic, and a list of Intervals organized 
 [C, D, E, F, G, A, B]
 ```
 
-You can also create a scale using scale-steps using the Scale.scaleStepsToPitchClass() method in case Intervals are too tedious.
+You can also create a scale using scale-steps in case Intervals are too tedious.
 ```
->>> C_Major_Scale = Scale(C, Scale.scaleStepsToPitchClass([2, 2, 1, 2, 2, 2, 1]))
+>>> C_Major_Scale = Scale(C, [2, 2, 1, 2, 2, 2, 1])
+[C, D, E, F, G, A, B]
+```
+
+The easiest way to create a Scale is using a decimal number associated with a Scale. For the Major Scale this is the number 2741. However you don't need to worry about memorizing these numbers as they are all saved in constants and you can simply use the name "major". As of right now all 3000+ Scales are supported.
+```
+>>> C_Major_Scale = Scale(C, major)
 [C, D, E, F, G, A, B]
 ```
 
@@ -178,7 +184,7 @@ C
 You can also print the name of a Scale. Since Scale names cannot be derived logically in contrast to Chord names, the names of all Scales are kept in scalesDictionary. My algorithm converts the scale to its decimal representation then accesses the dictionary and retrieves the name associated with that number. 
 ```
 >>> C_Major_Scale.getName()
-Major
+Ionian/Major
 >>> (C_Major_Scale + 2).getName()
 Dorian
 ```
