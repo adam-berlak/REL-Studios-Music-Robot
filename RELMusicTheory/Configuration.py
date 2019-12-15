@@ -7,6 +7,8 @@ DEFAULT_SYSTEM = "western"
 
 ACCIDENTAL_LIMIT = 2
 
+DEGREE_SIMPLE_REPRESENTATION = True
+
 TONE_NAMES = {
         "western": ["C", None, "D", None, "E", "F", None, "G", None, "A", None, "B"],
         "german": ["C", None, "D", None, "E", "F", None, "G", None, "A", None, "H"],
@@ -128,13 +130,6 @@ G_sharp = Tone("G", 1)
 A_sharp = Tone("A", 1)
 B_sharp = Tone("B", 1)
 
-# Configuration Heptatonic Scales Constants
-major = [P1, M2, M3, P4, P5, M6, M7]
-minor = [P1, M2, m3, P4, P5, m6, m7]
-melodicMinor = [P1, M2, m3, P4, P5, M6, M7]
-harmonicMinor = [P1, M2, m3, P4, P5, m6, M7]
-neopolitanMajor = [P1, m2, m3, P4, P5, M6, M7]
-
 # Configuration Chord Quality Systems
 CHORD_QUALITIES = {
         "western": {
@@ -186,10 +181,3 @@ CHORD_QUALITIES = {
 
 # Configuration Scale Degree Naming Systems
 SCALE_DEGREE_NAMES = {"western": {P1: "tonic", m2: "supertonic", M2: "supertonic", m3: "mediant", M3: "mediant", P4: "subdominant", P5: "dominant", m6: "submediant", M6: "submediant", m7: "subtonic", M7: "leading tone"}}
-
-# Configuration Resolution Rules
-def circleOfFifths(p_chord):
-	return p_chord - 5
-def circleOfFourths(p_chord):
-	return p_chord - 4
-

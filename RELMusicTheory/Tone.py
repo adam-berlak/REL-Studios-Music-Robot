@@ -14,12 +14,9 @@ class Tone:
 
     def __str__(self):
 
-        if (self.getAccidental() < 0):
-            return self.getToneName() + (Tone.accidentals[-1] * abs(self.getAccidental()))
-        elif (self.getAccidental() > 0):
-            return self.getToneName() + (Tone.accidentals[1] * abs(self.getAccidental()))
-        else:
-            return self.getToneName() + Tone.accidentals[0]
+        if (self.getAccidental() < 0): return self.getToneName() + (Tone.accidentals[-1] * abs(self.getAccidental()))
+        elif (self.getAccidental() > 0): return self.getToneName() + (Tone.accidentals[1] * abs(self.getAccidental()))
+        else: return self.getToneName() + Tone.accidentals[0]
 
     def __repr__(self):
         return str(self)

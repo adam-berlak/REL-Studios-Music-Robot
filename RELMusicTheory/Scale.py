@@ -43,13 +43,25 @@ from HelperMethods import *
 
 class Scale:
 
-	def __init__(self, p_tonic_tone, p_intervals):
+	def __init__(self, p_tonic_tone, p_item):
 		self.tonic_tone = p_tonic_tone
 		self.parent_degree = None
 		self.degrees = []
 
-		for i in range(len(p_intervals)):
-			self.degrees.append(type(self)._Degree(p_intervals[i], self))
+		if (isinstance(p_item, list)):
+
+			if (isinstance(p_item[0], Interval)):
+				intervals = p_item
+
+			if (isinstance(p_item[0], int)):
+				intervals = Scale.scaleStepsToPitchClass(p_item)
+
+		elif (isinstance(p_item, int)):
+
+			intervals = Scale.decimalToPitchClass(p_item)
+
+		for i in range(len(intervals)):
+			self.degrees.append(type(self)._Degree(intervals[i], self))
 
 	#####################################
 	# Methods concerning class behavior #
@@ -563,10 +575,7 @@ class Scale:
 	def getTonicTone(self):
 		return self.tonic_tone
 	def getParentDegree(self):
-		if (self.parent_degree != None):
-			return self.parent_degree
-
-		return None
+		return self.parent_degree
 
 	def setDegrees(self, p_degrees):
 		self.degrees = p_degrees
@@ -602,7 +611,8 @@ class Scale:
 			return _Degree(self.getInterval(), self.getParentScale())
 
 		def __str__(self):
-			return self.printNumeral() + ": " + str(self.getTone())
+			if (not DEGREE_SIMPLE_REPRESENTATION): return self.printNumeral() + ": " + str(self.getTone())
+			else: return str(self.getTone())
 
 		##############
 		# Comparison #
@@ -627,7 +637,6 @@ class Scale:
 
 					if (not new_interval in self.getParentScale() and not self.getParentScale().isDistinct()): return self.getParentScale().addInterval(new_interval).getDegreeByInterval(new_interval)
 					elif (not new_interval in self.getParentScale() and self.getParentScale().isDistinct()): return self.getParentScale().replaceAtNumeralWith(new_interval.getNumeral(), new_interval).getDegreeByInterval(new_interval)
-
 					return self.getParentScale().getDegreeByInterval(new_interval)
 
 				except:
@@ -635,10 +644,8 @@ class Scale:
 
 			if (isinstance(p_other, int)):
 
-				if (p_other < 0): return self - abs(p_other)
-				
+				if (p_other < 0): return self - abs(p_other)			
 				if (p_other == 1): return self
-
 				if (type(self) != Scale._Degree): return super(type(self), self).next() + (p_other - 1)
 				else: return self.next() + (p_other - 1)
 
@@ -677,9 +684,7 @@ class Scale:
 			if (isinstance(p_other, int)):
 
 				if (p_other < 0): return self + abs(p_other)
-
 				if (p_other == 1): return self
-
 				if (type(self) != Scale._Degree): return super(type(self), self).previous() - (p_other - 1)
 				else: return self.previous() - (p_other - 1)
 
@@ -858,6 +863,10 @@ class Scale:
 		def getPositionInParent(self):
 			return self.getParentScale().getParentScale().getDegrees().index(self.findInParent()) + 1
 
+		def findInParent(self):
+			if (self.getParentScale().getParentDegree() != None): return self.getParentScale().getParentDegree().getParentScale().getDegreeByInterval((self.getParentScale().getParentDegree().getInterval() + self.getInterval()).simplify())
+			else: return self
+
 		def next(self):		
 			if (self.getPosition() == len(self.getParentScale().getDegrees())): return self.getParentScale()[1]
 			return self.getParentScale()[self.getPosition() + 1]
@@ -865,10 +874,6 @@ class Scale:
 		def previous(self):
 			if (self.getPosition() == 1): return self.getParentScale()[-0]
 			return self.getParentScale()[self.getPosition() - 1]
-
-		def findInParent(self):
-			if (self.getParentScale().getParentDegree() != None): return self.getParentScale().getParentDegree().getParentScale().getDegreeByInterval((self.getParentScale().getParentDegree().getInterval() + self.getInterval()).simplify())
-			return self
 
 		#######################
 		# Getters and Setters #

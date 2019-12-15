@@ -41,6 +41,7 @@
 # NEW FEATURES: Add support for chord inversions and sus notes in printQuality()
 # NEW FEATURES: Support voice leading rules in configuration
 
+# BUGS TO FIX: In Chord, for all methods that access parentDegree perfom a check
 # BUGS TO FIX: Add limitations on getFirstInversion() and getInversion() so that it doesnt loop forever
 # BUGS TO FIX: Fix sub and addition
 # BUGS TO FIX: Remove hardcoded chord quality names from Chord class
@@ -60,12 +61,14 @@ def main():
 
 	print(Scale(C, [P1, M2, M3, P4, P5, M6, M7])[1].build(Chord, 7, 8))
 
+	print(Scale(C, [2, 2, 1, 2, 2, 2, 1]).getModeNames())
+
 	# Create a C Major Scale
-	CMajorScale = Scale(C, major)
+	CMajorScale = Scale(C, Scale.decimalToPitchClass(major))
 
 	print("Got Here" + CMajorScale[1].build(Chord).getSecondaryAugmentedSix())
 
-	print(Chord(C, [P1, m3, aug4, M7]).getQuality())
+	print(Chord(C, [P1, m3, P5, m7])[2])
 
 	print(CMajorScale.printTones())
 
@@ -73,7 +76,7 @@ def main():
 
 	print(CMajorScale[2].buildScale()[2].findInParent().getInterval())
 
-	print(Scale(C, Scale.decimalToPitchClass(Diminished_Seventh)))
+	print(Scale(C, Scale.decimalToPitchClass(diminished_seventh)))
 
 	print((CMajorScale[1].build(Chord)[1] + m3).getParentScale().getParentScale())
 	
@@ -146,7 +149,7 @@ def main():
 	print("The quality of the 7th chord of the C major scale is: " + Bhalfdim9.getParentChordQuality())
 
 	# Properly assign notes to non-major heptatonic scales
-	AMelodicMinor = Scale(A, melodicMinor)
+	AMelodicMinor = Scale(A, Scale.decimalToPitchClass(melodic_minor_ascending))
 	print("The A Melodic Minor Scale is: " + AMelodicMinor.printTones())
 
 	# Build a chord on a non-major heptatonic scale
@@ -157,7 +160,7 @@ def main():
 	print("The quality of this chord is: " + AM11b3.getParentChordQuality())
 
 	# Print Roman Numerals with the Correct quality
-	print("The jazz numeral notation of the 6th chord of A minor, with 7 notes is: " + Scale(A, minor)[6].build(Chord, 7).printNumeral(True, 2))
+	print("The jazz numeral notation of the 6th chord of A minor, with 7 notes is: " + Scale(A, Scale.decimalToPitchClass(minor))[6].build(Chord, 7).printNumeral(True, 2))
 
 	print(CMajorScale[1].buildWithIntervals(Chord, Chord.stringToPitchClass("half-dimmaj7")).getParentDegree().getParentScale().printTones())
 
