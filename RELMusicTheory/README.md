@@ -181,7 +181,7 @@ C
 
 #### 2.2.1. Representation
 
-You can also print the name of a Scale. Since Scale names cannot be derived logically in contrast to Chord names, the names of all Scales are kept in scalesDictionary. My algorithm converts the scale to its decimal representation then accesses the dictionary and retrieves the name associated with that number. 
+You can also print the name of a Scale. Since Scale names cannot be derived logically in contrast to Chord names, the names of all Scales are kept in ScalesDictionary.py. My algorithm converts the scale to its decimal representation then accesses the dictionary and retrieves the name associated with that number. 
 ```
 >>> C_Major_Scale.getName()
 Ionian/Major
