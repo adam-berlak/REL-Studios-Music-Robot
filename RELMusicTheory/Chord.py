@@ -2,8 +2,7 @@ from Scale import *
 
 class Chord(Scale):
 	
-	def __init__(self, p_tone, p_pitch_class):
-		super().__init__(p_tone, p_pitch_class)
+	def __init__(self, p_tone, p_pitch_class): super().__init__(p_tone, p_pitch_class)
 
 	#####################################
 	# Methods concerning class behavior #
@@ -15,8 +14,8 @@ class Chord(Scale):
 			new_interval_list = super(Chord._Degree, self[p_other.start]).buildPitchClass()
 			new_chord = self[p_other.start].findInParent().buildWithIntervals(Chord, new_interval_list[:p_other.stop])
 			return new_chord
-		else:
-			return super().__getitem__(p_other)
+
+		else: return super().__getitem__(p_other)
 
 	##############
 	# Arithmetic #
@@ -25,34 +24,22 @@ class Chord(Scale):
 	def __add__(self, p_other):
 
 		if (self.getParentDegree() != None):
+			if (isinstance(p_other, Interval)):return (self.getParentDegree() + p_other).buildWithIntervals(Chord, self.getIntervals())
+			if (isinstance(p_other, int)):return (self.getParentDegree() + p_other).buildWithGenericIntervals(Chord, self.getNumerals())
+			if (isinstance(p_other, str)):return str(self) + p_other
 
-			if (isinstance(p_other, Interval)):
-				return (self.getParentDegree() + p_other).buildWithIntervals(Chord, self.getIntervals())
-
-			if (isinstance(p_other, int)):
-				return (self.getParentDegree() + p_other).buildWithGenericIntervals(Chord, self.getNumerals())
-
-			if (isinstance(p_other, str)):
-				return str(self) + p_other
-		else:
-			return super().__add__(p_other)
+		else: return super().__add__(p_other)
 
 	def __radd__(self, p_other):
-
-		if (isinstance(p_other, str)):
-			return p_other + str(self)
+		if (isinstance(p_other, str)): return p_other + str(self)
 
 	def __sub__(self, p_other):
 
 		if (self.getParentDegree() != None):
+			if (isinstance(p_other, Interval)): return (self.getParentDegree() - p_other).buildWithIntervals(Chord, self.getIntervals())
+			if (isinstance(p_other, int)): return (self.getParentDegree() - p_other).buildWithGenericIntervals(Chord, self.getNumerals())
 
-			if (isinstance(p_other, Interval)):
-				return (self.getParentDegree() - p_other).buildWithIntervals(Chord, self.getIntervals())
-
-			if (isinstance(p_other, int)):
-				return (self.getParentDegree() - p_other).buildWithGenericIntervals(Chord, self.getNumerals())
-		else:
-			return super().__sub__(p_other)
+		else: return super().__sub__(p_other)
 		
 	################################
 	# Methods concerned with names #
@@ -71,8 +58,7 @@ class Chord(Scale):
 			for key in CHORD_QUALITIES[p_system].keys():
 
 				# If bass triad in dictionary matches bass triad in parent chord add its name to the list
-				if (all(elem in chord_intervals[:2] for elem in CHORD_QUALITIES[p_system][key][:2]) or chord_intervals[1] == None):
-					triad_qualities.append(key)
+				if (all(elem in chord_intervals[:2] for elem in CHORD_QUALITIES[p_system][key][:2]) or chord_intervals[1] == None): triad_qualities.append(key)
 
 			# Retrieve extensions of parent chord
 			extensions = chord_intervals[2:]
@@ -102,12 +88,10 @@ class Chord(Scale):
 							count = count + 1
 
 							# Add the extension to the list of accidentals if it is altered
-							if (extensions[i] != temp_chord_quality_extensions[i]):
-								temp_accidentals = temp_accidentals + extensions[i]
+							if (extensions[i] != temp_chord_quality_extensions[i]): temp_accidentals = temp_accidentals + extensions[i]
 
 					# If chord interval is None object indicate that the chord is missing this interval
-					else:
-						temp_accidentals = temp_accidentals + OMISSION_NOTATION[p_system] + str((((2 + i) + 1) * 2) - 1)
+					else: temp_accidentals = temp_accidentals + OMISSION_NOTATION[p_system] + str((((2 + i) + 1) * 2) - 1)
 
 					i = i + 1
 
@@ -120,8 +104,7 @@ class Chord(Scale):
 					possible_extensions.append((key, temp_accidentals))
 
 				# If has similar differance as the closest match so far add it to possible extensions
-				elif (count == smallest_difference):
-					possible_extensions.append((key, temp_accidentals))
+				elif (count == smallest_difference): possible_extensions.append((key, temp_accidentals))
 			
 			# Keep track of all valid names for the chord
 			possible_qualities = []
@@ -149,8 +132,7 @@ class Chord(Scale):
 			# Return the shortest name
 			return min(possible_qualities, key=len)
 
-		except: 
-			print("Error: Failed to get quality of parent chord for chord: " + str(self))
+		except: print("Error: Failed to get quality of parent chord for chord: " + str(self))
 
 	def getQuality(self, p_style = 2, p_system = DEFAULT_SYSTEM):
 
@@ -166,8 +148,7 @@ class Chord(Scale):
 			extensions_quality = quality_contents.group(2)
 
 			# If there is no extensions quality, set it as the same as the bass triad
-			if (extensions_quality == None):
-				extensions_quality = bass_triad_quality
+			if (extensions_quality == None): extensions_quality = bass_triad_quality
 
 			# Get actually highest numeral in Chord
 			extensions_numeral = max([item.getNumeral() for item in self.getIntervals()])
@@ -182,9 +163,7 @@ class Chord(Scale):
 
 			# Retrieve all altered intervals from string
 			for altered_interval in altered_intervals:
-
-				if (Interval.stringToInterval(altered_interval).getNumeral() <= int(extensions_numeral)):
-					modifications.append((altered_interval, Interval.stringToInterval(altered_interval).getNumeral()))
+				if (Interval.stringToInterval(altered_interval).getNumeral() <= int(extensions_numeral)): modifications.append((altered_interval, Interval.stringToInterval(altered_interval).getNumeral()))
 
 			# RegEx no intervals in parent chord quality and only include those below highest numeral
 			interval_regex_optional_accidental = "[" + accidentals_regex + "]*\d+"
@@ -193,11 +172,8 @@ class Chord(Scale):
 
 			# Retrieve all no intervals from string
 			for omitted_interval in omitted_intervals:
-
 				interval_string = re.findall(re.compile(interval_regex_optional_accidental), str(omitted_interval))[0]
-
-				if (Interval.stringToInterval(interval_string).getNumeral() <= int(extensions_numeral)):
-					modifications.append((omitted_interval, Interval.stringToInterval(interval_string).getNumeral()))
+				if (Interval.stringToInterval(interval_string).getNumeral() <= int(extensions_numeral)): modifications.append((omitted_interval, Interval.stringToInterval(interval_string).getNumeral()))
 
 			# Loop through tones and if not a third make it a sus
 			for interval in self.getIntervals():
@@ -213,19 +189,15 @@ class Chord(Scale):
 			modifications_string = ""
 
 			# Create string for the modifications of the bass chord
-			for modification in modifications:
-				modifications_string = modifications_string + modification[0]
+			for modification in modifications: modifications_string = modifications_string + modification[0]
 
 			# If bass quality is the same as extensions quality return only the bass triad quality
-			if (bass_triad_quality == extensions_quality):
-				return bass_triad_quality + str(extensions_numeral) + modifications_string
+			if (bass_triad_quality == extensions_quality): return bass_triad_quality + str(extensions_numeral) + modifications_string
 
 			# Otherwise return both
-			else:
-				return bass_triad_quality + extensions_quality + str(extensions_numeral) + modifications_string
+			else: return bass_triad_quality + extensions_quality + str(extensions_numeral) + modifications_string
 
-		except:
-			print("Error: Failed to get quality of chord: " + str(self))
+		except: print("Error: Failed to get quality of chord: " + str(self))
 
 	def printNumeral(self, p_with_quality = False, p_style = 2, p_system = DEFAULT_SYSTEM):
 
@@ -233,15 +205,12 @@ class Chord(Scale):
 			if (self.getParentDegree() != None):
 				result = self.getParentDegree().printNumeral()
 
-				if (p_with_quality == True):
-					return result + self.getParentChordQuality(p_style, p_system)
+				if (p_with_quality == True): return result + self.getParentChordQuality(p_style, p_system)
 
 				return result
-			else:
-				print("Error: Unable to retrieve numeral of Chord as there is not Parent Degree Assigned")
+			else: print("Error: Unable to retrieve numeral of Chord as there is not Parent Degree Assigned")
 		
-		except:
-			print("Error: Failed to print numeral of chord: " + str(self))
+		except: print("Error: Failed to print numeral of chord: " + str(self))
 
 	def printNumeralWithContext(self, p_with_quality = False, p_style = 2, p_system = DEFAULT_SYSTEM):
 
@@ -249,14 +218,12 @@ class Chord(Scale):
 			if (self.getParentDegree() != None and self.getParentScale().getParentDegree() != None):
 				secondary_information = "\\" + self.getParentScale().getParentDegree().build(Chord).printNumeral()
 				return self.printNumeral(p_with_quality, p_style, p_system) + secondary_information
-			else:
-				print("Error: Unable to retrieve secondary information of Chord as there is not Parent Degree Assigned")
-		
-		except:
-			print("Error: Failed to print numeral with context of chord: " + str(self))
 
-	def getFiguredBass(self):
-		return self.getFirstInversion().printNumeral(False) + Chord.pitchClassToFiguredBass(self.getIntervals())
+			else: print("Error: Unable to retrieve secondary information of Chord as there is not Parent Degree Assigned")
+		
+		except: print("Error: Failed to print numeral with context of chord: " + str(self))
+
+	def getFiguredBass(self): return self.getFirstInversion().printNumeral(False) + Chord.pitchClassToFiguredBass(self.getIntervals())
 
 	##########################
 	# Transformation methods #
@@ -274,11 +241,10 @@ class Chord(Scale):
 				parallel_scale = self.getParentScale().getParallelScale()
 				parallel_chord = parallel_scale[self[1].getPositionInParent()].buildWithGenericIntervals(Chord, self.getNumerals())
 				return parallel_chord
-			else:
-				print("Error: Unable to get parallel of Chord that does not have a Parent Scale")
 
-		except:
-			print("Error: Failed to get parallel Chord")
+			else: print("Error: Unable to get parallel of Chord that does not have a Parent Scale")
+
+		except: print("Error: Failed to get parallel Chord")
 
 	def getRelativeChord(self):
 
@@ -288,11 +254,9 @@ class Chord(Scale):
 				relative_chord = relative_scale[self[1].getPositionInParent()].buildWithGenericIntervals(Chord, self.getNumerals())
 				return relative_chord
 
-			else:
-				print("Error: Unable to get relative of Chord that does not have a Parent Scale")
+			else: print("Error: Unable to get relative of Chord that does not have a Parent Scale")
 
-		except:
-			print("Error: Failed to get relative Chord")
+		except: print("Error: Failed to get relative Chord")
 
 	########################
 	# Common Functionality #
@@ -304,13 +268,11 @@ class Chord(Scale):
 			position_vector = [item.getPositionInFirstInversion() for item in self.getDegrees()]
 			new_chord = self
 
-			for i in range(len(self.getDegrees())):
-				new_chord = new_chord[i + 1].transformWithGenericInterval(HARMONIC_VOICE_LEADING[p_system][position_vector[i]])
+			for i in range(len(self.getDegrees())): new_chord = new_chord[i + 1].transformWithGenericInterval(HARMONIC_VOICE_LEADING[p_system][position_vector[i]])
 
 			return new_chord
 		
-		except:
-			print("Error: Failed to resolve Chords: " + str(self))
+		except: print("Error: Failed to resolve Chords: " + str(self))
 
 	def invert(self, p_inversion_number):
 
@@ -319,8 +281,7 @@ class Chord(Scale):
 			new_chord.setParentDegree(super(type(self[1]), self[1]).__add__(p_inversion_number).findInParent())
 			return new_chord
 
-		except:
-			print("Error: Failed to invert Chord: " + str(self) + " by " + str(p_inversion_number))
+		except: print("Error: Failed to invert Chord: " + str(self) + " by " + str(p_inversion_number))
 
 	def getInversion(self):
 
@@ -334,8 +295,7 @@ class Chord(Scale):
 
 			return counter
 
-		except:
-			print("Error: Failed to get inversion number for Chord: " + str(self))
+		except: print("Error: Failed to get inversion number for Chord: " + str(self))
 
 	def getFirstInversion(self):
 
@@ -354,8 +314,7 @@ class Chord(Scale):
 					smallest_inversion = temp_chord
 					min_interval_sum = temp_interval_sum
 
-				elif (temp_interval_sum < min_interval_sum):
-					duplicates_found = True
+				elif (temp_interval_sum < min_interval_sum): duplicates_found = True
 
 				previous = temp_chord
 
@@ -365,8 +324,7 @@ class Chord(Scale):
 
 			return smallest_inversion
 
-		except:
-			print("Error: Failed to get first inversion of Chord: " + str(self))
+		except: print("Error: Failed to get first inversion of Chord: " + str(self))
 
 	def getSecondaryDominant(self):
 		if (self.getParentDegree() != None):
@@ -421,8 +379,7 @@ class Chord(Scale):
 			if (self.getParentDegree() != None): new_chord.setParentDegree(self.getParentDegree())
 			return new_chord
 
-		except:
-			print("Error: Failed to build Chord: " + str(self) + " on thirds")
+		except: print("Error: Failed to build Chord: " + str(self) + " on thirds")
 
 	def simplify(self):
 
@@ -433,8 +390,7 @@ class Chord(Scale):
 			if (self.getParentDegree() != None): new_chord.setParentDegree(self.getParentDegree())
 			return new_chord
 
-		except:
-			print("Error: Failed to simplify intervals of Chord: " + str(self))
+		except: print("Error: Failed to simplify intervals of Chord: " + str(self))
 
 	def next(self):
 		if (self.getParentDegree() != None): return (self[1].next()).buildWithGenericIntervals(Chord, self.getNumerals())
@@ -474,18 +430,14 @@ class Chord(Scale):
 				if (bass_triad_quality != ""):
 
 					# Copy types pitch class
-					if bass_triad_quality in quality_tuple:
-						bass_triad_pitch_class = CHORD_QUALITIES[p_system][quality_tuple][:]
+					if bass_triad_quality in quality_tuple: bass_triad_pitch_class = CHORD_QUALITIES[p_system][quality_tuple][:]
 
 				# Copy types pitch class
-				if extensions_quality in quality_tuple:
-					extensions_pitch_class = CHORD_QUALITIES[p_system][quality_tuple][:]
+				if extensions_quality in quality_tuple: extensions_pitch_class = CHORD_QUALITIES[p_system][quality_tuple][:]
 
 			# Return result with bass_triad_pitch class if it is defined
-			if (bass_triad_pitch_class != ""):
-				result = (bass_triad_pitch_class[:2] + extensions_pitch_class[2:])[:int((int(extensions_numeral) + 1) / 2)]
-			else:
-				result = extensions_pitch_class[:int((int(extensions_numeral) + 1) / 2)]
+			if (bass_triad_pitch_class != ""): result = (bass_triad_pitch_class[:2] + extensions_pitch_class[2:])[:int((int(extensions_numeral) + 1) / 2)]
+			else: result = extensions_pitch_class[:int((int(extensions_numeral) + 1) / 2)]
 
 			# Loop through all altered intervals and apply them to the pitch class set
 			for altered_interval in altered_intervals:
@@ -520,13 +472,11 @@ class Chord(Scale):
 				interval_string = str(re.findall(re.compile(interval_regex_optional_accidental), str(omitted_interval)))
 				interval = Interval.stringToInterval(interval_string)
 
-				if (interval in result):
-					result.pop(result.index(interval))
+				if (interval in result): result.pop(result.index(interval))
 
 			return result
 
-		except:
-			print("Error: Failed to convert string " + p_quality + " to pitch-class")
+		except: print("Error: Failed to convert string " + p_quality + " to pitch-class")
 
 	@staticmethod
 	def pitchClassToFiguredBass(p_pitch_class, p_slice = 2):
@@ -539,11 +489,9 @@ class Chord(Scale):
 
 			# Create figured bass string from inverting pitch class and retrieving numerals
 			for numeral in [item.getNumeral() for item in new_pitch_class][:p_slice]: string = string + str(numeral) + "/"
-
 			return string[:-1]
 		
-		except:
-			print("Error: Failed to calculate figured-bass for: " + p_pitch_class)
+		except: print("Error: Failed to calculate figured-bass for: " + p_pitch_class)
 
 
 	@staticmethod
@@ -564,8 +512,7 @@ class Chord(Scale):
 					new_interval = interval
 
 					# subtract 12 until interval semitones is below 12
-					while (new_interval > P8):
-						new_interval -= P8
+					while (new_interval > P8): new_interval -= P8
 				else:
 					new_interval = interval
 
@@ -595,30 +542,22 @@ class Chord(Scale):
 
 			return new_interval_list
 		
-		except:
-			print("Error: Failed to rearrange intervals " + p_pitch_class + "as thirds")
+		except: print("Error: Failed to rearrange intervals " + p_pitch_class + "as thirds")
 
 	##################################
 	# Overridden Methods and Classes #
 	##################################
 
-	def setParentDegree(self, p_degree):
-		self.parent_degree = self.configureParentDegree(p_degree)
+	def setParentDegree(self, p_degree): self.parent_degree = self.configureParentDegree(p_degree)
 
 	def configureParentDegree(self, p_degree):
 		result_scale = p_degree.getParentScale()
 
 		for degree in self.getDegrees():
 			interval_in_parent = (p_degree.getInterval() + degree.getInterval())
-
-			if (interval_in_parent.getNumeral() > max([item.getNumeral() for item in result_scale.getIntervals()])):
-				interval_in_parent = interval_in_parent.simplify()
-
-			if (interval_in_parent not in result_scale and not result_scale.isDistinct()):
-				result_scale = result_scale.addInterval(interval_in_parent)
-
-			elif (interval_in_parent not in result_scale and result_scale.isDistinct()):
-				result_scale = result_scale.replaceAtNumeralWith(interval_in_parent.getNumeral(), interval_in_parent)
+			if (interval_in_parent.getNumeral() > max([item.getNumeral() for item in result_scale.getIntervals()])): interval_in_parent = interval_in_parent.simplify()
+			if (interval_in_parent not in result_scale and not result_scale.isDistinct()): result_scale = result_scale.addInterval(interval_in_parent)
+			elif (interval_in_parent not in result_scale and result_scale.isDistinct()): result_scale = result_scale.replaceAtNumeralWith(interval_in_parent.getNumeral(), interval_in_parent)
 
 		return result_scale.getDegreeByInterval(p_degree.getInterval())
 
@@ -627,22 +566,20 @@ class Chord(Scale):
 		def __add__(self, p_other):
 
 			if (isinstance(p_other, int)):
-
 				if (p_other < 0): return self - abs(p_other)			
 				if (p_other == 1): return self
 				return self.next() + (p_other - 1)
-			else:
-				return super().__add__(p_other)
+
+			else: return super().__add__(p_other)
 
 		def __sub__(self, p_other):
 
 			if (isinstance(p_other, int)):
-
 				if (p_other < 0): return self + abs(p_other)
 				if (p_other == 1): return self
 				return self.previous() - (p_other - 1)
-			else:
-				return super().__add__(p_other)
+
+			else: return super().__add__(p_other)
 
 		def build(self, object_type, p_num_tones = 4, p_leap_size = 3, *args):
 			if (self.getParentScale().getParentDegree() != None): return self.findInParent().build(object_type, p_num_tones, p_leap_size, *args)
@@ -687,8 +624,7 @@ class Chord(Scale):
 
 				return new_object
 
-			except:
-				print("Error: Failed to transform: " + str(self) + " by the accidental " + str(p_accidental))
+			except: print("Error: Failed to transform: " + str(self) + " by the accidental " + str(p_accidental))
 
 		def transformWithGenericInterval(self, p_generic_interval):
 
@@ -705,11 +641,10 @@ class Chord(Scale):
 						return (self + p_generic_interval).findInParent().buildWithGenericIntervals(Chord, new_generic_intervals)
 					
 					return self.getParentScale().getParentDegree().buildWithGenericIntervals(Chord, new_generic_intervals)
-				else:
-					print("Error: Unable to manipulate Chord with generic intervals as a parent scale is not assigned")
 
-			except:
-				print("Error: Failed to transform: " + str(self) + " by generic interval: " + str(p_generic_interval))
+				else: print("Error: Unable to manipulate Chord with generic intervals as a parent scale is not assigned")
+
+			except: print("Error: Failed to transform: " + str(self) + " by generic interval: " + str(p_generic_interval))
 
 		def getPositionInFirstInversion(self):
 
@@ -720,5 +655,4 @@ class Chord(Scale):
 
 				return None
 			
-			except:
-				print("Error: Failed to get the position of: " + str(self) + " in first inversion")
+			except: print("Error: Failed to get the position of: " + str(self) + " in first inversion")
