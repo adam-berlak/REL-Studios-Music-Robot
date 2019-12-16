@@ -59,6 +59,8 @@ from Configuration import *
 
 def main():
 
+	print(Chord(C, [P1, M3, M7]).getQuality())
+
 	print(Scale(C, [P1, M2, M3, P4, P5, M6, M7])[1].build(Chord, 7, 8))
 
 	print(Scale(C, [2, 2, 1, 2, 2, 2, 1]).getModeNames())
@@ -89,7 +91,7 @@ def main():
 	Dorian = CMajorScale + 2
 	print(CMajorScale[7].build(Chord).getSecondaryDominant())
 	
-	CM7 = CMajorScale[1].buildWithIntervals(Chord, [P1, M3, aug5, M7, aug9, aug11.transform("#")])
+	CM7 = CMajorScale[1].buildWithIntervals(Chord, [P1, M3, aug5, m7, m9, P11])
 	print(CM7.getParentChordQuality())
 	
 	print(Scale(B, Scale.scaleStepsToPitchClass([2, 2, 1, 2, 2, 2, 1])))

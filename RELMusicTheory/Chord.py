@@ -2,7 +2,10 @@ from Scale import *
 
 class Chord(Scale):
 	
-	def __init__(self, p_tone, p_pitch_class): super().__init__(p_tone, p_pitch_class)
+	def __init__(self, p_tone, p_item): 
+		if (isinstance(p_item, str)): pitch_class = Chord.stringToPitchClass(p_item)
+		else: pitch_class = p_item
+		super().__init__(p_tone, pitch_class)
 
 	#####################################
 	# Methods concerning class behavior #
@@ -38,7 +41,7 @@ class Chord(Scale):
 		if (self.getParentDegree() != None):
 			if (isinstance(p_other, Interval)): return (self.getParentDegree() - p_other).buildWithIntervals(Chord, self.getIntervals())
 			if (isinstance(p_other, int)): return (self.getParentDegree() - p_other).buildWithGenericIntervals(Chord, self.getNumerals())
-
+			
 		else: return super().__sub__(p_other)
 		
 	################################
@@ -52,29 +55,45 @@ class Chord(Scale):
 			chord_intervals = Chord.rearrangeIntervalsAsThirds(self.getIntervals())
 
 			# Keep track of all possible bass triad names
+			triad = chord_intervals[:3]
 			triad_qualities = []
 
 			# Loop through all naming conventions for bass triads
 			for key in CHORD_QUALITIES[p_system].keys():
 
-				# If bass triad in dictionary matches bass triad in parent chord add its name to the list
-				if (all(elem in chord_intervals[:2] for elem in CHORD_QUALITIES[p_system][key][:2]) or chord_intervals[1] == None): triad_qualities.append(key)
+				# Counters
+				temp_chord_quality_triad = CHORD_QUALITIES[p_system][key][:3]
+				temp_accidentals = ""
+				exclude = False
+				i = 0
+
+				while(i < len(triad)):
+
+					# Check if chord interval is not None object
+					if (triad[i]):
+
+						# Check if interval does not match with interval in dictionary
+						if (temp_chord_quality_triad[i] and (triad[i] > temp_chord_quality_triad[i]) and triad[i] in [P1, M3, P5, M7, M9, P11, M13]): exclude = True
+						elif (triad[i] != temp_chord_quality_triad[i]): temp_accidentals = temp_accidentals + triad[i]
+
+					# If chord interval is None object indicate that the chord is missing this interval
+					else:
+						temp_accidentals = temp_accidentals + OMISSION_NOTATION[p_system] + str(temp_chord_quality_triad[i])
+					i = i + 1
+
+				if (not exclude): triad_qualities.append((key, temp_accidentals))
 
 			# Retrieve extensions of parent chord
-			extensions = chord_intervals[2:]
-			smallest_difference = 1000
-			accidentals = ""
-
-			# Keep track of all possible extension names
+			extensions = chord_intervals[3:]
 			possible_extensions = []
 
 			# Loop through all naming conventions for extensions
 			for key in CHORD_QUALITIES[p_system].keys():
 
 				# Counters
-				temp_chord_quality_extensions = CHORD_QUALITIES[p_system][key][2:]
+				temp_chord_quality_extensions = CHORD_QUALITIES[p_system][key][3:]
 				temp_accidentals = ""
-				count = 0
+				exclude = False
 				i = 0
 
 				# Loop through all the chord intervals
@@ -84,27 +103,15 @@ class Chord(Scale):
 					if (extensions[i]):
 
 						# Check if interval does not match with interval in dictionary
-						if (extensions[i] != temp_chord_quality_extensions[i]):
-							count = count + 1
-
-							# Add the extension to the list of accidentals if it is altered
-							if (extensions[i] != temp_chord_quality_extensions[i]): temp_accidentals = temp_accidentals + extensions[i]
+						if (temp_chord_quality_extensions[i] and (extensions[i] > temp_chord_quality_extensions[i]) and extensions[i] in [P1, M3, P5, M7, M9, P11, M13]): exclude = True
+						elif (extensions[i] != temp_chord_quality_extensions[i]): temp_accidentals = temp_accidentals + extensions[i]
 
 					# If chord interval is None object indicate that the chord is missing this interval
-					else: temp_accidentals = temp_accidentals + OMISSION_NOTATION[p_system] + str((((2 + i) + 1) * 2) - 1)
-
+					else:
+						temp_accidentals = temp_accidentals + OMISSION_NOTATION[p_system] + str(temp_chord_quality_extensions[i])
 					i = i + 1
 
-				# Check if the current match is the closest to the parent chords pitch class
-				if (count < smallest_difference):
-					closest_match = key
-					smallest_difference = count
-					accidentals = temp_accidentals
-					possible_extensions = []
-					possible_extensions.append((key, temp_accidentals))
-
-				# If has similar differance as the closest match so far add it to possible extensions
-				elif (count == smallest_difference): possible_extensions.append((key, temp_accidentals))
+				if (not exclude): possible_extensions.append((key, temp_accidentals))
 			
 			# Keep track of all valid names for the chord
 			possible_qualities = []
@@ -113,7 +120,8 @@ class Chord(Scale):
 			for extensions_quality_and_accidentals in possible_extensions:
 
 				# Loop through all the possible naming conventions for the bass triad of this chord
-				for final_triad_quality in triad_qualities:
+				for triad_quality_and_accidentals in triad_qualities:
+					final_triad_quality = triad_quality_and_accidentals[0]
 					final_extensions_quality = extensions_quality_and_accidentals[0]
 
 					# If the bass triad and the extensions have the same quality null out the extensions quality for the final string
@@ -121,13 +129,12 @@ class Chord(Scale):
 						final_extensions_quality = ("", "", "")
 
 						# Append the following to the possible names of the chord
-						possible_qualities.append(final_triad_quality[p_style] + final_extensions_quality[p_style] + str(max([x.getNumeral() for x in chord_intervals if x])) + extensions_quality_and_accidentals[1])
+						possible_qualities.append(final_triad_quality[p_style] + final_extensions_quality[p_style] + str(max([x.getNumeral() for x in chord_intervals if x])) + triad_quality_and_accidentals[1] + extensions_quality_and_accidentals[1])
 
 					# If the bass triad and the extensions dont have the same quality the only valid extension qualities are Major and Minor (In order to prevent using Dominant or other extension qualities)
-					elif (("major" in final_extensions_quality[0]) or ("minor" in final_extensions_quality[0])):
-
+					else:
 						# Append the following to the possible names of the chord
-						possible_qualities.append(final_triad_quality[p_style] + final_extensions_quality[p_style] + str(max([x.getNumeral() for x in chord_intervals if x])) + extensions_quality_and_accidentals[1])
+						possible_qualities.append(final_triad_quality[p_style] + final_extensions_quality[p_style] + str(max([x.getNumeral() for x in chord_intervals if x])) + triad_quality_and_accidentals[1] + extensions_quality_and_accidentals[1])
 			
 			# Return the shortest name
 			return min(possible_qualities, key=len)
@@ -177,10 +184,10 @@ class Chord(Scale):
 
 			# Loop through tones and if not a third make it a sus
 			for interval in self.getIntervals():
-
-				if (((interval.getNumeral() - 1) % 2) != 0):
-					string_form = SUSPENDED_NOTATION[p_system] + str(interval)
-					modifications.append((string_form, interval.getNumeral()))
+				if ((interval.getNumeral() in [2, 4]) and (3 not in [item.getNumeral() for item in self.getIntervals()])): 
+					modifications.append((str(SUSPENDED_NOTATION[p_system] + str(interval)), interval.getNumeral()))
+					modifications.pop(modifications.index([item for item in modifications if item[1] == 3 and "no" in item[0]][0]))
+				elif (((interval.getNumeral() - 1) % 2) != 0): modifications.append((str(ADDITION_NOTATION[p_system] + str(interval)), interval.getNumeral()))
 
 			# Add all the alterations to the quality by order of numeral
 			modifications = sorted(modifications, key=lambda x: x[1])
@@ -314,7 +321,7 @@ class Chord(Scale):
 					smallest_inversion = temp_chord
 					min_interval_sum = temp_interval_sum
 
-				elif (temp_interval_sum < min_interval_sum): duplicates_found = True
+				elif (temp_interval_sum == min_interval_sum): duplicates_found = True
 
 				previous = temp_chord
 
@@ -428,7 +435,7 @@ class Chord(Scale):
 				if extensions_quality in quality_tuple: extensions_pitch_class = CHORD_QUALITIES[p_system][quality_tuple][:]
 
 			# Return result with bass_triad_pitch class if it is defined
-			if (bass_triad_pitch_class != ""): result = (bass_triad_pitch_class[:2] + extensions_pitch_class[2:])[:int((int(extensions_numeral) + 1) / 2)]
+			if (bass_triad_pitch_class != ""): result = (bass_triad_pitch_class[:3] + extensions_pitch_class[3:])[:int((int(extensions_numeral) + 1) / 2)]
 			else: result = extensions_pitch_class[:int((int(extensions_numeral) + 1) / 2)]
 
 			# Loop through all altered intervals and apply them to the pitch class set
@@ -443,16 +450,29 @@ class Chord(Scale):
 
 			# Obtain sus components via RegEx
 			interval_regex_optional_accidental = "[" + accidentals_regex + "]*\d+"
-			regex = SUSPENDED_NOTATION[p_system] + interval_regex_optional_accidental
-			sus_intervals = re.findall(re.compile(regex), p_quality)
+			regex_sus = SUSPENDED_NOTATION[p_system] + interval_regex_optional_accidental
+			sus_intervals = re.findall(re.compile(regex_sus), p_quality)
 			list_of_sus_intervals = []
 
-			# Create a list of suspended intervals
+			# Create a list of sus intervals
 			for sus_interval in sus_intervals:
 				interval = str(re.findall(re.compile(interval_regex_optional_accidental), str(sus_interval)))
 				list_of_sus_intervals.append(Interval.stringToInterval(interval))
 
 			result = result + list_of_sus_intervals
+			if (len(list_of_sus_intervals) > 0 and 3 in [item.getNumeral() for item in result]): result.pop(result.index([item for item in result if item.getNumeral() == 3][0]))
+			
+			# Obtain add components via RegEx
+			regex = ADDITION_NOTATION[p_system] + interval_regex_optional_accidental
+			add_intervals = re.findall(re.compile(regex), p_quality)
+			list_of_add_intervals = []
+
+			# Create a list of added intervals
+			for add_interval in add_intervals:
+				interval = str(re.findall(re.compile(interval_regex_optional_accidental), str(add_interval)))
+				list_of_add_intervals.append(Interval.stringToInterval(interval))
+
+			result = result + list_of_add_intervals
 			result.sort(key=lambda x: x.getSemitones())
 
 			# Obtain no components via RegEx
@@ -472,6 +492,7 @@ class Chord(Scale):
 
 	@staticmethod
 	def pitchClassToFiguredBass(p_pitch_class, p_slice = 2):
+
 		try:
 			# Invert pitch class
 			new_pitch_class = p_pitch_class[::-1]
@@ -505,10 +526,12 @@ class Chord(Scale):
 
 					# subtract 12 until interval semitones is below 12
 					while (new_interval > P8): new_interval -= P8
+
 				else:
 					new_interval = interval
 
-				new_interval_list.append(new_interval)
+				if (new_interval != P8):
+					new_interval_list.append(new_interval)
 
 			# Sort the new interval list by number of semitones in the intervals
 			new_interval_list.sort(key=lambda x: x.getSemitones())

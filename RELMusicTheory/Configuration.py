@@ -28,6 +28,8 @@ ACCIDENTALS = {"western": {-1: "b", 0: "", 1: "#"}}
 
 SUSPENDED_NOTATION = {"western": "sus"}
 
+ADDITION_NOTATION = {"western": "add"}
+
 OMISSION_NOTATION = {"western": "no"}
 
 Interval.unaltered_intervals = UNALTERED_INTERVALS["western"]
@@ -105,11 +107,11 @@ B_sharp = Tone("B", 1)
 # Configuration Chord Quality Systems
 CHORD_QUALITIES = {"western": {
                 ("major", "maj", "M", "Δ"): [P1, M3, P5, M7, M9, P11, M13],
-                ("minor", "min", "m", "-"): [P1, m3, P5, m7, M9, P11, m13],
+                ("minor", "min", "m", "-"): [P1, m3, P5, m7, M9, P11, M13],
                 ("dominant", "dom", "\"", "\""): [P1, M3, P5, m7, M9, P11, M13],
-                ("half-diminished", "half-dim", "ø", "ø"): [P1, m3, dim5, m7, m9, P11, m13],
-                ("augmented", "aug", "+", "+"): [P1, M3, aug5, M7, aug9, aug11.transform("#"), P15],
-                ("diminished", "dim", "o", "o"): [P1, m3, dim5, m7.transform("b"), P8, m10, dim12]}}
+                ("half-diminished", "half-dim", "ø", "ø"): [P1, m3, dim5, m7, M9, P11, M13],
+                ("augmented", "aug", "+", "+"): [P1, M3, aug5, m7, M9, P11, M3],
+                ("diminished", "dim", "o", "o"): [P1, m3, dim5, m7.transform("b"), M9, P11, None]}}
 
 # Configuration Scale Degree Naming Systems
 SCALE_DEGREE_NAMES = {"western": {P1: "tonic", m2: "supertonic", M2: "supertonic", m3: "mediant", M3: "mediant", P4: "subdominant", P5: "dominant", m6: "submediant", M6: "submediant", m7: "subtonic", M7: "leading tone"}}
