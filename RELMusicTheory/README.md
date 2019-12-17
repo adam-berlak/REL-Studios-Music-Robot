@@ -358,7 +358,7 @@ Some more ways to build Chords:
 ```
 >>> Chord(C, [P1, M3, P5, M7])
 >>> Chord(C, [4, 3, 4])
->>> Chord([C, D, E, F])
+>>> Chord([C, E, G, B])
 >>> Chord(C, "maj7")
 ```
 
