@@ -134,13 +134,6 @@ You can simplify an Tone in case you want compare Tones.
 >>> Tone("G", 2).simplify()
 "A#"
 ```
-
-You can find the distance between Tones using subtraction.
-```
->>> Tone("E", -1) - Tone("C")
-3b
-```
-
 <a name="tone-arithmetic"/>
 
 #### 2.1.1. Arithmetic
@@ -149,6 +142,12 @@ You can also do arithmetic with Tones and Intervals
 ```
 >>> Tone("C") + m3
 "Eb"
+```
+
+You can find the distance between Tones using subtraction.
+```
+>>> Tone("E", -1) - Tone("C")
+3b
 ```
 
 <a name="scales"/>
