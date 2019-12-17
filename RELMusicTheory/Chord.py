@@ -55,69 +55,16 @@ class Chord(Scale):
 			chord_intervals = Chord.rearrangeIntervalsAsThirds(self.getIntervals())
 
 			# Keep track of all possible bass triad names
-			triad = chord_intervals[:3]
-			triad_qualities = []
-
-			# Loop through all naming conventions for bass triads
-			for key in CHORD_QUALITIES[p_system].keys():
-
-				# Counters
-				temp_chord_quality_triad = CHORD_QUALITIES[p_system][key][:3]
-				temp_accidentals = ""
-				exclude = False
-				i = 0
-
-				while(i < len(triad)):
-
-					# Check if chord interval is not None object
-					if (triad[i]):
-
-						# Check if interval does not match with interval in dictionary
-						if (temp_chord_quality_triad[i] and (triad[i] > temp_chord_quality_triad[i]) and triad[i] in [P1, M3, P5, M7, M9, P11, M13]): exclude = True
-						elif (triad[i] != temp_chord_quality_triad[i]): temp_accidentals = temp_accidentals + triad[i]
-
-					# If chord interval is None object indicate that the chord is missing this interval
-					else:
-						temp_accidentals = temp_accidentals + OMISSION_NOTATION[p_system] + str(temp_chord_quality_triad[i])
-					i = i + 1
-
-				if (not exclude): triad_qualities.append((key, temp_accidentals))
+			triad_qualities = Chord.getPossibleQualitiesOfSlice(chord_intervals, 0, 3, p_system)
 
 			# Retrieve extensions of parent chord
-			extensions = chord_intervals[3:]
-			possible_extensions = []
-
-			# Loop through all naming conventions for extensions
-			for key in CHORD_QUALITIES[p_system].keys():
-
-				# Counters
-				temp_chord_quality_extensions = CHORD_QUALITIES[p_system][key][3:]
-				temp_accidentals = ""
-				exclude = False
-				i = 0
-
-				# Loop through all the chord intervals
-				while(i < len(extensions)):
-
-					# Check if chord interval is not None object
-					if (extensions[i]):
-
-						# Check if interval does not match with interval in dictionary
-						if (temp_chord_quality_extensions[i] and (extensions[i] > temp_chord_quality_extensions[i]) and extensions[i] in [P1, M3, P5, M7, M9, P11, M13]): exclude = True
-						elif (extensions[i] != temp_chord_quality_extensions[i]): temp_accidentals = temp_accidentals + extensions[i]
-
-					# If chord interval is None object indicate that the chord is missing this interval
-					else:
-						temp_accidentals = temp_accidentals + OMISSION_NOTATION[p_system] + str(temp_chord_quality_extensions[i])
-					i = i + 1
-
-				if (not exclude): possible_extensions.append((key, temp_accidentals))
+			extension_qualities = Chord.getPossibleQualitiesOfSlice(chord_intervals, 3, len(chord_intervals), p_system)
 			
 			# Keep track of all valid names for the chord
 			possible_qualities = []
 
 			# Loop through all the possible naming conventions for the extensions of this chord
-			for extensions_quality_and_accidentals in possible_extensions:
+			for extensions_quality_and_accidentals in extension_qualities:
 
 				# Loop through all the possible naming conventions for the bass triad of this chord
 				for triad_quality_and_accidentals in triad_qualities:
@@ -506,6 +453,39 @@ class Chord(Scale):
 		
 		except: print("Error: Failed to calculate figured-bass for: " + p_pitch_class)
 
+	@staticmethod
+	def getPossibleQualitiesOfSlice(p_pitch_class, p_slice_start, p_slice_end, p_system = DEFAULT_SYSTEM):
+
+			# Keep track of all possible bass triad names
+			chord = p_pitch_class[p_slice_start:p_slice_end]
+			chord_qualities = []
+
+			# Loop through all naming conventions for bass triads
+			for key in CHORD_QUALITIES[p_system].keys():
+
+				# Counters
+				temp_chord_quality_chord = CHORD_QUALITIES[p_system][key][p_slice_start:p_slice_end]
+				temp_accidentals = ""
+				exclude = False
+				i = 0
+
+				while(i < len(chord)):
+
+					# Check if chord interval is not None object
+					if (chord[i]):
+
+						# Check if interval does not match with interval in dictionary
+						if (temp_chord_quality_chord[i] and (chord[i] > temp_chord_quality_chord[i]) and chord[i] in [P1, M3, P5, M7, M9, P11, M13]): exclude = True
+						elif (chord[i] != temp_chord_quality_chord[i]): temp_accidentals = temp_accidentals + chord[i]
+
+					# If chord interval is None object indicate that the chord is missing this interval
+					else:
+						temp_accidentals = temp_accidentals + OMISSION_NOTATION[p_system] + str(temp_chord_quality_chord[i])
+					i = i + 1
+
+				if (not exclude): chord_qualities.append((key, temp_accidentals))
+
+			return chord_qualities
 
 	@staticmethod
 	def rearrangeIntervalsAsThirds(p_pitch_class, p_system = DEFAULT_SYSTEM):
