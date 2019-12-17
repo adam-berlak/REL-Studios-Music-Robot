@@ -135,6 +135,12 @@ You can simplify an Tone in case you want compare Tones.
 "A#"
 ```
 
+You can find the distance between Tones using subtraction.
+```
+>>> Tone("E", -1) - Tone("C")
+3b
+```
+
 <a name="tone-arithmetic"/>
 
 #### 2.1.1. Arithmetic
@@ -162,6 +168,12 @@ A Scale Object requires a Tone for the Tonic, and a list of Intervals organized 
 You can also create a scale using scale-steps in case Intervals are too tedious.
 ```
 >>> C_Major_Scale = Scale(C, [2, 2, 1, 2, 2, 2, 1])
+[C, D, E, F, G, A, B]
+```
+
+You can also create a scale using a list of Tones:
+```
+>>> C_Major_Scale = Scale([C, D, E, F, G, A, B])
 [C, D, E, F, G, A, B]
 ```
 
@@ -340,6 +352,14 @@ You can also build a Chord using Generic Intervals.
 ```
 >>> E7 = C_Major_Scale[1].buildWithGenericIntervals(Chord, [1, 3, 4, 6])
 [C, E, F, A]
+```
+
+Some more ways to build Chords:
+```
+>>> Chord(C, [P1, M3, P5, M7])
+>>> Chord(C, [4, 3, 4])
+>>> Chord([C, D, E, F])
+>>> Chord(C, "maj7")
 ```
 
 <a name="chord-representation"/>
