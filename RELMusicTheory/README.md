@@ -475,6 +475,26 @@ CM7[2].transformWithGenericInterval(2)
 [C, F, G, B]
 ```
 
+I also created some sugar methods for getting the Parallel and Relative Chords of a Chord. To get the Relative Chord of a Chord, you must either translate the Chord up or down a Generic Interval of 3. Whether its up or down depends on the Parent-Scale of the Chord. As an example: If our Chord is C Major and the Parent-Scale is C Major the Relative Chord is A Minor. However if The Parent-Scale is A Minor, then the Relative Chord is E Minor. 
+```
+>>> CM7 = C_Major_Scale[1].build(Chord)
+>>> CM7.getRelativeChord()
+[A, C, E, G]
+>>> Am7 = A_Minor_Scale[1].build(Chord)
+>>> Am7.getRelativeChord()
+[C, E, G, B]
+```
+
+The same idea applies to Parallel Chords.
+```
+>>> CM7 = C_Major_Scale[1].build(Chord)
+>>> CM7.getParallelChord()
+[C, Eb, G, Bb]
+>>> Cm7 = C_Minor_Scale[1].build(Chord)
+>>> Cm7.getParallelChord()
+[C, E, G, B]
+```
+
 <a name="chord-secondary"/>
 
 #### 2.3.4. Secondary Chords
