@@ -385,10 +385,10 @@ You can also slice chords in case you only want the quality of a certain part of
 minor3
 ```
 
-If you want to print the exact quality of the Chord with support of sus intervals, you must use the getQuality() method.
+If you want to print the exact quality of the Chord with support of add/sus intervals, you must use the getQuality() method.
 ```
 >>> Chord(C, [P1, m3, aug4, M7]).getQuality()
-mM7sus#4no5
+mM7add#4no5
 ```
 
 You can also print the Jazz Numeral Notation
