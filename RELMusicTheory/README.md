@@ -132,7 +132,7 @@ You can simplify an Tone in case you want compare Tones.
 >>> Tone("G", 2)
 "G##"
 >>> Tone("G", 2).simplify()
-"[A#, Bb]"
+["A#", "Bb"]
 ```
 <a name="tone-arithmetic"/>
 
