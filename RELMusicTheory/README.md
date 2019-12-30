@@ -132,9 +132,8 @@ You can simplify an Tone in case you want compare Tones.
 >>> Tone("G", 2)
 "G##"
 >>> Tone("G", 2).simplify()
-"A#"
+"A"
 ```
-
 <a name="tone-arithmetic"/>
 
 #### 2.1.1. Arithmetic
@@ -143,6 +142,12 @@ You can also do arithmetic with Tones and Intervals
 ```
 >>> Tone("C") + m3
 "Eb"
+```
+
+You can find the distance between Tones using subtraction.
+```
+>>> Tone("E", -1) - Tone("C")
+3b
 ```
 
 <a name="scales"/>
@@ -162,6 +167,12 @@ A Scale Object requires a Tone for the Tonic, and a list of Intervals organized 
 You can also create a scale using scale-steps in case Intervals are too tedious.
 ```
 >>> C_Major_Scale = Scale(C, [2, 2, 1, 2, 2, 2, 1])
+[C, D, E, F, G, A, B]
+```
+
+You can also create a scale using a list of Tones:
+```
+>>> C_Major_Scale = Scale([C, D, E, F, G, A, B])
 [C, D, E, F, G, A, B]
 ```
 
@@ -342,6 +353,14 @@ You can also build a Chord using Generic Intervals.
 [C, E, F, A]
 ```
 
+Some more ways to build Chords:
+```
+>>> Chord(C, [P1, M3, P5, M7])
+>>> Chord(C, [4, 3, 4])
+>>> Chord([C, E, G, B])
+>>> Chord(C, "maj7")
+```
+
 <a name="chord-representation"/>
 
 #### 2.3.1. Representation
@@ -366,10 +385,10 @@ You can also slice chords in case you only want the quality of a certain part of
 minor3
 ```
 
-If you want to print the exact quality of the Chord with support of sus intervals, you must use the getQuality() method.
+If you want to print the exact quality of the Chord with support of add/sus intervals, you must use the getQuality() method.
 ```
 >>> Chord(C, [P1, m3, aug4, M7]).getQuality()
-mM7sus#4no5
+mM7add#4no5
 ```
 
 You can also print the Jazz Numeral Notation
@@ -454,6 +473,26 @@ You can transform a Chord just like a Scale with either an Accidental or ontop o
 [C, D, Eb, F, G, A, B]
 CM7[2].transformWithGenericInterval(2)
 [C, F, G, B]
+```
+
+I also created some sugar methods for getting the Parallel and Relative Chords of a Chord. To get the Relative Chord of a Chord, you must either translate the Chord up or down a Generic Interval of 3. Whether its up or down depends on the Parent-Scale of the Chord. As an example: If our Chord is C Major and the Parent-Scale is C Major the Relative Chord is A Minor. However if The Parent-Scale is A Minor, then the Relative Chord is E Minor. 
+```
+>>> CM7 = C_Major_Scale[1].build(Chord)
+>>> CM7.getRelativeChord()
+[A, C, E, G]
+>>> Am7 = A_Minor_Scale[1].build(Chord)
+>>> Am7.getRelativeChord()
+[C, E, G, B]
+```
+
+The same idea applies to Parallel Chords.
+```
+>>> CM7 = C_Major_Scale[1].build(Chord)
+>>> CM7.getParallelChord()
+[C, Eb, G, Bb]
+>>> Cm7 = C_Minor_Scale[1].build(Chord)
+>>> Cm7.getParallelChord()
+[C, E, G, B]
 ```
 
 <a name="chord-secondary"/>
