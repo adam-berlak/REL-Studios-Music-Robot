@@ -5,7 +5,7 @@ from ScalesDictionary import *
 # Configuration System
 DEFAULT_SYSTEM = "western"
 
-ACCIDENTAL_LIMIT = 2
+ACCIDENTAL_LIMIT = 1
 
 DEGREE_SIMPLE_REPRESENTATION = True
 
@@ -20,16 +20,12 @@ CARDINALITY = {"western": {1: "monotonic", 2: "ditonic", 3: "tritonic", 4: "tetr
 # Configure Unaltered Intervals
 UNALTERED_INTERVALS = {"western": [0, 2, 4, 5, 7, 9, 11]}
 
-# Configure Voice Leading for Chords
-HARMONIC_VOICE_LEADING = {"western": {1: 1, 2: 1, 3: -2, 4: -2}}
+RESOLUTION_SYSTEM = {"western": -5}
 
 # Configure Notation Systems
 ACCIDENTALS = {"western": {-1: "b", 0: "", 1: "#"}}
-
 SUSPENDED_NOTATION = {"western": "sus"}
-
 ADDITION_NOTATION = {"western": "add"}
-
 OMISSION_NOTATION = {"western": "no"}
 
 Interval.unaltered_intervals = UNALTERED_INTERVALS["western"]
@@ -110,7 +106,7 @@ CHORD_QUALITIES = {"western": {
                 ("minor", "min", "m", "-"): [P1, m3, P5, m7, M9, P11, M13],
                 ("dominant", "dom", "\"", "\""): [P1, M3, P5, m7, M9, P11, M13],
                 ("half-diminished", "half-dim", "ø", "ø"): [P1, m3, dim5, m7, M9, P11, M13],
-                ("augmented", "aug", "+", "+"): [P1, M3, aug5, m7, M9, P11, M3],
+                ("augmented", "aug", "+", "+"): [P1, M3, aug5, m7, M9, P11, M13],
                 ("diminished", "dim", "o", "o"): [P1, m3, dim5, m7.transform("b"), M9, P11, None]}}
 
 # Configuration Scale Degree Naming Systems

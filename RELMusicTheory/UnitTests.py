@@ -6,6 +6,39 @@ from Configuration import *
 
 class TestScaleMethods(unittest.TestCase):
 
+    def test_interval_arithmetic(self):
+        self.assertEqual(str(P1 + M3), "3")     # Adding to P1 does not change Interval
+        self.assertEqual(str(m2 + M3), "4")     # Adding two positive Intervals produces correct result
+        self.assertEqual(str(M3 - M3), "1")     # Subtracting Interval by itself produces P1
+        self.assertEqual(str(M3 - P4), "-b2")   # Subtracting an Interval from a smaller Interval produces correct result
+        self.assertEqual(str(M3 - -m2), "4")    # Subtracting negative Interval produces correct result
+        self.assertEqual(str(-M3 - m2), "-4")   # Subtracting two negative Intervals produces correct result
+        self.assertEqual(str(-M3 + M3), "1")    # Adding Interval to its opposite produces P1
+        self.assertEqual(str(-M3 + P4), "b2")   # Adding larger positive Interval to negative Interval produces correct result
+        self.assertEqual(str(-P1 + P4), "4")    # Negative P1 works correctly
+
+        self.assertEqual(str(abs(P1)), "1")     # Absolute value works correctly on positive P1
+        self.assertEqual(str(abs(-P1)), "1")    # Absolute value works correctly on negative P1
+        self.assertEqual(str(abs(m2)), "b2")    # Absolute value works correctly on positive Interval
+        self.assertEqual(str(abs(-m2)), "b2")   # Absolute value works correctly on negative Interval
+
+    def test_degree_arithmetic(self):
+        self.assertEqual(str(Scale(C, major)[1] + M2), "D")
+        self.assertEqual(str((Scale(C, major)[1] + M2).getParentScale()), "<C, D, E, F, G, A, B>")
+        self.assertEqual(str(Scale(C, major)[1] + m2), "Db")
+        self.assertEqual(str((Scale(C, major)[1] + m2).getParentScale()), "<C, Db, E, F, G, A, B>")
+        self.assertEqual(str(Scale(C, major)[1] + P8), "C")
+        self.assertEqual(str((Scale(C, major)[1] + P8).getParentScale()), "<C, D, E, F, G, A, B>")
+        self.assertEqual(str(Scale(C, major)[1] - m2), "B")
+        self.assertEqual(str((Scale(C, major)[1] - m2).getParentScale()), "<C, D, E, F, G, A, B>")
+        self.assertEqual(str(Scale(C, major)[1] - M2), "Bb")
+        self.assertEqual(str((Scale(C, major)[1] - M2).getParentScale()), "<C, D, E, F, G, A, Bb>")
+
+        self.assertEqual(str(Scale(C, diminished)[1] + M2), "D")
+        self.assertEqual(str((Scale(C, diminished)[1] + M2).getParentScale()), "<C, D, Eb, F, Gb, Ab, A, B>")
+        self.assertEqual(str(Scale(C, diminished)[1] + m2), "Db")
+        self.assertEqual(str((Scale(C, diminished)[1] + m2).getParentScale()), "<C, Db, D, Eb, F, Gb, Ab, A, B>")
+        
     def test_scale_creation(self):
         self.assertEqual(str(Scale(C_flat, [P1, M2, M3, P4, P5, M6, M7]).printTones()), "[Cb, Db, Eb, Fb, Gb, Ab, Bb]")
         self.assertEqual(str(Scale(C, [P1, M2, M3, P4, P5, M6, M7]).printTones()), "[C, D, E, F, G, A, B]")
@@ -105,6 +138,7 @@ class TestScaleMethods(unittest.TestCase):
         self.assertEqual(str(Chord.stringToPitchClass("minmaj7no5sus2")), "[1, 2, 7]")
         self.assertEqual(str(Chord.stringToPitchClass("mindom7")), "[1, b3, 5, b7]")
         self.assertEqual(str(Chord.stringToPitchClass("domdom7")), "[1, 3, 5, b7]")
+        self.assertEqual(str(Chord.stringToPitchClass("Mo11")), "[1, 3, 5, bb7, 9, 11]")
 
     def test_print_quality(self):
         self.assertEqual(str(Chord(C, [P1, M3, M7]).getQuality()), "M7no5")
@@ -115,11 +149,41 @@ class TestScaleMethods(unittest.TestCase):
         self.assertEqual(str(Chord(C, [P1, aug4, M7]).getQuality()), "M7sus#4no5")
         self.assertEqual(str(Chord(C, [P1, M3, P5, m7]).getQuality()), "\"7")
         self.assertEqual(str(Chord(C, [P1, M3, dim5, m7]).getQuality()), "\"7b5")
-        self.assertEqual(str(Chord(C, [P1, m3, dim5, m7.transform("b")]).getQuality()), "o7")
-        self.assertEqual(str(Chord(C, [P1, m3, dim5, m7.transform("b"), M9]).getQuality()), "o9")
-        self.assertEqual(str(Chord(C, [P1, m3, dim5, m7.transform("b"), m9]).getQuality()), "o9b9")  
-        self.assertEqual(str(Chord(C, [P1, m3, dim5, m7.transform("b"), P11]).getQuality()), "o11no9")
-        self.assertEqual(str(Chord(C, [P1, M3, aug5, m7]).getQuality()), "+7")
+
+        # Test all Chord Qualities
+        self.assertEqual(str(Chord(C, [P1, M3, P5, M7, M9, P11, M13]).getQuality()), "M13")
+        self.assertEqual(str(Chord(C, [P1, m3, P5, m7, M9, P11, M13]).getQuality()), "m13") 
+        self.assertEqual(str(Chord(C, [P1, M3, P5, m7, M9, P11, M13]).getQuality()), "\"13")
+        self.assertEqual(str(Chord(C, [P1, m3, dim5, m7, M9, P11, M13]).getQuality()), "ø13")
+        self.assertEqual(str(Chord(C, [P1, m3, dim5, m7.transform("b"), M9, P11]).getQuality()), "o11")
+        self.assertEqual(str(Chord(C, [P1, M3, aug5, m7, M9, P11, M13]).getQuality()), "+13")
+
+        # Test compound Chord Qualities
+        self.assertEqual(str(Chord(C, [P1, m3, P5, M7, M9, P11, M13]).getQuality()), "mM13")
+        self.assertEqual(str(Chord(C, [P1, m3, dim5, M7, M9, P11, M13]).getQuality()), "øM13")
+        self.assertEqual(str(Chord(C, [P1, M3, P5, m7.transform("b"), M9, P11]).getQuality()), "Mo11")
+
+        # Test no keyword
+        self.assertEqual(str(Chord(C, [P1, P5, M7, M9, P11, M13]).getQuality()), "M13no3")
+        self.assertEqual(str(Chord(C, [P1, M3, M7, M9, P11, M13]).getQuality()), "M13no5")
+        self.assertEqual(str(Chord(C, [P1, M3, P5, M9, P11, M13]).getQuality()), "M13no7")
+        # self.assertEqual(str(Chord(C, [P1, m3, m7.transform("b"), M9, P11]).getQuality()), "øM13nob5")
+        self.assertEqual(str(Chord(C, [P1, m3, dim5, M9, P11, M13]).getQuality()), "øM13no7")
+
+    def test_scale_properties(self):
+        self.assertEqual(Scale(C, major).getHemitonia(), 2)
+        self.assertEqual(Scale(C, major).getTritonia(), 1)
+        self.assertEqual(Scale(C, major).countIntervals(2), 5)
+        self.assertEqual(Scale(C, major).countIntervals(3), 4)
+        self.assertEqual(Scale(C, major).getCardinality(), "heptatonic")
+        self.assertEqual(Scale(C, major).isPrime(), False)
+        self.assertEqual(Scale(C, major).getImperfections(), 1)
+        self.assertEqual(Scale(C, major).getRotationalSymmetry(), [])
+        self.assertEqual(Scale(C, major).getReflectionAxes(), [2])
+        self.assertEqual(Scale(C, major).getIntervalVector(), "S(5)M(3)P(6)N(4)D(2)T(1)")
+        self.assertEqual(Scale(C, major).isChiral(), False)
+        self.assertEqual(Scale(C, major).getCohemitonic(), [])
+        self.assertEqual(Scale(C, major).getPrimeMode(), "7")
 
 if __name__ == '__main__':
     unittest.main()
