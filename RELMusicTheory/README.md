@@ -592,6 +592,11 @@ In case you want a Chord with context to behave like a Scale you can access supe
 
 ### 2.4. Configuration [WIP]:
 
+```
+ACCIDENTAL_LIMIT = 1
+```
+This constant changes the limit on the number of accidentals allowed for algorithm-generated intervals, specifically in the Scale.scaleStepsToPitchClass() method. Changing this constant will alter behaviour in some of the conversion methods.
+
 <a name="goals"/>
 
 ## 3. Goals:
