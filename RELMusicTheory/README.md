@@ -164,36 +164,23 @@ Some ways to build a Scale object include
 >>> C_Major_Scale = Scale(C, [P1, M2, M3, P4, P5, M6, M7])                # Diatonic Intervals
 >>> C_Major_Scale = Scale(C, [2, 2, 1, 2, 2, 2, 1])                       # Scale-Steps
 >>> C_Major_Scale = Scale([C, D, E, F, G, A, B])                          # List of Tones
+<Scale I=C, ii=D, iii=E, IV=F, V=G, vi=A, VII=B>
 ```
 
-A Scale Object requires a Tone for the Tonic, and a list of Intervals organized as a pitch-class-set
-```
->>> C_Major_Scale = Scale(C, [P1, M2, M3, P4, P5, M6, M7])
-[C, D, E, F, G, A, B]
-```
-
-You can also create a scale using scale-steps in case Intervals are too tedious.
-```
->>> C_Major_Scale = Scale(C, [2, 2, 1, 2, 2, 2, 1])
-[C, D, E, F, G, A, B]
-```
-
-You can also create a scale using a list of Tones:
-```
->>> C_Major_Scale = Scale([C, D, E, F, G, A, B])
-[C, D, E, F, G, A, B]
-```
-
-The easiest way to create a Scale is using a decimal number associated with a Scale. For the Major Scale this is the number 2741. However you don't need to worry about memorizing these numbers as they are all saved in constants and you can simply use the name "major". As of right now all 3000+ Scales are supported.
-```
->>> C_Major_Scale = Scale(C, major)
-[C, D, E, F, G, A, B]
-```
-
-You can access any of the Scale-Degrees by using an index. The indices start at 1 as opposed to 0
+You can access any of the Scale-Degrees by using Intervals as indices. You can use both Diatonic and Generic Intervals.
 ```
 >>> C_Major_Scale[1]
-C
+"C"
+>>> C_Major_Scale[m3]
+"Eb"
+```
+
+There are some other uses for indices.
+```
+>>> C_Major_Scale[1:5]
+"<Scale I=C, ii=D, iii=E, IV=F, V=G>"
+>>> C_Major_Scale[1, 3, 5, 7]
+"<Scale I=C, iii=E, V=G, VII=B"
 ```
 
 <a name="scale-representation"/>
