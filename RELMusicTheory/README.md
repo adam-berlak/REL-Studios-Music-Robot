@@ -101,7 +101,7 @@ An important method I created is called simplify(). This method takes any Interv
 
 You can transform an Interval with accidentals.
 ```
->>> P5.transform(#)
+>>> P5.transform("#")
 #5
 ```
 
@@ -157,6 +157,14 @@ You can find the distance between Tones using subtraction.
 <a name="scale-initialization"/>
 
 #### 2.2.0. Initialization
+
+Some ways to build a Scale object include
+```
+>>> C_Major_Scale = Scale(C, major)                                       # Decimal Number
+>>> C_Major_Scale = Scale(C, [P1, M2, M3, P4, P5, M6, M7])                # Diatonic Intervals
+>>> C_Major_Scale = Scale(C, [2, 2, 1, 2, 2, 2, 1])                       # Scale-Steps
+>>> C_Major_Scale = Scale([C, D, E, F, G, A, B])                          # List of Tones
+```
 
 A Scale Object requires a Tone for the Tonic, and a list of Intervals organized as a pitch-class-set
 ```
