@@ -164,7 +164,7 @@ Some ways to build a Scale object include
 >>> C_Major_Scale = Scale(C, [P1, M2, M3, P4, P5, M6, M7])                # Diatonic Intervals
 >>> C_Major_Scale = Scale(C, [2, 2, 1, 2, 2, 2, 1])                       # Scale-Steps
 >>> C_Major_Scale = Scale([C, D, E, F, G, A, B])                          # List of Tones
-<Scale I=C, ii=D, iii=E, IV=F, V=G, vi=A, VII=B>
+"<Scale I=C, ii=D, iii=E, IV=F, V=G, vi=A, VII=B>"
 ```
 
 You can access any of the Scale-Degrees by using Intervals as indices. You can use both Diatonic and Generic Intervals.
