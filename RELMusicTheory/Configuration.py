@@ -1,5 +1,6 @@
 from Interval import *
 from Tone import *
+from Key import *
 from ScalesDictionary import *
 
 # Configuration System
@@ -7,7 +8,7 @@ DEFAULT_SYSTEM = "western"
 
 ACCIDENTAL_LIMIT = 1
 
-DEGREE_SIMPLE_REPRESENTATION = True
+DEGREE_SIMPLE_REPRESENTATION = False
 
 TONE_NAMES = {"western": ["C", None, "D", None, "E", "F", None, "G", None, "A", None, "B"]}
 
@@ -75,31 +76,6 @@ aug12 = Interval(20, 12)
 aug13 = Interval(22, 13)
 aug14 = Interval(24, 14)
 
-# Configuration Tone Constants
-C = Tone("C")
-D = Tone("D")
-E = Tone("E")
-F = Tone("F")
-G = Tone("G")
-A = Tone("A")
-B = Tone("B")
-
-C_flat = Tone("C", -1)
-D_flat = Tone("D", -1)
-E_flat = Tone("E", -1)
-F_flat = Tone("F", -1)
-G_flat = Tone("G", -1)
-A_flat = Tone("A", -1)
-B_flat = Tone("B", -1)
-
-C_sharp = Tone("C", 1)
-D_sharp = Tone("D", 1)
-E_sharp = Tone("E", 1)
-F_sharp = Tone("F", 1)
-G_sharp = Tone("G", 1)
-A_sharp = Tone("A", 1)
-B_sharp = Tone("B", 1)
-
 # Configuration Chord Quality Systems
 CHORD_QUALITIES = {"western": {
                 ("major", "maj", "M", "Δ"): [P1, M3, P5, M7, M9, P11, M13],
@@ -111,3 +87,37 @@ CHORD_QUALITIES = {"western": {
 
 # Configuration Scale Degree Naming Systems
 SCALE_DEGREE_NAMES = {"western": {P1: "tonic", m2: "supertonic", M2: "supertonic", m3: "mediant", M3: "mediant", P4: "subdominant", P5: "dominant", m6: "submediant", M6: "submediant", m7: "subtonic", M7: "leading tone"}}
+
+# Configuration Tone Constants
+C = Tone(TONE_NAMES[DEFAULT_SYSTEM][0])
+D = Tone(TONE_NAMES[DEFAULT_SYSTEM][2])
+E = Tone(TONE_NAMES[DEFAULT_SYSTEM][4])
+F = Tone(TONE_NAMES[DEFAULT_SYSTEM][5])
+G = Tone(TONE_NAMES[DEFAULT_SYSTEM][7])
+A = Tone(TONE_NAMES[DEFAULT_SYSTEM][9])
+B = Tone(TONE_NAMES[DEFAULT_SYSTEM][11])
+
+C_flat = Tone(TONE_NAMES[DEFAULT_SYSTEM][0], -1)
+D_flat = Tone(TONE_NAMES[DEFAULT_SYSTEM][2], -1)
+E_flat = Tone(TONE_NAMES[DEFAULT_SYSTEM][4], -1)
+F_flat = Tone(TONE_NAMES[DEFAULT_SYSTEM][5], -1)
+G_flat = Tone(TONE_NAMES[DEFAULT_SYSTEM][7], -1)
+A_flat = Tone(TONE_NAMES[DEFAULT_SYSTEM][9], -1)
+B_flat = Tone(TONE_NAMES[DEFAULT_SYSTEM][11], -1)
+
+C_sharp = Tone(TONE_NAMES[DEFAULT_SYSTEM][0], 1)
+D_sharp = Tone(TONE_NAMES[DEFAULT_SYSTEM][2], 1)
+E_sharp = Tone(TONE_NAMES[DEFAULT_SYSTEM][4], 1)
+F_sharp = Tone(TONE_NAMES[DEFAULT_SYSTEM][5], 1)
+G_sharp = Tone(TONE_NAMES[DEFAULT_SYSTEM][7], 1)
+A_sharp = Tone(TONE_NAMES[DEFAULT_SYSTEM][9], 1)
+B_sharp = Tone(TONE_NAMES[DEFAULT_SYSTEM][11], 1)
+
+# Configuration Key Constants
+keyboard_tones = [C_flat, C, C_sharp, D_flat, D, D_sharp, E_flat, E, E_sharp, F_flat, F, F_sharp, G_flat, G, G_sharp, A_flat, A, A_sharp, B_flat, B, B_sharp]
+Key.start_point = A
+
+Keyboard = {}
+
+for i in range(12):
+    for tone in keyboard_tones: Keyboard[str(tone) + str(i)] = Key(tone, i)

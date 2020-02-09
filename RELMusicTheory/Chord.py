@@ -44,12 +44,17 @@ class Chord(Scale):
 
 	def getParentChordQuality(self, p_style = 2, p_system = DEFAULT_SYSTEM):
 
-		try: 
+		try:
+			# Create a list of Specific intervals using the Parent-Chord arranged as Thirds
 			chord_intervals = Chord.rearrangeIntervalsAsThirds(self.getIntervals())
+
+			# Generate two lists of possible quality/accidental combinations for the bass triad and extensions, return example: [P1, M3, P5] => [("min", ""),("maj", "b3")]
 			triad_qualities = Chord.getPossibleQualitiesOfSlice(chord_intervals, 0, 3, p_system)
 			extension_qualities = Chord.getPossibleQualitiesOfSlice(chord_intervals, 3, len(chord_intervals), p_system)
+
 			possible_qualities = []
 
+			# Generate a list of bass-triad/extensions quality combinations
 			for extensions_quality_and_accidentals in extension_qualities:
 
 				for triad_quality_and_accidentals in triad_qualities:
@@ -61,6 +66,7 @@ class Chord(Scale):
 
 					possible_qualities.append(final_triad_quality[p_style] + final_extensions_quality[p_style] + str(max([x.getNumeral() for x in chord_intervals if x])) + triad_quality_and_accidentals[1] + extensions_quality_and_accidentals[1])
 			
+			# Return the smallest possible name within the list
 			return min(possible_qualities, key=len)
 
 		except: print("Error: Failed to get quality of parent chord for chord: " + str(self))
@@ -96,12 +102,12 @@ class Chord(Scale):
 				interval_string = re.findall(re.compile(interval_regex_optional_accidental), str(omitted_interval))[0]
 				my_quality = bass_triad_quality + extensions_quality + str(extensions_numeral)
 				my_numeral = Interval.stringToInterval(interval_string).getNumeral()
-				if (Interval.stringToInterval(interval_string).getNumeral() <= int(extensions_numeral)): modifications.append(("no" + str(Chord.stringToPitchClass(my_quality)[int(((my_numeral + 1) / 2) - 1)]), my_numeral))
+				if (Interval.stringToInterval(interval_string).getNumeral() <= int(extensions_numeral)): modifications.append((OMISSION_NOTATION[p_system] + str(Chord.stringToPitchClass(my_quality)[int(((my_numeral + 1) / 2) - 1)]), my_numeral))
 
 			for interval in self.getIntervals():
 				if ((interval.getNumeral() in [2, 4]) and (3 not in [item.getNumeral() for item in self.getIntervals()])): 
 					modifications.append((str(SUSPENDED_NOTATION[p_system] + str(interval)), interval.getNumeral()))
-					modifications.pop(modifications.index([item for item in modifications if item[1] == 3 and "no" in item[0]][0]))
+					modifications.pop(modifications.index([item for item in modifications if item[1] == 3 and OMISSION_NOTATION[p_system] in item[0]][0]))
 				elif (((interval.getNumeral() - 1) % 2) != 0): modifications.append((str(ADDITION_NOTATION[p_system] + str(interval)), interval.getNumeral()))
 
 			modifications = sorted(modifications, key=lambda x: x[1])
@@ -158,14 +164,14 @@ class Chord(Scale):
 
 	def transformChordTo(self, p_intervals):
 		new_chord = Chord(self[1].getTone(), p_intervals)
-		if (self.getParentDegree() != None): new_chord.setParentDegree(self.getParentDegree())
+		new_chord.setParentDegree(self.getParentDegree())
 		return new_chord
 
-	def getParallelChord(self):
+	def getParallelChord(self, p_reflection_point = P5):
 
 		try:
 			if (self.getParentDegree() != None):
-				parallel_scale = self.getParentScale().getParallelScale()
+				parallel_scale = self.getParentScale().getParallelScale(p_reflection_point)
 				parallel_chord = parallel_scale[self[1].getPositionInParent()].build(Chord, self.getNumerals())
 				return parallel_chord
 
@@ -173,11 +179,11 @@ class Chord(Scale):
 
 		except: print("Error: Failed to get parallel Chord")
 
-	def getRelativeChord(self):
+	def getRelativeChord(self, p_reflection_point = P5):
 
 		try:
 			if (self.getParentDegree() != None):
-				relative_scale = self.getParentScale().getRelativeScale()
+				relative_scale = self.getParentScale().getRelativeScale(p_reflection_point)
 				relative_chord = relative_scale[self[1].getPositionInParent()].build(Chord, self.getNumerals())
 				return relative_chord
 
@@ -185,12 +191,12 @@ class Chord(Scale):
 
 		except: print("Error: Failed to get relative Chord")
 
-	def getNegativeChord(self, p_axis_point = 3):
+	def getNegativeChord(self, p_reflection_point = P5):
 
 		try:
 			first_inversion = self.getFirstInversion()
 			generic_intervals_inverted = [item.getNumeral() for item in Scale.scaleStepsToPitchClass(Scale.pitchClassToScaleSteps(self.getIntervals())[:-1][::-1] + [1])]
-			root = self.getParentScale().getNegativeScale(p_axis_point)[-first_inversion[1].getPositionInParent()] - ((2 * (self.getInversion() - 1)) + 1) - generic_intervals_inverted[-1]
+			root = self.getParentScale().getNegativeScale(p_reflection_point)[-first_inversion[1].getPositionInParent()] - ((2 * (self.getInversion() - 1)) + 1) - generic_intervals_inverted[-1]
 			return root.build(Chord, generic_intervals_inverted)
 
 		except: print("Error: Failed to get negative of chord: " + str(self))
@@ -259,12 +265,11 @@ class Chord(Scale):
 		
 		except: print("Error: Failed to get possible Parent-Scales")
 
-	def invert(self, p_inversion_number):
+	def invert(self, p_inversion_number = 1):
 
 		try:
 			new_chord = super(Chord._Degree, self[p_inversion_number + 1]).build(Chord, len(self.getIntervals()), 2)
 			if (self.getParentDegree() != None): new_chord.setParentDegree(self[p_inversion_number + 1].findInParent())
-			else: new_chord.parent_degree = None
 			return new_chord
 
 		except: print("Error: Failed to invert Chord: " + str(self) + " by " + str(p_inversion_number))
@@ -273,7 +278,7 @@ class Chord(Scale):
 
 		try:
 			next_inversion = self.getFirstInversion()
-			counter = 1
+			counter = 0
 
 			while(next_inversion.simplify() != self.simplify()):
 				next_inversion = next_inversion.invert(1)
@@ -369,7 +374,7 @@ class Chord(Scale):
 
 		try:
 			new_chord = Chord(self[1].getTone(), [item for item in Chord.rearrangeIntervalsAsThirds(self.getIntervals()) if item != None])
-			if (self.getParentDegree() != None): new_chord.setParentDegree(self.getParentDegree())
+			new_chord.setParentDegree(self.getParentDegree())
 			return new_chord
 
 		except: print("Error: Failed to build Chord: " + str(self) + " on thirds")
@@ -380,7 +385,7 @@ class Chord(Scale):
 			new_pitch_class = [item.simplify() for item in self.getIntervals()]
 			new_pitch_class.sort(key=lambda x: x.getSemitones())
 			new_chord = Chord(self[1].getTone(), new_pitch_class)
-			if (self.getParentDegree() != None): new_chord.setParentDegree(self.getParentDegree())
+			new_chord.setParentDegree(self.getParentDegree())
 			return new_chord
 
 		except: print("Error: Failed to simplify intervals of Chord: " + str(self))
@@ -560,7 +565,9 @@ class Chord(Scale):
 	# Overridden Methods and Classes #
 	##################################
 
-	def setParentDegree(self, p_degree): self.parent_degree = self.configureParentDegree(p_degree)
+	def setParentDegree(self, p_degree): 
+		if (p_degree == None): return
+		self.parent_degree = self.configureParentDegree(p_degree)
 
 	def configureParentDegree(self, p_degree):
 		result_scale = p_degree.getParentScale()

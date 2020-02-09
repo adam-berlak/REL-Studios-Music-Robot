@@ -48,28 +48,59 @@
 # COMPLETED: In distanceFromNext() check if it works with scales larger than 7 degrees
 # COMPLETED: Resulting Chord from ResolveChord should use same accidentals as inputed chord
 # COMPLETED: BUGS TO FIX: next() and previous() for Intervals with mutliple accidentals should work differently *Removed Next and Previous*
+# COMPLETED: GetNegativeScale() parameter can be Generic or Specific Interval, and refers to the start of reflection not axis point
+# COMPLETED: New Algorithm for Deriving Parallel Scale and Relative Scale:
+	# - Go a fifth above root of Scale, invert Scale pitch class, and build a new scale
+	# - Go to same scale root a fifth below and build a new scale
+	# - Find the mode of the original scale that matches the same pitch class, this is the parallel scale
+	# - If scale does not have a reflection axis then the scale has no relative scale
+# COMPLETED: Fix the add/sub methods in Key
+# COMPLETED: Bug when adding m3 + 6
 
 # LONG-TERM GOAL: Create and fix issues in UnitTest
 # LONG-TERM GOAL: Add try-catch statements of invalid inputs 
 
 # NEW FEATURES: Should be able to get a version of an interval with minimal accidentals IE: bb4 = b3
 # NEW FEATURES: Change name for the Tone class within the Keyboard object to Key, allow it to play sounds
+# NEW FEATURES: Use Diatonic and Generic Intervals together
 
+# FEATURE:	   Should be able to get exact interval between Keys
+# BUGS TO FIX: [BUG] Weird behavior when adding generic interval of 0 to a scale
+# BUGS TO FIX: Diatonic Interval != Generic Interval
+# BUGS TO FIX: Invert calls super of Chord Degree
+# BUGS TO FIX: Maybe change how indexing works for Chord
+# BUGS TO FIX: Add logic when adding an Interval to a Degree parent scale should change
+# BUGS TO FIX: Change how sub works for Key Class
 # BUGS TO FIX: Support decimal to pitch class in build
 # BUGS TO FIX: Dont use contains for checking if interval in scale, because contains will rotate scale
 # BUGS TO FIX: Transform should return degree instead of Scale or Chord
 # BUGS TO FIX: Too many overrided methods in Chord, indexing should retrieve parent scale degree instead
 # BUGS TO FIX: Transform should either take int or Accidental
 # BUGS TO FIX: Override Interval add in Chord Degree
-# BUGS TO FIX: Possibly fix slice for Chord
+# BUGS TO FIX: [BUG] Possibly fix slice for Chord
 # BUGS TO FIX: Possibly change how findInParent returns self if no parent defined
-# BUGS TO FIX: In Chord, for all methods that access parentDegree perfom a check
-# BUGS TO FIX: Add limitations on getFirstInversion() and getInversion() so that it doesnt loop forever
-# BUGS TO FIX: Fix sub and addition
-# BUGS TO FIX: Remove hardcoded chord quality names from Chord class
-# BUGS TO FIX: If you build a Chord on a Chord degree with specific intervals how does it behave
-# BUGS TO FIX: Check if sub-setting Chords and rotating/added maintains the parent degree
+# BUGS TO FIX: In Chord, for all methods that access parentDegree() perfom a check
+# BUGS TO FIX: [BUG] Add limitations on getFirstInversion() and getInversion() so that it doesnt loop forever
+# BUGS TO FIX: [BUG] Remove hardcoded chord quality names from Chord class
+# BUGS TO FIX: [BUG] If you build a Chord on a Chord degree with specific intervals how does it behave
+# BUGS TO FIX: [BUG] Check if sub-setting Chords and rotating/added maintains the parent degree
 # BUGS TO FIX: Retrieving numeral relative to parent should go down the chain of all parents
+
+# CHANGE-LOG
+# 01/28/2020 - Scale 		 :: [BUG] Fixed Interval arithmetic on Degrees with Keys as Tones
+# 01/28/2020 - Scale/Chord 	 :: [BUG] Added check for None value in parameter for Chord/Scale.setParentDegree() / Simplified Code
+# 01/28/2020 - Scale 		 :: [BUG] Changed interval arithmetic logic for Scale Objects
+# 01/28/2020 - Interval 	 :: Added floor/roof support for negative intervals
+# 01/28/2020 - Chord 		 :: [BUG] Removed hardcoded 'no' in Chord.getQuality()
+# 01/29/2020 - Scale 		 :: Changed parameter of Scale.getNegativeScale() + others from p_axis_point to p_reflection_point, method now takes an interval
+# 01/30/2020 - Configuration :: Added missing Tone Constants from keyboard_tones array in Configuration
+# 01/30/2020 - Key			 :: [BUG] Fixed add/sub for Key Class
+# 01/30/2020 - Tone			 :: Subtracting a Tone from an identical Tone now returns P8 instead of P1
+# 01/30/2020 - Chord		 :: Added p_reflection_point parameter to Chord.getRelativeChord() / Chord.getParallelChord() / Chord.getNegativeChord()
+# 02/07/2020 - Scale		 :: [BUG] Changed behavior of Scale.getModes() to fix missing modes
+# 02/07/2020 - Key			 :: [BUG] Fixed issue with Key addition/subtraction
+# 02/07/2020 - Scale		 :: [BUG] You can now use multiple indices on Scales
+# 02/07/2020 - Scale		 :: [BUG] Adding a Specific Interval to a Scale now also transposes the Parent Degree/ParentScale
 
 import random
 import sys
@@ -77,13 +108,17 @@ import sys
 from Scale import *
 from Chord import *
 from Configuration import *
+from Bar import *
 
 def main():
 
+	#midi_file = MidiFile()
+	#midi_file.parseMidiFile("C:\\Users\\adamb\\github\\REL-Studios-Music-Robot\\RELMusicTheory\\test.mid")
+
+	print(Keyboard["A4"] - Keyboard["B3"])
+
 	# Ways to build a Scale object
 	C_Major_Scale = Scale(C, major)
-	C_M7 = C_Major_Scale[1].build(Chord, "maj7")
-
 	C_Major_Scale_2 = Scale(C, [P1, M2, M3, P4, P5, M6, M7])
 	C_Major_Scale_3 = Scale(C, [2, 2, 1, 2, 2, 2, 1])
 	C_Major_Scale_4 = Scale([C, D, E, F, G, A, B])
@@ -93,12 +128,14 @@ def main():
 	C_M7_2 = C_Major_Scale[1].build(Chord, 4, 3)
 	C_M7_3 = C_Major_Scale[1].build(Chord, [P1, M3, P5, M7])
 	C_M7_4 = C_Major_Scale[1].build(Chord, [1, 3, 5, 7])
-	C_M7_5 = (Chord(C_Major_Scale[1] + C_Major_Scale[3] + C_Major_Scale[5] + C_Major_Scale[7]))
+	C_M7_5 = Chord(C_Major_Scale[1] + C_Major_Scale[3] + C_Major_Scale[5] + C_Major_Scale[7])
+	C_M7_6 = Chord(C_Major_Scale[1, 3, 5, 7])
 
 	# Ways to build a Chord object without a Parent Scale
-	C_M7_6 = Chord(C, [P1, M3, P5, M7])
-	C_M7_7 = Chord(C, [4, 3, 4, 1])
-	C_M7_8 = Chord([C, E, G, B])
+	C_M7_6 = Chord(C, "maj7")
+	C_M7_7 = Chord(C, [P1, M3, P5, M7])
+	C_M7_8 = Chord(C, [4, 3, 4, 1])
+	C_M7_9 = Chord([C, E, G, B])
 
 	# Naming Conventions
 	C_Major_Scale.getName()
@@ -113,36 +150,36 @@ def main():
 	C_M7.getNumeral()
 
 	# Arithmetic
-	C_Major_Scale + 3
-	C_Major_Scale + m3
-	C_Major_Scale[1] + 3
-	C_Major_Scale[1] + m3
-	C_Major_Scale[1] + C_Major_Scale[3]
-	C_Major_Scale[1:2] + C_Major_Scale[4]
-	C_Major_Scale[1:2] + C_Major_Scale[4:7]
+	C_Major_Scale + 3																										# Rotates the Scale by a Generic Interval of 3
+	C_Major_Scale + m3																										# Transposes the Scale by a Specfic Interval of m3
+	C_Major_Scale[1] + 3																									# Returns a Scale-Degree 3 Generic Intervals above the Tonic
+	C_Major_Scale[1] + m3																									# Returns a Scale-Degree m3 Specific Intervals above the Tonic
+	C_Major_Scale[1] + C_Major_Scale[3]																						# Creates a new Scale containing C and E
+	C_Major_Scale[1:2] + C_Major_Scale[4]																					# Adds an F to the Scale <Scale I=C, II=D>
+	C_Major_Scale[1:3] + C_Major_Scale[5:6]																					# Adds the Scale <Scale I=G, II=A> to <Scale I=C, II=D, III=E> => <Scale I=C, II=D, III=E, V=G, VI=A>
 
-	C_Major_Scale[3] - C_Major_Scale[1]
+	C_Major_Scale[3] - C_Major_Scale[1]																						# Returns the Specific Interval between Scale-Degrees 3 and 1 => 3
 	
-	E - C
-	C + m3
-	P1 + m3
+	E - C																													# Returns the Specific Interval between the Tones E and C => b6
+	C + m3																													# Returns the Tone a m3 above the Tone C => Eb
+	P1 + m3																													# Returns the Sum of the Specific Intervals P1 and m3 => b3
 
 	# Chord Inversions and Sub-Setting
-	C_64 = C_M7[1:3].invert(2)
-	C_64.getInversion()
-	C_64.getFiguredBass()
-	C_75 = C_64.getFirstInversion()
+	C_64 = C_M7[1:3].invert(2)																								# Returns the Second Inversion of a Chord => <Chord I=G, IV=C, vi=E>
+	C_64.getInversion()																										# Returns the inversion number of the Chord in question => 2
+	C_64.getFiguredBass()																									# Returns the Figure-Bass notation of the Chord in question => I 6/4
+	C_53 = C_64.getFirstInversion()																							# Returns the First Inversion of the Chord in question => <Chord I=C, iii=E, V=G>
 
 	# Resolving Chords and Voice Leading
-	F_643 = C_M7.resolveChord()
-	F_643.getInversion()
-	G_643 = C_M7.resolveChordInto(C_Major_Scale[5].build(Chord))
+	F_643 = C_M7.resolveChord()																								# Returns the result of resolving the Chord in question using Voice Leading Rules => <Chord I=C, iii=E, IV=F, vi=A>
+	F_643.getInversion()																									# Returns the inversion number of the Chord in question => 2
+	G_643 = C_M7.resolveChordInto(C_Major_Scale[5].build(Chord))															# Returns the result of resolving the Chord in question into a specific Chord
 	G_643.getInversion()
 	
 	# Transformations
-	C_M7.getRelativeChord()
-	C_M7.getParallelChord()
-	C_M7.getNegativeChord()
+	C_M7.getRelativeChord()																									# Returns the Relative-Chord of the Chord in question => <Chord i=A, biii=C, V=E, bVII=G>
+	C_M7.getParallelChord()																									# Returns the Parallel-Chord of the Chord in question => <Chord i=C, biii=Eb, V=G, bVII=Bb>
+	C_M7.getNegativeChord()																									# Returns the Negative-Chord of the Chord in question => <Chord I=Ab, iii=C, V=Eb, bvii=G>
 
 	# Finding alternative Scales
 	#C_M7.getPossibleParentScales()
@@ -157,10 +194,10 @@ def main():
 
 	# Complex Chord Building
 	Chord(C, "mM11b5no9")
+	Chord(C, "m9b5add6")
 	Chord(C, "half-dim9sus4b9")
 
-
-'''
+	'''
 	C_Minor_Scale = Scale(C, lydian)
 	
 	C_Diminished_Scale = Scale(C, diminished)
@@ -177,6 +214,7 @@ def main():
 	G7 = C_Major_Scale[5].build(Chord)
 	CM7 = C_Major_Scale[1].build(Chord)
 	FM7 = C_Major_Scale[1].build(Chord, [1, 3, 4, 7])
+
 
 	AmM7 = A_Melodic_Minor[1].build(Chord)
 

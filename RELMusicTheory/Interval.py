@@ -51,6 +51,10 @@ class Interval:
 			elif (self < Interval(0, 0)): return p_other - abs(self)
 			else: return Interval(self.getSemitones() + p_other.getSemitones(), self.getNumeral() + p_other.getNumeral() - 1)
 
+		if (isinstance(p_other, int)): 
+			if (p_other == 1): return self
+			return self.next().__add__(p_other - 1)
+
 		if (isinstance(p_other, str)): return str(self) + p_other
 
 	def __radd__(self, p_other):
@@ -64,7 +68,7 @@ class Interval:
 			else: return Interval(self.getSemitones() - p_other.getSemitones(), (self.getNumeral() + 1) - p_other.getNumeral())
 
 	def __mul__(self, p_other):
-		if (isinstance(p_other, int)): return Interval(self.getSemitones() * p_other, ((self.getNumeral() + 1) * p_other) - p_other)
+		if (isinstance(p_other, int)): return Interval(self.getSemitones() * p_other, ((self.getNumeral() * p_other) - (1 * (p_other - 1))))
 
 	##########################
 	# Representation Methods #
@@ -184,12 +188,29 @@ class Interval:
 	#################
 
 	def getOctaveRange(self): return int(self.getSemitones() / 12)
-
 	def getIdenticalIntervals(self): return Interval.getPossibleIntervals(self.getSemitones())
+	
+	def roof(self): 
+		if (self < Interval(0, 0)): return -abs(self).floor()
+		return self + (Interval(12, 8) - self.simplify())
+
+	def floor(self): 
+		if (self < Interval(0, 0)): return -abs(self).roof()
+		return self - (self.simplify())
 
 	def simplify(self): 
-		if (self.getNumeral() == 8 and self.getSemitones() != 12): return Interval(self.getSemitones() - 12, Interval.getSimpleNumeral(self.getNumeral()))
 		return Interval(Interval.getSimpleSemitones(self.getSemitones()), Interval.getSimpleNumeral(self.getNumeral()))
+
+	def next(self):
+
+		if (self.getNumeral() == len(Interval.unaltered_intervals)): 
+			new_interval = Interval(Interval.unaltered_intervals[0] + self.getAccidentalAsSemitones(), 1)
+			shift = Interval(12, 8) * (self.getOctaveRange() + 1)
+		else:
+			new_interval = Interval(Interval.unaltered_intervals[(self.simplify().getNumeral() - 1) + 1] + self.getAccidentalAsSemitones(), self.simplify().getNumeral() + 1)
+			shift = Interval(12, 8) * self.getOctaveRange()
+
+		return new_interval + shift
 
 	@staticmethod
 	def getSimpleNumeral(p_numeral):
