@@ -63,8 +63,26 @@
 # NEW FEATURES: Should be able to get a version of an interval with minimal accidentals IE: bb4 = b3
 # NEW FEATURES: Change name for the Tone class within the Keyboard object to Key, allow it to play sounds
 # NEW FEATURES: Use Diatonic and Generic Intervals together
+# NEW FEATURES:
+ 
+''' New Chord Object
+		- Chord built on Scale Degrees instead of Intervals
+		- When adding a Generic Interval that does not exist to a Chord Degree, a new Chord with that Degree is produced with Non-Harmonic Tone Boolean set True
+		- This mirrors Interval Arithmetic in Scale Objects, insteading of "Chromatic Tone" boolean we have "Non-Harmonic Tone" boolean. 
+		- Degrees that are both Chromatic and Non-Harmonic and resolve into a Chord Tone have Appoggiatura Boolean set True
+		- If any of the Booleans are set to True, the associated degree will be removed from the parent object and the parent object will return to its original state
+		- As an example: C_maj_7[1] + [1, 2, -b1, 2, -2] => "[C, D, Db, D, C]"
+		- In such a case C is a Harmonic Tone, D is a Non-Harmonic Tone, and Db is a Chromatic Tone
+		- This allows for indexing Chords with real Generic intervals IE C_maj_7[3] => "E"
+		- When describing a piece in a Sequencer we can now use the highest level of abstraction, a Chord Degree
+		- Thus any given Tone in the Sequencer object has a Parent Scale, a Parent Chord, and several booleans that describe its nature
+'''
 
-# FEATURE:	   Should be able to get exact interval between Keys
+# BUGS TO FIX: [BUG] getting closest distance of chord doesnt work for keys because of subtraction, also adding M2 to B in CMAJ7 chord issue?
+# BUGS TO FIX: [BUG] C# Octave higher when converted to midi
+# BUGS TO FIX: [BUG] C# Octave higher when converted to midi
+# BUGS TO FIX: [BUG] int + Interval doesnt work
+# BUGS TO FIX: Feature: Allow style for accientals IE b/flat
 # BUGS TO FIX: [BUG] Weird behavior when adding generic interval of 0 to a scale
 # BUGS TO FIX: Diatonic Interval != Generic Interval
 # BUGS TO FIX: Invert calls super of Chord Degree
@@ -101,22 +119,42 @@
 # 02/07/2020 - Key			 :: [BUG] Fixed issue with Key addition/subtraction
 # 02/07/2020 - Scale		 :: [BUG] You can now use multiple indices on Scales
 # 02/07/2020 - Scale		 :: [BUG] Adding a Specific Interval to a Scale now also transposes the Parent Degree/ParentScale
+# 02/15/2020 - Scale		 :: Added support for Degree arithmetic for Scales built on Key objects
+# 02/16/2020 - Scale		 :: [BUG] Fixed type() bug in Scale + Degree method
 
+# Dependancies
 import random
 import sys
 
-from Scale import *
-from Chord import *
+# Internal Dependancies
 from Configuration import *
-from Bar import *
+from MidiReader.MidiToObjects import *
+
+from MusicCollections.Scale import *
+from MusicCollections.Chord import *
+
+from Components.Interval import *
+from Components.Tone import *
+from Components.Key import *
+from Components.Note import *
 
 def main():
 
-	#midi_file = MidiFile()
-	#midi_file.parseMidiFile("C:\\Users\\adamb\\github\\REL-Studios-Music-Robot\\RELMusicTheory\\test.mid")
+	#midiIn = MidiInFile(MidiToObjects(), 'C:/Users/adamb/github/REL-Studios-Music-Robot/RELMusicTheory/MidiReader/bach_847.mid')
+	#midiIn.read()
 
-	print(Keyboard["A4"] - Keyboard["B3"])
+	test_scale = Scale(Note(C_4, quarter_note), major)
+	print(test_scale[1].build(Chord).resolveChord())
 
+	'''
+	sequencer = Sequencer()
+	sequencer.add(0, Chord(Note(A_3, crochet), "min7").getTones())
+	sequencer.add(0, [Note(A_4, quaver)])
+	sequencer.add(crochet, Chord(Note(A_3, crochet), "maj7").getTones())
+	sequencer.add(crochet*2, [Note(A_4, quaver)])
+	sequencer.add(int(crochet*2.5), [Note(B_4, quaver)])
+	'''
+	'''
 	# Ways to build a Scale object
 	C_Major_Scale = Scale(C, major)
 	C_Major_Scale_2 = Scale(C, [P1, M2, M3, P4, P5, M6, M7])
@@ -196,7 +234,7 @@ def main():
 	Chord(C, "mM11b5no9")
 	Chord(C, "m9b5add6")
 	Chord(C, "half-dim9sus4b9")
-
+	'''
 	'''
 	C_Minor_Scale = Scale(C, lydian)
 	

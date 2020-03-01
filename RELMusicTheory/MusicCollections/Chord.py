@@ -1,6 +1,6 @@
 import itertools
 
-from Scale import *
+from MusicCollections.Scale import *
 
 class Chord(Scale):
 	
@@ -206,7 +206,8 @@ class Chord(Scale):
 	########################
 
 	def resolveChord(self, p_system = DEFAULT_SYSTEM):
-		try: return self.resolveChordInto((self.getFirstInversion() + RESOLUTION_SYSTEM[p_system])[1:4])
+		try: 
+			return self.resolveChordInto((self.getFirstInversion() + RESOLUTION_SYSTEM[p_system])[1:4])
 		except: print("Error: Failed to resolve Chords: " + str(self))
 
 	def resolveChordInto(self, p_next_chord, p_system = DEFAULT_SYSTEM):
@@ -667,6 +668,6 @@ class Chord(Scale):
 			except: print("Error: Failed to get the position of: " + str(self) + " in first inversion")
 
 		def getMotionToClosestDegree(self, p_next_chord):
-			min_positive_distance = min([(degree - self).simplify() for degree in p_next_chord.getDegrees()])
-			min_negative_distance = min([(self - degree).simplify() for degree in p_next_chord.getDegrees()])
+			min_positive_distance = min([(tone.getTone() - self.getTone().getTone()).simplify() for tone in p_next_chord.getTones()])
+			min_negative_distance = min([(self.getTone().getTone() - tone.getTone()).simplify() for tone in p_next_chord.getTones()])
 			return [min_positive_distance, -min_negative_distance]

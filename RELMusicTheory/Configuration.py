@@ -1,6 +1,8 @@
-from Interval import *
-from Tone import *
-from Key import *
+from Components.Interval import Interval
+from Components.Tone import Tone
+from Components.Key import Key
+from Components.Note import Note
+
 from ScalesDictionary import *
 
 # Configuration System
@@ -29,13 +31,28 @@ SUSPENDED_NOTATION = {"western": "sus"}
 ADDITION_NOTATION = {"western": "add"}
 OMISSION_NOTATION = {"western": "no"}
 
-Interval.unaltered_intervals = UNALTERED_INTERVALS["western"]
-Interval.accidentals = ACCIDENTALS["western"]
+RHYTHM_TREE = {"western": {1: "Breve", 2: "Minim", 4: "Crochet", 8: "Semi-Breve", 16: "Demi-Semi-Quaver"}}
 
-Tone.tone_names = TONE_NAMES["western"]
-Tone.accidentals = ACCIDENTALS["western"]
+Interval.unaltered_intervals = UNALTERED_INTERVALS[DEFAULT_SYSTEM]
+Interval.accidentals = ACCIDENTALS[DEFAULT_SYSTEM]
+
+Tone.tone_names = TONE_NAMES[DEFAULT_SYSTEM]
+Tone.accidentals = ACCIDENTALS[DEFAULT_SYSTEM]
+
+# Configuration Note Constants Systems
+whole_note_tick_length = 1920
+
+Note.whole_note_tick_length = whole_note_tick_length
+Note.rhythm_tree = RHYTHM_TREE[DEFAULT_SYSTEM]
 
 # Variables #
+
+# Configuration note length constants
+whole_note = 1
+half_note = 2
+quarter_note = 4
+eighth_note = 8
+sixteenth_note = 16
 
 # Configuration Interval Constants
 P1 = Interval(0, 1)
@@ -78,12 +95,12 @@ aug14 = Interval(24, 14)
 
 # Configuration Chord Quality Systems
 CHORD_QUALITIES = {"western": {
-                ("major", "maj", "M", "Δ"): [P1, M3, P5, M7, M9, P11, M13],
-                ("minor", "min", "m", "-"): [P1, m3, P5, m7, M9, P11, M13],
-                ("dominant", "dom", "\"", "\""): [P1, M3, P5, m7, M9, P11, M13],
+                ("major", "maj", "M", "Δ"):                [P1, M3, P5, M7, M9, P11, M13],
+                ("minor", "min", "m", "-"):                [P1, m3, P5, m7, M9, P11, M13],
+                ("dominant", "dom", "\"", "\""):           [P1, M3, P5, m7, M9, P11, M13],
                 ("half-diminished", "half-dim", "ø", "ø"): [P1, m3, dim5, m7, M9, P11, M13],
-                ("augmented", "aug", "+", "+"): [P1, M3, aug5, m7, M9, P11, M13],
-                ("diminished", "dim", "o", "o"): [P1, m3, dim5, m7.transform("b"), M9, P11, None]}}
+                ("augmented", "aug", "+", "+"):            [P1, M3, aug5, m7, M9, P11, M13],
+                ("diminished", "dim", "o", "o"):           [P1, m3, dim5, m7.transform("b"), M9, P11, None]}}
 
 # Configuration Scale Degree Naming Systems
 SCALE_DEGREE_NAMES = {"western": {P1: "tonic", m2: "supertonic", M2: "supertonic", m3: "mediant", M3: "mediant", P4: "subdominant", P5: "dominant", m6: "submediant", M6: "submediant", m7: "subtonic", M7: "leading tone"}}
@@ -115,9 +132,16 @@ B_sharp = Tone(TONE_NAMES[DEFAULT_SYSTEM][11], 1)
 
 # Configuration Key Constants
 keyboard_tones = [C_flat, C, C_sharp, D_flat, D, D_sharp, E_flat, E, E_sharp, F_flat, F, F_sharp, G_flat, G, G_sharp, A_flat, A, A_sharp, B_flat, B, B_sharp]
-Key.start_point = A
+Key.start_point = C
 
 Keyboard = {}
 
 for i in range(12):
-    for tone in keyboard_tones: Keyboard[str(tone) + str(i)] = Key(tone, i)
+
+    for tone in keyboard_tones: 
+
+        temp_accidental = ''
+        if (tone.getAccidental() == 1): temp_accidental = '_sharp'
+        if (tone.getAccidental() == -1): temp_accidental = '_flat'
+
+        globals()[tone.getToneName() + temp_accidental + "_" + str(i)] = Key(tone, i)

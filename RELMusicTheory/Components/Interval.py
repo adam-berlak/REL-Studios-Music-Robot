@@ -126,11 +126,13 @@ class Interval:
 	@staticmethod
 	def getPossibleIntervals(p_semitones):
 		previous_list = Interval.generateIntervalList(Interval.unaltered_intervals)
+		octaves = 1
 
-		while(len(previous_list) < p_semitones):
+		while(len(previous_list) <= p_semitones):
 			temp_list = previous_list[:]
-			for intervals in previous_list: temp_list.append([item + Interval(12, 8) for item in intervals])
+			for intervals in previous_list[:12]: temp_list.append([item + (Interval(12, 8) * octaves) for item in intervals])
 			previous_list = temp_list[:]
+			octaves += 1
 
 		return previous_list[p_semitones]
 
