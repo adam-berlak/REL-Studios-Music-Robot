@@ -14,25 +14,33 @@ class Interval:
 		if (self.getNumeral() < 0): prefix = "-"
 		return prefix + abs(self).getAccidental() + str(abs(self).getNumeral())
 
-	def __repr__(self): return str(self)
+	def __repr__(self): 
+		return str(self)
 
-	def __hash__(self): return hash((self.semitones, self.numeral))
+	def __hash__(self): 
+		return hash((self.semitones, self.numeral))
 
 	##############
 	# Comparison #
 	##############
 
-	def __eq__(self, p_other): return (type(self) == type(p_other)) and ((self.getSemitones() == p_other.getSemitones()) and (self.getNumeral() == p_other.getNumeral()))
+	def __eq__(self, p_other): 
+		return (type(self) == type(p_other)) and ((self.getSemitones() == p_other.getSemitones()) and (self.getNumeral() == p_other.getNumeral()))
 
-	def __ne__(self, p_other): return not (self == p_other)
+	def __ne__(self, p_other): 
+		return not (self == p_other)
 
-	def __gt__(self, p_other): return (self.getNumeral() > p_other.getNumeral())
+	def __gt__(self, p_other): 
+		return (self.getNumeral() > p_other.getNumeral())
 
-	def __lt__(self, p_other): return (self.getNumeral() < p_other.getNumeral())
+	def __lt__(self, p_other): 
+		return (self.getNumeral() < p_other.getNumeral())
 
-	def __ge__(self, p_other): return (self > p_other) or (self == p_other)
+	def __ge__(self, p_other): 
+		return (self > p_other) or (self.getNumeral() == p_other.getNumeral())
 
-	def __le__(self, p_other): return (self < p_other) or (self == p_other)
+	def __le__(self, p_other): 
+		return (self < p_other) or (self.getNumeral() == p_other.getNumeral())
 
 	##############
 	# Arithmetic #
@@ -45,7 +53,6 @@ class Interval:
 		return Interval(-self.getSemitones(), -self.getNumeral())
 
 	def __add__(self, p_other):
-
 		if (isinstance(p_other, Interval)): 
 			if (p_other < Interval(0, 0)): return self - abs(p_other)
 			elif (self < Interval(0, 0)): return p_other - abs(self)
@@ -55,20 +62,22 @@ class Interval:
 			if (p_other == 1): return self
 			return self.next().__add__(p_other - 1)
 
-		if (isinstance(p_other, str)): return str(self) + p_other
+		if (isinstance(p_other, str)): 
+			return str(self) + p_other
 
 	def __radd__(self, p_other):
-		if (isinstance(p_other, str)): return p_other + str(self)
+		if (isinstance(p_other, str)): 
+			return p_other + str(self)
 
 	def __sub__(self, p_other):
-
 		if (isinstance(p_other, Interval)): 
 			if (p_other < Interval(0, 0)): return self + abs(p_other)
 			elif (self > Interval(0, 0) and p_other > self): return Interval(self.getSemitones() - p_other.getSemitones(), self.getNumeral() - (p_other.getNumeral() + 1))
 			else: return Interval(self.getSemitones() - p_other.getSemitones(), (self.getNumeral() + 1) - p_other.getNumeral())
 
 	def __mul__(self, p_other):
-		if (isinstance(p_other, int)): return Interval(self.getSemitones() * p_other, ((self.getNumeral() * p_other) - (1 * (p_other - 1))))
+		if (isinstance(p_other, int)): 
+			return Interval(self.getSemitones() * p_other, ((self.getNumeral() * p_other) - (1 * (p_other - 1))))
 
 	##########################
 	# Representation Methods #
@@ -189,8 +198,12 @@ class Interval:
 	# Sugar Methods #
 	#################
 
-	def getOctaveRange(self): return int(self.getSemitones() / 12)
-	def getIdenticalIntervals(self): return Interval.getPossibleIntervals(self.getSemitones())
+	def getOctaveRange(self): 
+		if self < Interval(0, 0): return -int(abs(self.getSemitones()) / 12) - 1
+		return int(self.getSemitones() / 12)
+
+	def getIdenticalIntervals(self): 
+		return Interval.getPossibleIntervals(self.getSemitones())
 	
 	def roof(self): 
 		if (self < Interval(0, 0)): return -abs(self).floor()
@@ -204,7 +217,6 @@ class Interval:
 		return Interval(Interval.getSimpleSemitones(self.getSemitones()), Interval.getSimpleNumeral(self.getNumeral()))
 
 	def next(self):
-
 		if (self.getNumeral() == len(Interval.unaltered_intervals)): 
 			new_interval = Interval(Interval.unaltered_intervals[0] + self.getAccidentalAsSemitones(), 1)
 			shift = Interval(12, 8) * (self.getOctaveRange() + 1)
@@ -217,11 +229,13 @@ class Interval:
 	@staticmethod
 	def getSimpleNumeral(p_numeral):
 		while (p_numeral > 7): p_numeral -= 7
+		while (p_numeral < 1): p_numeral += 7
 		return p_numeral
 
 	@staticmethod
 	def getSimpleSemitones(p_semitones):
 		while (p_semitones > 11): p_semitones -= 12
+		while (p_semitones < 0): p_semitones += 12
 		return p_semitones
 
 	#######################

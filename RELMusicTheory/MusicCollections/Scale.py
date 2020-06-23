@@ -6,257 +6,116 @@ import statistics
 from Configuration import *
 from HelperMethods import *
 
-class Scale:
+from MusicCollections.IntervalList import *
+from MusicCollections.IntervalListUtilities import *
+from Components.IPitchedObject import * 
+from IMusicObject import *
 
-	def __init__(self, p_item_1, p_item_2 = -1):
+class Scale(IntervalList, IMusicObject):
 
-		if (isinstance(p_item_1, Scale)): 
-			scale = p_item_1
-			p_tonic_tone = scale[1].getTone()
-			p_item = scale.getIntervals()
+	def __init__(self, p_item_1, p_item_2 = None, p_type_dict = {}):
 
-		if (isinstance(p_item_1, list)): 
-			if (isinstance(p_item_1[0], Tone)): 
-				intervals = Scale.tonesToPitchClass(p_item_1)
-				p_item_1 = p_item_1[0]
+		if isinstance(p_item_1, Scale): 
+			self.tonic_tone = p_item_1[1].getTone()
+			self.intervals = p_item_1.getIntervals()
+			self.parent_item = p_item_1.getParentDegree()
+			self.type_dict = p_type_dict 
 
-		elif (isinstance(p_item_2, list)):
-			if (isinstance(p_item_2[0], Interval)): intervals = p_item_2
-			if (isinstance(p_item_2[0], int)): intervals = Scale.scaleStepsToPitchClass(p_item_2)
+		elif isinstance(p_item_1, list) and len(p_item_1) > 0 and isinstance(p_item_1[0], Tone): 
+			self.tonic_tone = p_item_1[0]
+			self.intervals = IntervalListUtilities.tonesToPitchClass(p_item_1)
+			self.parent_item = None
+			self.type_dict = p_type_dict
 
-		elif (isinstance(p_item_2, int)): intervals = Scale.decimalToPitchClass(p_item_2)
-
-		self.tonic_tone = p_item_1
-		self.parent_degree = None
-		self.degrees = []
-
-		for i in range(len(intervals)): self.degrees.append(type(self)._Degree(intervals[i], self))
-
-	#####################################
-	# Methods concerning class behavior #
-	#####################################
-
-	def __repr__logic(self): return self.__str__logic()
-	
-	def __str__logic(self):
-		result = "<" + type(self).__name__ + " "
-		for degree in self.getDegrees(): result = result + str(degree) + ", "
-		return result[:-2] + ">"
-
-	def __getitem__logic(self, p_index): 
+		elif isinstance(p_item_2, list) and len(p_item_2) > 0 and isinstance(p_item_2[0], Interval):
+			self.tonic_tone = p_item_1.getTone() if isinstance(p_item_1, Scale.Degree) else p_item_1
+			self.intervals = p_item_2
+			self.parent_item = p_item_1 if isinstance(p_item_1, Scale.Degree) else None
+			self.type_dict = p_type_dict
 		
-		if (isinstance(p_index, slice)):
-			if (p_index.stop == 0): return type(self)(self.getTonicTone(), [])
-			new_interval_list = (self.__add__logic(p_index.start)).getIntervals()[:(p_index.stop + 1) - p_index.start]
-			new_scale = self.__getitem__logic(p_index.start)._Degree__findInParent()._Degree__build(type(self), new_interval_list)
-			return new_scale
+		elif isinstance(p_item_2, list) and len(p_item_2) > 0 and isinstance(p_item_2[0], int):
+			self.tonic_tone = p_item_1.getTone() if isinstance(p_item_1, Scale.Degree) else p_item_1
+			self.intervals = IntervalListUtilities.scaleStepsToPitchClass(p_item_2)
+			self.parent_item = p_item_1 if isinstance(p_item_1, Scale.Degree) else None
+			self.type_dict = p_type_dict
 
-		if (isinstance(p_index, tuple)):
-			degrees = [self.__getitem__logic(1).__add__(item) for item in p_index]
-			result = degrees[0]
-			for item in degrees[1:]:
-				result += item
+		elif isinstance(p_item_2, int):
+			self.tonic_tone = p_item_1.getTone() if isinstance(p_item_1, Scale.Degree) else p_item_1
+			self.intervals = IntervalListUtilities.decimalToPitchClass(p_item_2)
+			self.parent_item = p_item_1 if isinstance(p_item_1, Scale.Degree) else None
+			self.type_dict = p_type_dict
 
-			return result
-		
-		else: return self.getDegrees()[0]._Degree__add__logic(p_index)
-	
-	def __contains__logic(self, p_other):
-		if (isinstance(p_other, Tone) or isinstance(p_other, Key)): return p_other.simplify() in [item.simplify() for item in self.__getTones()]
-		if (isinstance(p_other, int)): return Interval.getSimpleNumeral(p_other) in [item.getNumeral() for item in self.getIntervals()]
-		if (isinstance(p_other, Interval)): return p_other.simplify() in self.getIntervals()
-		if (isinstance(p_other, Scale)): return all(elem in self.__getTones() for elem in p_other.getTones())
-		if (isinstance(p_other, Scale._Degree)): return p_other in self.getDegrees()
-		if (isinstance(p_other, list) and isinstance(p_other[0], Interval)): return (True in [all(elem.simplify() in degree._Degree__buildPitchClass() for elem in p_other) for degree in self.getDegrees()])
-		return False
-	
-	##############
-	# Comparison #
-	##############
+		else: print("Error: Cannot build Scale object with these parameters")
 
-	def __eq__logic(self, p_other): return (type(self) == type(p_other)) and ((self.getIntervals() == p_other.getIntervals()) and (self.getTonicTone() == p_other.getTonicTone()))
-	def __ne__logic(self, p_other): return not (self.__eq__logic(p_other))
+		self.buildComponents()
 
-	##############
-	# Arithmetic #
-	##############
+	###########################
+	# Playable Object Methods #
+	###########################
 
-	def __add__logic(self, p_other):
+	def __play__(self):
+		return
 
-		try:
-			if (isinstance(p_other, str)): return str(self) + p_other
-			if (isinstance(p_other, int)): return (self.__getitem__logic(1)._Degree__add__logic(p_other))._Degree__build(type(self), len(self.getIntervals()), 2)
-			if (isinstance(p_other, Interval)): 
-				new_scale = (self.__getitem__logic(1).getTone() + p_other).build(type(self), self.getIntervals())
-				if (self.getParentDegree() != None): new_scale.setParentDegree((self.getParentDegree().getParentScale() + p_other)[self.getParentDegree().getPosition()])
-				return new_scale
-
-			if (isinstance(p_other, Scale._Degree)):
-				new_intervals = self.getIntervals() + [self.getIntervals()[-1] + (p_other.getTone() - self.getDegrees()[-1].getTone())]
-				new_intervals = Scale.sortIntervals(new_intervals)
-				new_intervals = Scale.normalizeIntervals(new_intervals)
-				new_intervals = Scale.scaleIntervalsByOrder(new_intervals)
-				new_scale = type(self)(self.getDegrees()[0].getTone() if ((p_other.getTone() - self.getDegrees()[0].getTone()) > P1) else p_other.getTone(), new_intervals)
-				new_scale.setParentDegree(self.getParentDegree() if ((p_other.getTone() - self.getDegrees()[0].getTone()) > P1) else p_other)
-				return new_scale
-			
-			if (isinstance(p_other, Scale)):
-				if (len(p_other.getIntervals()) == 1): return self + p_other[1]
-				return self.__add__logic(p_other[1]) + p_other.__remove(1)
-
-		except: print("Error: Failed to add " + str(p_other) + " to " + str(self))
-
-	def __sub__logic(self, p_other):
-		
-		try:
-			if (isinstance(p_other, int)): return (self.__getitem__logic(1)._Degree__sub__logic(p_other))._Degree__build(type(self), len(self.getIntervals()), 2)
-			if (isinstance(p_other, Interval)): return self.__add__logic(-p_other)
-
-		except: print("Error: Failed to subtract " + str(p_other) + " from " + str(self))
-
-	def __radd__logic(self, p_other):
-		if (isinstance(p_other, str)): return p_other + self.__str__logic()
+	def __toMidiData__(self): 
+		try: return self.getTones()
+		except: print("Error: Unable to convert object to midi data as it does not contain playable objects")
 
 	################################
 	# Methods concerned with names #
 	################################
 
-	def __getName(self): return scale_names[Scale.pitchClassToDecimal(self.getIntervals())]
-
-	def __getModeNames(self): return [(self.__add__logic(item + 1)).__getName() for item in range(len(self.getIntervals()))]
-
-	def __printTones(self):
-		result = ""
-		for tone in self.__getTones(): result = result + str(tone) + ", "
-		return "[" + result[:-2] + "]"
-
-	##########################
-	# Transformation methods #
-	##########################
-
-	def __remove(self, p_degree_index):
-		new_intervals = self.getIntervals()[:]
-		new_intervals.pop(p_degree_index - 1)
-		new_scale = type(self)(self.__getitem__logic(2).getTone() if p_degree_index == 1 else self.getTonicTone(), Scale.normalizeIntervals(new_intervals))
-		new_scale.setParentDegree(self.getParentDegree())
-		return new_scale
-
-	def __addInterval(self, p_interval):
-		new_pitch_class = self.getIntervals()[:]
-		new_pitch_class.append(p_interval)
-		new_pitch_class.sort(key=lambda x: x.getSemitones())
-		new_scale = type(self)(self.__getitem__logic(1).getTone(), new_pitch_class)
-		new_scale.setParentDegree(self.getParentDegree())
-		return new_scale
-
-	def __replaceAtNumeralWith(self, p_numeral, p_interval):
-		list_items = [item for item in self.getIntervals() if item.getNumeral() == p_numeral]
-
-		if (len(list_items) != 0):
-			index = self.getIntervals().index(list_items[0])
-			new_scale_beginning = self.getIntervals()[:index]
-			new_scale_beginning.append(p_interval)
-			new_scale_ending = self.getIntervals()[index + 1:]
-			new_scale_intervals = new_scale_beginning + new_scale_ending
-
-		else: return self.__addInterval(p_interval)
-		new_scale = type(self)(self.__getitem__logic(1).getTone(), new_scale_intervals)
-		new_scale.setParentDegree(self.getParentDegree())
-		return new_scale
+	def getName(self): return scale_names[IntervalListUtilities.pitchClassToDecimal([item.getInterval() for item in self.getIncludedDegrees()])]
+	def getModeNames(self): return [(self + (item + 1)).getName() for item in range(len(self.getIntervals()))]
 
 	#################
 	# Sugar Methods #
 	#################
 
-	def __getRelativeScale(self, p_experimental = True, p_reflection_point = P5):
-
-		if (p_experimental and self.__isDistinct() and self.__contains__logic(p_reflection_point)): 
-			parallel_scale = self.__getParallelScale(True, p_reflection_point)
-			relative_modes = [mode for mode in self.__getModes() if mode.getIntervals() == parallel_scale.getIntervals()]
+	def getRelativeScale(self, p_experimental = True, p_reflection_point = 5):
+		if (p_experimental and IntervalListUtilities.isDistinct(self.getIntervals()) and self.__contains__(p_reflection_point)): 
+			parallel_scale = self.getParallelScale(True, p_reflection_point)
+			relative_modes = [mode for mode in self.getModes() if mode.getIntervals() == parallel_scale.getIntervals()]
 			if (len(relative_modes) > 0): return relative_modes[0]
 			else: 
 				print("Error: Scale has no reflection axis, relative Scale could not be found")
 				return -1
 		else: 
-			if (self.__getitem__logic(1)._Degree__buildPitchClass(2, 3) == [P1, m3]): return (self.__sub__logic(6))
-			elif (self.__getitem__logic(1)._Degree__buildPitchClass(2, 3) == [P1, M3]): return (self.__add__logic(6))		
+			if (self.__getitem__(1).buildPitchClass(2, 3) == [P1, m3]): return (self.sub(6))
+			elif (self.__getitem__(1).buildPitchClass(2, 3) == [P1, M3]): return (self.add(6))		
 			else: return self
 
-	def __getParallelScale(self, p_experimental = True, p_reflection_point = P5):
-
-		if (p_experimental and self.__isDistinct() and self.__contains__logic(p_reflection_point)): 
-			return self.__getNegativeScale(p_reflection_point)[-p_reflection_point].buildScale()
+	def getParallelScale(self, p_experimental = True, p_reflection_point = 5):
+		if (p_experimental and IntervalListUtilities.isDistinct(self.getIntervals()) and self.__contains__(p_reflection_point)): 
+			return self.getNegativeScale(p_reflection_point)[-p_reflection_point].buildScale()
 		else: 
-			if (self.__getitem__logic(1)._Degree__buildPitchClass(2, 3) == [P1, m3]): return self.__getitem__logic(1)._Degree__buildScaleWithIntervals((self.__sub__logic(6)).getIntervals())
-			elif (self.__getitem__logic(1)._Degree__buildPitchClass(2, 3) == [P1, M3]): return self.__getitem__logic(1)._Degree__buildScaleWithIntervals((self.__add__logic(6)).getIntervals())
+			if (self.__getitem__(1).buildPitchClass(2, 3) == [P1, m3]): return self.__getitem__(1).buildScaleWithIntervals((self.sub(6)).getIntervals())
+			elif (self.__getitem__(1).buildPitchClass(2, 3) == [P1, M3]): return self.__getitem__(1).buildScaleWithIntervals((self.add(6)).getIntervals())
 			else: return self
 
-	def __getNegativeScale(self, p_reflection_point = P5): 
-		
-		if (self.__isDistinct() and self.__contains__logic(p_reflection_point)): 
-			new_scale = Scale(self.__getitem__logic(p_reflection_point).getTone(), Scale.scaleStepsToPitchClass(Scale.pitchClassToScaleSteps(self.__getitem__logic(p_reflection_point).getParentScale()[1].buildPitchClass())[::-1]))
-			new_scale.setParentDegree(self.getParentDegree())
+	def getNegativeScale(self, p_reflection_point = 5): 
+		if (IntervalListUtilities.isDistinct(self.getIntervals()) and self.__contains__(p_reflection_point)): 
+			new_reference_point = self.__getitem__(p_reflection_point).findInParent() if self.getParentDegree() is not None else self.__getitem__(p_reflection_point).getTone()
+			new_scale = Scale(new_reference_point, IntervalListUtilities.scaleStepsToPitchClass(IntervalListUtilities.pitchClassToScaleSteps(self.__getitem__(p_reflection_point).getParentScale()[1].buildPitchClass())[::-1]))
 			return new_scale
 		else: 
 			print("Error: Unable to get Negative of Scale")
 			return -1
 
-	def __isDistinct(self): return (len([item.simplify().getNumeral() for item in self.getIntervals()]) == len(set([item.simplify().getNumeral() for item in self.getIntervals()])))
-
-	def __transpose(self, p_interval): return (self.__add__logic(p_interval))
-	def __rotate(self): return (self.__transpose(2))
-
-	def __getModes(self): return [self + integer for integer in range(1,len(self.getIntervals()) + 1)]
-	def __getRoot(self): return self.__getitem__logic(1)
-	def __getParentScale(self): return self.getParentDegree().getParentScale()
-	def __getNumerals(self): return [item.getNumeral() for item in self.getIntervals()]
-	def __getSemitones(self): return [item.getSemitones() for item in self.getIntervals()]
-	def __getIntervals(self): return [item.getInterval() for item in self.getDegrees()]
-	def __getTones(self): return [item.getTone() for item in self.getDegrees()]
-	def __getDegreeByInterval(self, p_interval): return [item for item in self.getDegrees() if item.getInterval() == p_interval][0]
-	def __getDegreeByNumeral(self, p_numeral): return [item for item in self.getDegrees() if item.getInterval().getNumeral() == p_numeral][0]
+	def transpose(self, p_interval): return (self.add(p_interval))
+	def rotate(self): return (self.transpose(2))
+	def getModes(self): return [self + integer for integer in range(1, len(self.getIntervals()) + 1)]
+	def getTonic(self): return self.__getitem__(1)
 
 	###################
 	# Wrapper Methods #
 	###################
 
-	def __repr__(self): return self.__repr__logic()
-	def __str__(self): return self.__str__logic()
-
-	def __eq__(self, p_other): return self.__eq__logic(p_other)
-	def __ne__(self, p_other): return self.__ne__logic(p_other)
-
-	def __contains__(self, p_other): return self.__contains__logic(p_other)
-	def __getitem__(self, p_index): return self.__getitem__logic(p_index)
-
-	def __add__(self, p_other): return self.__add__logic(p_other)
-	def __sub__(self, p_other): return self.__sub__logic(p_other)
-	def __radd__(self, p_other): return self.__radd__logic(p_other)
-
-	def getName(self): return self.__getName()
-	def getModeNames(self): return self.__getModeNames()
-	def printTones(self): return self.__printTones()
-	def remove(self, p_degree_index): return self.__remove(p_degree_index)
-	def addInterval(self, p_interval): return self.__addInterval(p_interval)
-	def replaceAtNumeralWith(self, p_numeral, p_interval): return self.__replaceAtNumeralWith(p_numeral, p_interval)
-	def getParallelScale(self, p_reflection_point = P5): return self.__getParallelScale(p_reflection_point)
-	def getRelativeScale(self, p_reflection_point = P5): return self.__getRelativeScale(p_reflection_point)
-	def getNegativeScale(self, p_reflection_point = P5): return self.__getNegativeScale(p_reflection_point)
-	def transpose(self, p_interval): return self.__transpose(p_interval)
-	def rotate(self): return self.__rotate()
-	def getModes(self): return self.__getModes()
-	def getRoot(self): return self.__getRoot()
-	def isDistinct(self): return self.__isDistinct()
-	def getParentScale(self): return self.__getParentScale()
-	def getNumerals(self): return self.__getNumerals()
-	def getSemitones(self): return self.__getSemitones()
-	def getIntervals(self): return self.__getIntervals()
-	def getTones(self): return self.__getTones()
-	def getDegreeByInterval(self, p_interval): return self.__getDegreeByInterval(p_interval)
-	def getDegreeByNumeral(self, p_numeral): return self.__getDegreeByNumeral(p_numeral)
+	def getParentScale(self): return self.getParentIntervalList()
+	def getDegreeByInterval(self, p_interval): return self.getItemByInterval(p_interval)
+	def getDegreeByNumeral(self, p_numeral): return self.getItemByNumeral(p_numeral)
 
 	######################################################
-	# Methods for logically calculating scale properties #
+	# Methods for ally calculating scale properties #
 	######################################################
 
 	def getHemitonia(self): return self.countIntervals(1)
@@ -300,7 +159,7 @@ class Scale:
 
 			for degree in self.getDegrees():
 				if (degree == self[1]): continue
-				child_pitch_class = self.pitchClassToScaleSteps(degree.buildPitchClass())
+				child_pitch_class = IntervalListUtilities.pitchClassToScaleSteps(degree.buildPitchClass())
 				if (parent_pitch_class == child_pitch_class): result.append(degree.getPosition())
 
 			return result
@@ -313,7 +172,7 @@ class Scale:
 			result = []
 
 			for degree in self.getDegrees():
-				scale_steps = self.pitchClassToScaleSteps(degree.buildPitchClass())
+				scale_steps = IntervalListUtilities.pitchClassToScaleSteps(degree.buildPitchClass())
 				if (scale_steps == scale_steps[::-1]): result.append(degree.getPosition())
 
 			return result 
@@ -339,25 +198,26 @@ class Scale:
 
 		except: print("Error: Failed to retrieve interval vector for scale: " + str(self))
 
-	def isChiral(self):
+	def isChiral(self, p_intervals):
 
 		try:
-			reflection = self.pitchClassToScaleSteps(self.getIntervals())[::-1]
+			reflection_scale_steps = IntervalListUtilities.pitchClassToScaleSteps(p_intervals)[::-1]
 			result = []
 
-			for degree in self.getDegrees():
-				rotation = self.pitchClassToScaleSteps(degree.buildPitchClass())
-				if (rotation == reflection): return False
+			for rotation_ammount in len(p_intervals):
+				rotation_pitch_class = IntervalListUtilities.invertStatic(p_intervals, rotation_ammount + 1)
+				rotation_scale_steps = IntervalListUtilities.pitchClassToScaleSteps(rotation_pitch_class)
+				if (rotation_scale_steps == reflection_scale_steps): return False
 
 			return True
 
 		except: print("Error: Failed to check chirality for scale: " + str(self))
 
-	def getCohemitonic(self):
+	def getCohemitonic(self, p_intervals):
 
 		try:
 			result = []
-			scale_steps = (self.pitchClassToScaleSteps(self.getIntervals())*2)
+			scale_steps = IntervalListUtilities.pitchClassToScaleSteps(p_intervals) * 2
 
 			for i in range(int(len(scale_steps) / 2)):
 				if (scale_steps[i] == 1 and scale_steps[i + 1] == 1): result.append(i + 1)
@@ -391,447 +251,94 @@ class Scale:
 
 		except: print("Error: Failed to get prime mode of scale: " + str(self))
 
-	##################
-	# Static Methods #
-	##################
+	#################
+	# Sugar Methods #
+	#################
 
-	@staticmethod
-	def fromInt(p_int): return Scale.decimalToPitchClass(p_int)
+	def getIncludedDegrees(self): return [item for item in self.getDegrees() if not item.isOmitted()]
+	def getDiatonicDegrees(self): return [item for item in self.getDegrees() if not item.isChromatic()]
 
-	@staticmethod
-	def pitchClassToScaleSteps(p_pitch_class):
+	##############################
+	# Overridable Business Logic #
+	##############################
 
-		try:
-			result = []
-			previous = P1
+	def buildComponents(self):
+		self.items = []
 
-			for interval in p_pitch_class[1:]:
-				result.append((interval - previous).getSemitones())
-				previous = interval
+		for i in range(len(self.intervals)): 
+			self.items.append(type(self).Degree(self.intervals[i], self, **self.type_dict[self.intervals[i]] if self.intervals[i] in self.type_dict.keys() else {}))
 
-			result.append(abs(p_pitch_class[-1].simplify().getSemitones() - 12))
-			return result
-
-		except: print("Error: Failed to retrieve scale steps")
-
-	@staticmethod
-	def pitchClassToDecimal(p_intervals): return int(Scale.pitchClassToBinary(p_intervals), 2)
-
-	@staticmethod
-	def pitchClassToBinary(p_intervals):
-
-		try:
-			result = ""
-
-			for i in range(12):
-				if (len([item for item in p_intervals if i == item.getSemitones()]) == 0): result = result + "0"
-				else: result = result + "1"
-
-			return result[::-1]
-
-		except: print("Error: Failed to convert pitch class " + p_intervals + " to decimal")
-
-	@staticmethod
-	def decimalToPitchClass(p_integer, p_use_distinct_intervals = False): return Scale.binaryToPitchClass('{0:012b}'.format(p_integer))
-
-	@staticmethod
-	def binaryToPitchClass(p_binary): return Scale.scaleStepsToDistinctPitchClass(Scale.binaryToScaleSteps(p_binary))
-
-	@staticmethod
-	def binaryToScaleSteps(p_binary):
-		
-		binary = p_binary[len(p_binary)::-1]
-		binary = (binary + binary[0])[1:]
-		scale_steps = []
-		semitones = 0
-
-		for i in range(len(binary)):
-			if (binary[i] == '0'): semitones = semitones + 1
-			else:
-				semitones = semitones + 1
-				scale_steps.append(semitones)
-				semitones = 0
-		
-		return scale_steps
-
-	@staticmethod
-	def scaleStepsToPitchClass(p_scale_steps, p_system = DEFAULT_SYSTEM):
-
-		counter = 0
-		possible_intervals_collection = [(P1, P1, P1)]
-
-		for i in range(len(p_scale_steps) - 1):
-			integer = p_scale_steps[i]
-			counter = counter + integer
-			possible_intervals_collection.append(Interval.getPossibleIntervals(counter))
-
-		all_combinations = list(itertools.product(*possible_intervals_collection))
-
-		min_combination = None
-		min_repeat_size = 1000
-		min_accidental_count = 1000
-		min_sharp_count = 1000
-
-		for combination in all_combinations:
-			temp_repeat_size = statistics.mean([len(list(group)) for key, group in itertools.groupby([item.getNumeral() for item in combination])])
-			temp_accidental_count = len([item for item in combination if item.getAccidental() != ACCIDENTALS[p_system][0]])
-			temp_sharp_count = len([item for item in combination if ACCIDENTALS[p_system][1] in item.getAccidental()])
-
-			if (temp_repeat_size < min_repeat_size):
-				min_combination = combination
-				min_repeat_size = temp_repeat_size
-				min_accidental_count = temp_accidental_count
-
-			if (temp_repeat_size == min_repeat_size and (temp_accidental_count < min_accidental_count or temp_sharp_count < min_sharp_count)):
-				min_combination = combination
-				min_accidental_count = temp_accidental_count
-				min_sharp_count = temp_sharp_count
-
-		return list(min_combination)
-
-	@staticmethod
-	def scaleStepsToDistinctPitchClass(p_scale_steps):
-
-		try: 
-			result = [P1]
-			semitones = 0
-
-			for i in range(len(p_scale_steps) - 1):
-				semitones = semitones + p_scale_steps[i]
-				result.append(Interval(semitones, i + 2))
-
-			if (len([item for item in result if len(item.getAccidental()) > ACCIDENTAL_LIMIT]) > 0): return Scale.scaleStepsToPitchClass(p_scale_steps)
-			return result
-
-		except: print("Error: Failed to create list of distinct intervals")
-
-	@staticmethod
-	def scaleIntervalsByOrder(p_intervals):
-
-		try: 
-			result = []
-			previous = -m2
-
-			for interval in p_intervals:
-				while (interval <= previous): interval = interval + P8
-				previous = interval
-				result.append(interval)
-
-			return result
-
-		except: print("Error: Failed to order intervals")
-
-	@staticmethod
-	def sortIntervals(p_intervals): 
-		p_intervals.sort(key=lambda x: x.getNumeral())
-		p_intervals.sort(key=lambda x: x.getSemitones())
-		return p_intervals
-
-	@staticmethod
-	def normalizeIntervals(p_intervals): return [item - p_intervals[0] for item in p_intervals]
-
-	@staticmethod
-	def tonesToPitchClass(p_tones): return Scale.scaleIntervalsByOrder([tone - p_tones[0] for tone in p_tones])
+	def getAttributes(self):
+		return {
+			"p_type_dict": self.getTypeDict()
+		}
 
 	#######################
 	# Getters and Setters #
 	#######################
    
-	def getDegrees(self): return self.degrees
+	def getDegrees(self): return self.items
 	def getTonicTone(self): return self.tonic_tone
-	def getParentDegree(self): return self.parent_degree
-
-	def setDegrees(self, p_degrees): self.degrees = p_degrees
-	def setTonicTone(self, p_tonic_tone): self.tonic_tone = p_tonic_tone
-	def setParentDegree(self, p_parent_degree): 
-		if (p_parent_degree == None): return
-		self.parent_degree = p_parent_degree
+	def getParentDegree(self): return self.parent_item
+	def getTypeDict(self): return self.type_dict
 	
-	class _Degree:
+	class Degree(IntervalList.Item):
 		
-		def __init__(self, p_interval, p_parent_scale):
+		def __init__(self, p_interval, p_parent_scale, p_chromatic = False, p_omitted = False):
+			super().__init__(p_interval, p_parent_scale)
+			self.chromatic = p_chromatic
+			self.omitted = p_omitted
 
-			self.interval = p_interval
-			self.parent_scale = p_parent_scale
+		def add_BL(self, p_other):
+			if isinstance(p_other, int):	
+				if abs(p_other) == 1: return self
+				return self.next_BL().add_BL((p_other - 1) if not self.next_BL().isChromatic() else p_other) if p_other > 0 else self.previous_BL().add_BL((p_other + 1) if not self.previous_BL().isChromatic() else p_other)
 
-			degree_tone = self.getParentScale().getTonicTone() + self.getInterval()
-			self.setTone(degree_tone)
+			if isinstance(p_other, Interval):
+				if abs(p_other) == P1: return self
+				new_interval = self.getInterval() + p_other
 
-		#####################################
-		# Methods concerning class behavior #
-		#####################################
+				if new_interval < P1:
+					return (self.getParentIntervalList().sub_BL(P8))[self.getPosition()] - (p_other - P8)
+				
+				if new_interval >= self.getParentIntervalList().getIntervals()[-1].roof():
+					return (self.getParentIntervalList().add_BL(P8))[self.getPosition()] + (p_other - P8)
 
-		def __str__logic(self):
-			if (not DEGREE_SIMPLE_REPRESENTATION): return self.getNumeral() + ": " + str(self.getTone())
-			else: return str(self.getTone())
-
-		##############
-		# Comparison #
-		##############
-
-		def __eq__logic(self, p_other): return (type(self) == type(p_other)) and ((self.getInterval() == p_other.getInterval()) and (self.getTone() == p_other.getTone()))
-		def __ne__logic(self, p_other): return not (self.__eq__logic(p_other))
-
-		##############
-		# Arithmetic #
-		##############
-
-		def __add__logic(self, p_other):
-
-			if (isinstance(p_other, str)): return str(self) + p_other
-
-			if (isinstance(p_other, int)):
-				if (p_other < 0): return self.__sub__logic(abs(p_other))		
-				elif (p_other == 1): return self
-				else: return self.__next().__add__logic(p_other - 1)
-			
-			if (isinstance(p_other, Interval)):
-
-				try:
-					if (p_other < Interval(0, 0)): return self.__sub__logic(abs(p_other))
-					if (p_other == P1): return self
-
-					new_interval = self.getInterval() + p_other
-					
-					if (new_interval >= self.getParentScale().getIntervals()[-1].roof()):
-						return (self.getParentScale() + P8)[self.getPosition()] + (p_other - P8)
-
-					if (new_interval not in self.getParentScale()):
-
-						if (self.getParentScale().isDistinct()):
-							if (new_interval.getNumeral() == 1): return self.getParentScale()[1].transform(new_interval.getAccidental())[1]
-							elif (new_interval.getNumeral() in self.getParentScale().getNumerals()): return self.getParentScale().replaceAtNumeralWith(new_interval.getNumeral(), new_interval).getDegreeByInterval(new_interval)
-							else: return self.getParentScale().addInterval(new_interval).getDegreeByInterval(new_interval)
-
-						else: return self.getParentScale().addInterval(new_interval).getDegreeByInterval(new_interval)
-					else: return self.getParentScale().getDegreeByInterval(new_interval)
-
-				except: print("Error: Failed to assign tones to the new scale")
-
-			if (isinstance(p_other, Scale)):
-				new_scale = (self.__add__logic(p_other[1])) + (p_other[2:len(p_other.getIntervals())])
-				new_scale.setParentDegree(self if ((p_other[1].getTone() - self.getTone()) > P1) else p_other[1])
-				return new_scale
-			
-			if (isinstance(p_other, Scale._Degree)):
-				new_intervals = [P1, p_other.getTone() - self.getTone()]
-				new_intervals = Scale.sortIntervals(new_intervals)
-				new_intervals = Scale.normalizeIntervals(new_intervals)
-				new_intervals = Scale.scaleIntervalsByOrder(new_intervals)
-				new_scale = type(self.getParentScale())(self.getTone() if ((p_other.getTone() - self.getTone()) > P1) else p_other.getTone(), new_intervals)
-				new_scale.setParentDegree(self if ((p_other.getTone() - self.getTone()) > P1) else p_other)
-				return new_scale
-
-		def __sub__logic(self, p_other):
-
-			if (isinstance(p_other, int)):
-				if (p_other < 0): return self.__add__logic(abs(p_other))
-				elif (p_other == 1): return self
-				else: return self.__previous().__sub__logic((p_other - 1))
-
-			if (isinstance(p_other, Interval)):
-
-				try:
-					if (p_other < Interval(0, 0)): return self.__add__logic(abs(p_other))
-					if (p_other == P1): return self
-					
-					new_interval = self.getInterval() - p_other
-
-					if (new_interval < P1):
-						return (self.getParentScale() - P8)[self.getPosition()] - (p_other - P8)
-
-					if (new_interval not in self.getParentScale()):
-
-						if (self.getParentScale().isDistinct()):
-							if (new_interval.getNumeral() == 1): return self.getParentScale()[1].transform(new_interval.getAccidental())[1]
-							elif (new_interval.getNumeral() in self.getParentScale().getNumerals()): return self.getParentScale().replaceAtNumeralWith(new_interval.getNumeral(), new_interval).getDegreeByInterval(new_interval)
-							else: return self.getParentScale().addInterval(new_interval).getDegreeByInterval(new_interval)
-						
-						else: return self.getParentScale().addInterval(new_interval).getDegreeByInterval(new_interval)
-					else: return self.getParentScale().getDegreeByInterval(new_interval)
-
-				except: print("Error: Failed to assign tones to the new scale")
-
-			if (isinstance(p_other, Scale._Degree)): 
-				new_scale = p_other.__add__(self)
-				return new_scale[1].distanceFromNext(new_scale[2])
+				if new_interval not in self.getParentIntervalList():
+					return self.getParentIntervalList().addInterval(new_interval, {"p_chromatic": True}).getItemByInterval(new_interval)
+				
+				else: return self.getParentIntervalList().getItemByInterval(new_interval)
+			else: return super().add_BL(p_other)
 		
-		def __radd__(self, p_other):
-			if (isinstance(p_other, str)): return p_other + str(self)
-
 		################################
 		# Methods concerned with names #
 		################################
 
-		def __getName(self, p_system = DEFAULT_SYSTEM): return SCALE_DEGREE_NAMES[p_system][self.getInterval()]
-
-		def __getNumeral(self):
-
-			try:
-				numeral = intToRoman(self.getInterval().getNumeral()) 
-				if (self.buildPitchClass(2, 3) == [P1, m3]): numeral = numeral.lower()
-				accidental = self.getInterval().getAccidental()
-				return accidental + numeral
-			
-			except: print("Error: Failed to print numeral of chord")
-
-		##########################
-		# Transformation methods #
-		##########################
-
-		def __transform(self, p_accidental):
-
-			try:
-				new_interval = self.getInterval().transform(p_accidental)
-				new_pitch_class = self.getParentScale().getIntervals()[:]
-				new_pitch_class = [item for item in new_pitch_class if item != self.getInterval()]
-				new_pitch_class.append(new_interval)
-				new_pitch_class.sort(key=lambda x: x.getNumeral())
-
-				if (self.getPosition() == 1):
-					difference = new_interval.getSemitones()
-					new_pitch_class = [Interval(item.getSemitones() - difference, item.getNumeral()) for item in new_pitch_class]
-					return type(self.getParentScale())(self.getParentScale()[1].getTone() + Interval(difference, 1), new_pitch_class)
-
-				return type(self.getParentScale())(self.getParentScale()[1].getTone(), new_pitch_class)
-
-			except: print("Error: Failed to transform " + self + " by " + p_accidental)
-
-		#############################################################
-		# Methods concerned with measuring distance between degrees #
-		#############################################################
-
-		def __distanceFrom(self, p_other):
-			if (self.getInterval().getSemitones() < p_other.getInterval().getSemitones()): return p_other.getInterval() - self.getInterval()
-			else: return self.getInterval() - p_other.getInterval() 
-
-		def __distanceFromNext(self, p_other):	
-			if (self.getInterval().getSemitones() < p_other.getInterval().getSemitones()): return p_other.getInterval() - self.getInterval()
-			else: return ((self.getParentScale().getIntervals()[-1] + (P8 - self.getParentScale().getIntervals()[-1].simplify())) - self.getInterval()) + p_other.getInterval()
+		def getName(self, p_system = DEFAULT_SYSTEM): return SCALE_DEGREE_NAMES[p_system][self.getInterval()]
 
 		######################################################
 		# Methods concerned with operations on scale degrees #
 		######################################################
 
-		def __build(self, object_type, p_item_1 = 4, p_item_2 = 3, *args):
+		def buildScale(self):
+			new_scale = Scale(self, self.buildPitchClass())
+			return new_scale
 
-			try:
-				if (isinstance(p_item_1, list)):
-					if (isinstance(p_item_1[0], int)): child_object = object_type(self.getTone(), [(self.__distanceFromNext(self + item)).simplify() for item in p_item_1], *args)
-					if (isinstance(p_item_1[0], Interval)): child_object = object_type(self.getTone(), p_item_1, *args)
-				elif (isinstance(p_item_1, str)): child_object = object_type(self.getTone(), object_type.fromString(p_item_1), *args)
-				else: child_object = object_type(self.getTone(), self.__buildPitchClass(p_item_1, p_item_2)[:p_item_1], *args)
-				child_object.setParentDegree(self)
-				return child_object
-
-			except: print("Error: Failed to build object")
-
-		def __buildScale(self):
-
-			try:
-				child_intervals = self.__buildPitchClass()
-				child_scale = Scale(self.getTone(), child_intervals)
-				child_scale.setParentDegree(self)
-				return child_scale
-
-			except: print("Error: Failed to build scale")
-
-		def __buildScaleWithIntervals(self, p_intervals):
-
-			try:
-				new_scale = Scale(self.getTone(), p_intervals)
-				new_scale.setParentDegree(self)
-				return new_scale
-
-			except: print("Error: Failed to build custom scale!")
-
-		def __buildPitchClass(self, p_num_tones = -1, p_leap_size = 2, p_system = DEFAULT_SYSTEM):
-
-			try:
-				if (p_num_tones == -1): p_num_tones = len(self.getParentScale().getIntervals())
-				child_intervals = []
-				p_leap_size = p_leap_size - 1
-				next_degree = self
-				counter = 0
-
-				while (counter < p_num_tones - 1):
-					for j in range(p_leap_size): next_degree = next_degree.__next()
-					new_interval = self.__distanceFromNext(next_degree)
-					child_intervals.append(new_interval)
-					counter = counter + 1
-				
-				return Scale.scaleIntervalsByOrder([P1] + child_intervals)
-
-			except: print("Error: Failed to build pitch class set")
-
-		#################
-		# Sugar methods #
-		#################
-
-		def __getPosition(self): return self.getParentScale().getDegrees().index(self) + 1
-		def __getPositionInParent(self): return self.findInParent().getPosition()
-
-		def __findInParent(self):
-			if (self.getParentScale().getParentDegree() != None): return self.getParentScale().getParentDegree().getParentScale().getDegreeByInterval((self.getParentScale().getParentDegree().getInterval() + self.getInterval()).simplify())
-			else: return self
-
-		def __next(self):
-
-			if (self.__getPosition() == len(self.getParentScale().getDegrees())): 
-				new_tonic_tone = self.getParentScale().getDegrees()[0].getTone() + self.getParentScale().getDegrees()[-1].getInterval().roof()
-				new_object = type(self.getParentScale())(new_tonic_tone, self.getParentScale().getIntervals())
-				if (self.getParentScale().getParentDegree() != None): new_object.setParentDegree(self.getParentScale().getParentDegree())
-				return new_object.getDegrees()[0]
-
-			return self.getParentScale().getDegrees()[(self.__getPosition() - 1) + 1]
-
-		def __previous(self):
-
-			if (self.__getPosition() == 1): 
-				new_tonic_tone = self.getParentScale().getDegrees()[0].getTone() - self.getParentScale().getDegrees()[-1].getInterval().roof()
-				new_object = type(self.getParentScale())(new_tonic_tone, self.getParentScale().getIntervals())
-				if (self.getParentScale().getParentDegree() != None): new_object.setParentDegree(self.getParentScale().getParentDegree())
-				return new_object.getDegrees()[-1]
-
-			return self.getParentScale().getDegrees()[(self.__getPosition() - 1) - 1]
+		def buildScaleWithIntervals_BL(self, p_intervals):
+			new_scale = Scale(self, p_intervals)
+			return new_scale
 
 		###################
-		# Wrapper methods #
+		# Wrapper Methods #
 		###################
 
-		def __str__(self): return self.__str__logic()
-
-		def __eq__(self, p_other): return self.__eq__logic(p_other)
-		def __ne__(self, p_other): return self.__ne__logic(p_other)
-
-		def __add__(self, p_other): return self.__add__logic(p_other)
-		def __sub__(self, p_other): return self.__sub__logic(p_other)
-
-		def getName(self, p_system = DEFAULT_SYSTEM): return self.__getName(p_system)
-		def getNumeral(self): return self.__getNumeral()
-		def transform(self, p_accidental): return self.__transform(p_accidental)
-		def distanceFrom(self, p_other): return self.__distanceFrom(p_other)
-		def distanceFromNext(self, p_other): return self.__distanceFromNext(p_other)
-		def build(self, p_object_type, p_num_tones = 4, p_leap_size = 3, *args): return self.__build(p_object_type, p_num_tones, p_leap_size, *args)
-		def buildScale(self): return self.__buildScale()
-		def buildScaleWithIntervals(self, p_intervals): return self.__buildScaleWithIntervals(p_intervals)
-		def buildPitchClass(self, p_num_tones = -1, p_leap_size = 2, p_system = DEFAULT_SYSTEM): return self.__buildPitchClass(p_num_tones, p_leap_size, p_system)
-		def getPosition(self): return self.__getPosition()
-		def getPositionInParent(self): return self.__getPositionInParent()
-		def findInParent(self): return self.__findInParent()
-		def next(self):	return self.__next()
-		def previous(self): return self.__previous()
+		def buildScaleWithIntervals(self, p_intervals): return self.buildScaleWithIntervals_BL(p_intervals)
+		def getParentScale(self): return self.getParentIntervalList()
 
 		#######################
 		# Getters and Setters #
 		#######################
-		
-		def getOctaves(self): return self.octaves
-		def getTone(self): return self.tone	
-		def getInterval(self): return self.interval
-		def getParentScale(self): return self.parent_scale
 
-		def setOctaves(self, p_octaves): self.octaves = p_octaves
-		def setTone(self, p_tone): self.tone = p_tone
-		def setInterval(self, p_interval): self.interval = p_interval
-		def setParentScale(self, p_parent_scale): self.parent_scale = p_parent_scale
+		def isChromatic(self): return self.chromatic
+		def isOmitted(self): return self.omitted
+		

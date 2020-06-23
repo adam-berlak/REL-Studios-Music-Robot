@@ -20,7 +20,8 @@ class Tone(IPitchedObject):
         
         if (isinstance(p_other, Interval)):
 
-            if (p_other < Interval(0, 1)): return self - abs(p_other)
+            if abs(p_other.getNumeral()) == 1: return Tone(self.getToneName(), self.getAccidental() + p_other.getSemitones())
+            if (p_other < Interval(0, 0)): return self - abs(p_other)
 
             index = Tone.tone_names.index(self.getToneName()) 
 
@@ -36,18 +37,20 @@ class Tone(IPitchedObject):
             new_tone_name = (Tone.tone_names * 20)[index - 1]
             new_accidental = p_other.getSemitones() - (semitones_count - 1)
 
-            return Tone(new_tone_name, new_accidental)
+            return Tone(new_tone_name, new_accidental) 
+            
 
     def __sub__(self, p_other):
 
         if (isinstance(p_other, Interval)):
 
-            if (p_other < Interval(0, 1)): return self + abs(p_other)
+            #if abs(p_other.getNumeral()) == 1: return Tone(self.getToneName(), self.getAccidental() - p_other.getSemitones())
+            if (p_other < Interval(0, 0)): return self + abs(p_other)
 
             index = Tone.tone_names.index(self.getToneName()) + 12
 
             numeral_count = 0
-            semitones_count = (-1 * self.getAccidental())
+            semitones_count = self.getAccidental()
 
             while(numeral_count != p_other.getNumeral()):          
                 if ((Tone.tone_names * 20)[index] != None): numeral_count = numeral_count + 1

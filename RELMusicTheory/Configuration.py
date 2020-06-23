@@ -2,8 +2,7 @@ from Components.Interval import Interval
 from Components.Tone import Tone
 from Components.Key import Key
 from Components.Note import Note
-
-from ScalesDictionary import *
+from MusicCollections.ScalesDictionary import *
 
 # Configuration System
 DEFAULT_SYSTEM = "western"
@@ -71,6 +70,7 @@ M13 = Interval(21, 13)
 M14 = Interval(23, 14)
 P15 = Interval(24, 15)
 
+dim1 = Interval(-1, 1)
 m2 = Interval(1, 2)
 m3 = Interval(3, 3)
 dim5 = Interval(6, 5)
@@ -82,6 +82,7 @@ dim12 = Interval(18, 12)
 m13 = Interval(20, 13)
 m14 = Interval(22, 14)
 
+aug1 = Interval(1, 1)
 aug2 = Interval(3, 2)
 aug4 = Interval(6, 4)
 aug5 = Interval(8, 5)
@@ -144,4 +145,11 @@ for i in range(12):
         if (tone.getAccidental() == 1): temp_accidental = '_sharp'
         if (tone.getAccidental() == -1): temp_accidental = '_flat'
 
-        globals()[tone.getToneName() + temp_accidental + "_" + str(i)] = Key(tone, i)
+        globals()[tone.getToneName() + temp_accidental + str(i)] = Key(tone, i)
+
+# Functions
+def toMidiData(p_playable_object):
+    return p_playable_object.__toMidiData__()
+
+def play(p_playable_object):
+    return p_playable_object.__play__()

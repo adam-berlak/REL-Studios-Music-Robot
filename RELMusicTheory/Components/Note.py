@@ -2,7 +2,9 @@ from Components.IPitchedObject import *
 from Components.Interval import *
 from Components.Key import *
 
-class Note(IPitchedObject):
+from IMusicObject import *
+
+class Note(IPitchedObject, IMusicObject):
     
     def __init__(self, p_key, p_duration, p_velocity = 127):
         self.key = p_key
@@ -37,13 +39,26 @@ class Note(IPitchedObject):
     def __mul__(self, p_other):
         if (isinstance(p_other, int)): return Note(self.getKey(), self.getDuration() / p_other)
 
+    ###########################
+    # Playable Object Methods #
+    ###########################
+
+    def __play__(self): pass
+    def __toMidiData__(self): return [self]
+
     ##################
     # Static Methods #
     ##################
 
     @staticmethod
     def ticksToDuration(p_ticks):
+        if p_ticks == 0: return 0
         return Note.rhythm_tree[(Note.whole_note_tick_length / p_ticks)] if (Note.whole_note_tick_length / p_ticks) in Note.rhythm_tree else Note.rhythm_tree[min(Note.rhythm_tree.keys(), key=lambda k: abs(k - (Note.whole_note_tick_length / p_ticks)))]
+
+    @staticmethod
+    def durationToTicks(p_duration):
+        if p_duration == 0: return 0
+        return Note.whole_note_tick_length / p_duration
 
     #################
     # Sugar Methods #
@@ -58,5 +73,6 @@ class Note(IPitchedObject):
 
     def getTone(self): return self.getKey().getTone()
     def getKey(self): return self.key
+    def getTicks(self): return self.durationToTicks(self.getDuration())
     def getDuration(self): return self.duration
     def getVelocity(self): return self.velocity
