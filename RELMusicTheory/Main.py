@@ -153,6 +153,7 @@
 # 06/07/2020 - Scale		 :: [FTR] Changed Scale add/sub logic so that if you index an interval that does not belong to the Scale the interval will be chromatic
 # 06/13/2020 - Tone		     :: [BUG] Fixed subtraction issue
 # 06/13/2020 - Scale		 :: [BUG] Fixed issue in findInParent(), we now add to the degree instead of using getDegreeByInterval()
+# 06/27/2020 - Scale		 :: [BUG] Fixed issue where Degree attributes are not maintained when transposing a Scale
 
 # GOALS AND MILESTONES IN ORDER:
 # Need to add logic to Chord Build logic where you can choose whether a new note should be considered Chromatic or Diatonic. IE secondary dominants/chromatic chords.
@@ -177,14 +178,51 @@
 # [Done] Need to add override methods for chromatic logic for Scale class
 # Updating getitem and add has an issue, when we sub identical tones we get difference of 8
 
+# Code Cleanliness
+# Sub should replicate add logic in Key
+# Ensure consistant use of temp in variable names
+# Create a new assert equals for every outlier bug I fix
+# Derived attributes shouldnt be in getters and setters section
+# Fix Cammel Case
+# If scale and chord dont call business logic why are we using type when creating new objects, one implies inheritence support the other does not
+# Ensure parent degree is maintained for all new chords, scales and intervalLists
+# Ensure all use of if doesnt use open and close brackets
+# Ensure all method groups appear in the same order
+# replace self.getParentDegree().getParentScale() with self.getParentScale()
+# Ensure all non-wrapper methods in IntervalList are using the business logic methods
+# Get rid of unnecessary methods in Scale
+# Get rid of unnecessary methods in Chord
+# Chord should not be using __add__ in its business logic. If we cant override of add_BL with the new logic we have created we need to go in IntervalList and make sure we can
+# [Done] Sub should replicate add logic in Tone
+# [Done] In Scale, we shouldnt be referencing Part, but instead Item and use method names with Part as wrappers
+# [Done] In Chord, we shouldnt be referencing Part, but instead Item and use method names with Part as wrappers
+# [Done] In IntervalList, getitem_BL/__getitem__(1) should be replaced with getItems()[0]
+# [Done] In Scale, getitem_BL/__getitem__(1) should be replaced with getItems()[0]
+# [Done] In Chord, getitem_BL/__getitem__(1) should be replaced with getItems()[0]
+# [Done] getComponents() should be getItems()
+# [Done] Ensure consistant use of getitem_BL over [] in Scale 
+# [Done] Ensure consistant use of getitem_BL over [] in Chord 
+# [Done] Ensure consistant use of getitem_BL over [] in IntervalList 
+# [Done] Ensure consistant use of add_BL and sub_BL over +/- in Scale 
+# [Done] Ensure consistant use of add_BL and sub_BL over +/- in Chord (If we want to use the overriden add logic in the Chord BL I am now using __add__, in the future if I want to update this add logic I need to go through and replace any references of add_Bl that I might need to) Might need to rethink how we do this, should be referencing either __add__ or add_BL consistantly, we need to be able to change how numeral arithmetic works dynamically, or dont use add when accessing degrees
+# [Done] Ensure consistant use of add_BL and sub_BL over +/- in IntervalList 
+# [Done] Make sure whenever we check instance of lists we check length first in IntervalList (Check if all references of 0 check len first)
+# [Done] Make sure whenever we check instance of lists we check length first in Chord (Check if all references of 0 check len first)
+# [Done] Make sure whenever we check instance of lists we check length first in Scale (Check if all references of 0 check len first)
+
 # Optional Features and Bug Fixes that can be delayed
+# [Done] when specifying a fixed invert parameter in chord it must be greater than the last interval otherwise we will use the roof of the last interval
+# [Done] when using setParentItem() in IntervalList it should also update the tone
+# [Done] getTypeDict() should be generated based on items
+# Unalterted Tones and Tone Names should be combined
+# When the abs in new_accidental = (abs(p_other.getSemitones()) - (semitones_count - 1)) * sign is removed in Tone __add__ method there is an error in move()
+# Need to test new version of transform method for both Chord and IntervalList
+# Issue, if we specify type_dict in getAttributes but we use a modified interval list then the assignments in type dict will not make sense, one solution is to add logic for updating the type dict and generate a new one
+# Check that transform for Chord and Scale work as intended
 # binaryToIntervalListUtilitiesSteps Should have the name fixed
 # getItem_BL logic is flawed when used in Chord because it calls the build_BL method which is flawed, build_BL needs to build on the parent Scales degree
 # When we were overridding build_BL methods in chord the indexing logic in IntervalList would call it causing an error, this was fixed but I should revisit this to figure out why the exception occured
 # Adding an interval that has same numeral as the tonic of a scale or chord will modulate the tonic, it should be chromatic
-# [Done] we dont need an add and sub method, we can merge them into one method for IntervalList
-# [Done] get rid of buildIntervalList() method
-# [Done] Create get logic for interval, integer and degree in one method
 # GetInversion() only gets the inversion of the current chord not the parentChord()
 # Scale Degree arithmetic does not retain parentItem if set
 # Fix getFiguredBass()
@@ -197,15 +235,18 @@
 # root attribute of Chords should be an Interval instead of a TonedObject
 # Create a method for deriving omitted intervals
 # Parent Chord should contain omitted intervals that are associated with a degree. The degree should have an omitted boolean
-# [Done] Add a method to both the Scale Object and Chord Object that will generate the degree objects. We can override this in the Chord object and change the name of Chord.Degree to Chord.Part
-# [Done] Create a new object that contains most of the logic in Scale. Scale will be a subclass of this object and will have only scale specific methods. Chord will also be a subclass of this object
 # Remove wrappers for the Scale class
-# next() and previous() in Chord should not be return parent scale degrees
+# next() and previous() in Chord should not return parent scale degrees
 # We don't need a reference to the Intervals list aswell as the individual Intervals with the Degree objects in both Chord and Scale
 # Remove all instances of setParentDegree()
+# Add logic in Scale.Degree shouldn't modulate the parent Scale
+# [Done] we dont need an add and sub method, we can merge them into one method for IntervalList
+# [Done] get rid of buildIntervalList() method
+# [Done] Create get logic for interval, integer and degree in one method
+# [Done] Add a method to both the Scale Object and Chord Object that will generate the degree objects. We can override this in the Chord object and change the name of Chord.Degree to Chord.Part
+# [Done] Create a new object that contains most of the logic in Scale. Scale will be a subclass of this object and will have only scale specific methods. Chord will also be a subclass of this object
 # [Done] Build method in Scale doesnt need to have all these cases, we should be able to simply specify a dictionary of parameters
 # [Done] Chord addInterval will cause an error because a chord does not have a type_dict for degrees, for now there is a conditional in the scale, but change this later
-# Add logic in Scale.Degree shouldn't modulate the parent Scale
 
 # Dependancies
 import random
@@ -214,66 +255,34 @@ import sys
 # Internal Dependancies
 from Configuration import *
 
-from MusicCollections.IntervalList import *
-from MusicCollections.Scale import *
-from MusicCollections.Chord import *
-
-from Components.Interval import *
-from Components.Tone import *
-from Components.Key import *
-from Components.Note import *
-
-from Sequencers.Sequencer import *
-
-# External Dependancies
-from mxm.midifile import MidiInFile, MidiToCode
+from TheoryCollections.IntervalList import *
+from TheoryCollections.Scale import *
+from TheoryCollections.Chord import *
+from TheoryComponents.Interval import *
+from TheoryComponents.Tone import *
+from TheoryComponents.Key import *
+from TheoryComponents.Note import *
+from IOMidi.Sequencer import *
 
 def main():
-
-	#chord = Chord(C_4, [P1, M3, P4, M6])
-	#print(chord.buildOnThirds().invert(1))
-	#print(chord.invert(2))
-	#print(chord.getFirstInversion())
-
-	#midiIn = MidiInFile(MidiToObjects(), 'C:/Users/adamb/github/REL-Studios-Music-Robot/RELMusicTheory/MidiReader/waltz_34_2.mid')
-	#midiIn.read()
-
-	#test_scale = Scale(Note(C_4, quarter_note), major)
-	#print(test_scale[1].build(Chord).resolveChord())
-
-	#midi_in = MidiInFile(MidiToCode2(), 'C:/Users/adamb/github/REL-Studios-Music-Robot/RELMusicTheory/MidiReader/waltz_34_2.mid')
-	#midi_in.read()
-
-	'''
-	for i in range(21,127):
-		print(str(i), Key.decimalToKey(i))
-
-	print(Chord(Note(C_5, quarter_note), "maj7b5").getTones())
+	local_dir = "C:\\Users\\adamb\\github\\REL-Studios-Music-Robot\\RELMusicTheory\\IOMidi\\MidiFiles\\"
 
 	sequencer = Sequencer()
-	sequencer.add(Note(C_4, quarter_note), 1)
-	sequencer.add(Note(D_4, quarter_note), 2)
-	sequencer.add(Note(E_4, quarter_note), 3)
-	sequencer.add(Note(F_4, quarter_note), 4)
-	sequencer.add(Note(G_4, quarter_note), 5)
-	sequencer.add(Note(A_4, quarter_note), 6)
-	sequencer.add(Note(B_4, quarter_note), 7)
-	sequencer.add(Note(C_5, quarter_note), 8)
-	sequencer.add(Chord(Note(C_5, quarter_note), "maj7b5"), 9)
-	sequencer.add(Chord(Note(A_4, quarter_note), "min5").invert(), 10)
-	sequencer.add(Chord(Note(G_4, quarter_note), "min7b5"), 11)
-	sequencer.toMidi()
+	sequencer.add(Note(C4, quarter_note), 1)
+	sequencer.add(Note(D4, quarter_note), 2)
+	sequencer.add(Note(E4, quarter_note), 3)
+	sequencer.add(Note(F4, quarter_note), 4)
+	sequencer.add(Note(G4, quarter_note), 5)
+	sequencer.add(Note(A4, quarter_note), 6)
+	sequencer.add(Note(B4, quarter_note), 7)
+	sequencer.add(Note(C5, quarter_note), 8)
+	sequencer.add(Chord(Note(C5, quarter_note), "maj7b5"), 9)
+	sequencer.add(Chord(Note(A4, quarter_note), "min5").invert(), 10)
+	sequencer.add(Chord(Note(G4, quarter_note), "min7b5"), 11)
+	sequencer.toMidi(local_dir + "file-generated.mid")
 	
 	sequencer = Sequencer()
-	sequencer.add(0, Chord(Note(A_3, crochet), "min7").getTones())
-	sequencer.add(0, [Note(A_4, quaver)])
-	sequencer.add(crochet, Chord(Note(A_3, crochet), "maj7").getTones())
-	sequencer.add(crochet*2, [Note(A_4, quaver)])
-	sequencer.add(int(crochet*2.5), [Note(B_4, quaver)])
-	
-	'''
-	IntervalList(C4, [P1, M2, M3, P4, P5, M6, M7])
-	## print(Scale(C4, major)[1].build(Chord, "maj5").invert(1).getFiguredBass())
+	sequencer.fromMidi(local_dir + "untitled.mid")
 	
 	# Ways to build a Scale object
 	C_Major_Scale = Scale(C, major)
@@ -282,6 +291,7 @@ def main():
 	C_Major_Scale_4 = Scale([C, D, E, F, G, A, B])
 
 	Chord(C4, "maj7")[2, 4, 6]
+	Chord(C4, "maj9b9")[9].findInParent()
 	
 	# Ways to build a Chord object with a Parent Scale
 	C_M7 = C_Major_Scale[1].build(Chord, "maj7")

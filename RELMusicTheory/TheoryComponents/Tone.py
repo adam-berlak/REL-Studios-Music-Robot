@@ -1,5 +1,5 @@
-from Components.IPitchedObject import *
-from Components.Interval import *
+from TheoryComponents.IPitchedObject import *
+from TheoryComponents.Interval import *
 
 class Tone(IPitchedObject):
     
@@ -7,64 +7,47 @@ class Tone(IPitchedObject):
         self.tone_name = p_tone_name
         self.accidental = p_accidental
 
-    def __eq__(self, p_other): return (type(self) == type(p_other)) and (self.getToneName() == p_other.getToneName()) and (self.getAccidental() == p_other.getAccidental())
+    def __eq__(self, p_other): 
+        return (type(self) == type(p_other)) and (self.getToneName() == p_other.getToneName()) and (self.getAccidental() == p_other.getAccidental())
+    
     def __str__(self):
+        if (self.getAccidental() < 0): 
+            return self.getToneName() + (Tone.accidentals[-1] * abs(self.getAccidental()))
+            
+        elif (self.getAccidental() > 0): 
+            return self.getToneName() + (Tone.accidentals[1] * abs(self.getAccidental()))
 
-        if (self.getAccidental() < 0): return self.getToneName() + (Tone.accidentals[-1] * abs(self.getAccidental()))
-        elif (self.getAccidental() > 0): return self.getToneName() + (Tone.accidentals[1] * abs(self.getAccidental()))
         else: return self.getToneName() + Tone.accidentals[0]
 
-    def __repr__(self): return str(self)
+    def __repr__(self): 
+        return str(self)
 
     def __add__(self, p_other):
-        
         if (isinstance(p_other, Interval)):
-
+            if p_other.getNumeral() == 0: return self
             if abs(p_other.getNumeral()) == 1: return Tone(self.getToneName(), self.getAccidental() + p_other.getSemitones())
-            if (p_other < Interval(0, 0)): return self - abs(p_other)
-
-            index = Tone.tone_names.index(self.getToneName()) 
+            index = Tone.tone_names.index(self.getToneName()) + 12
+            sign = int(p_other.getNumeral() / abs(p_other.getNumeral()))
 
             numeral_count = 0
-            semitones_count = (-1 * self.getAccidental())
+            semitones_count = ((sign * -1) * self.getAccidental())
 
-            while(numeral_count != p_other.getNumeral()):     
+            while(numeral_count != abs(p_other.getNumeral())):     
                 if ((Tone.tone_names * 20)[index] != None): numeral_count = numeral_count + 1
 
                 semitones_count = semitones_count + 1
-                index = index + 1
+                index += sign
 
-            new_tone_name = (Tone.tone_names * 20)[index - 1]
-            new_accidental = p_other.getSemitones() - (semitones_count - 1)
-
+            new_tone_name = (Tone.tone_names * 20)[index - sign]
+            new_accidental = (abs(p_other.getSemitones()) - (semitones_count - 1)) * sign
             return Tone(new_tone_name, new_accidental) 
             
 
     def __sub__(self, p_other):
-
         if (isinstance(p_other, Interval)):
-
-            #if abs(p_other.getNumeral()) == 1: return Tone(self.getToneName(), self.getAccidental() - p_other.getSemitones())
-            if (p_other < Interval(0, 0)): return self + abs(p_other)
-
-            index = Tone.tone_names.index(self.getToneName()) + 12
-
-            numeral_count = 0
-            semitones_count = self.getAccidental()
-
-            while(numeral_count != p_other.getNumeral()):          
-                if ((Tone.tone_names * 20)[index] != None): numeral_count = numeral_count + 1
-
-                semitones_count = semitones_count + 1
-                index = index - 1
-
-            new_tone_name = (Tone.tone_names * 20)[index + 1]
-            new_accidental = (p_other.getSemitones() - (semitones_count - 1)) * -1
-
-            return Tone(new_tone_name, new_accidental)
+            return self.__add__(-p_other)
 
         if (isinstance(p_other, Tone)):
-
             if (self.getToneName() == p_other.getToneName()): return Interval(p_other.getAccidental() - self.getAccidental() if p_other.getAccidental() > self.getAccidental() else self.getAccidental() - p_other.getAccidental(), 1)
 
             index = Tone.tone_names.index(p_other.getToneName()) + 1
@@ -88,8 +71,8 @@ class Tone(IPitchedObject):
         if ((Tone.tone_names * 20)[index + self.getAccidental()] == None):
             if (self.getAccidental() > 0): return [self.getMinimalAccidental(), self.flipAccidental().getMinimalAccidental()]
             else: return [self.flipAccidental().getMinimalAccidental(), self.getMinimalAccidental()]
-        else:
-            return Tone((Tone.tone_names * 20)[index + self.getAccidental()])
+            
+        else: return Tone((Tone.tone_names * 20)[index + self.getAccidental()])
 
     def getMinimalAccidental(self):
         index = Tone.tone_names.index(self.getToneName()) + 12 + self.getAccidental()
@@ -101,8 +84,11 @@ class Tone(IPitchedObject):
 
         return Tone((Tone.tone_names * 20)[index], semitones_count)
 
-    def flipAccidental(self): return Tone(self.getToneName(), (12 - abs(self.getAccidental())) * (int(self.getAccidental() / abs(self.getAccidental())) * -1))
-    def build(self, p_object, *args): return p_object(self, *args)
+    def flipAccidental(self): 
+        return Tone(self.getToneName(), (12 - abs(self.getAccidental())) * (int(self.getAccidental() / abs(self.getAccidental())) * -1))
+        
+    def build(self, p_object, p_intervals, p_args): 
+        return p_object(self, p_intervals, **p_args)
 
     #######################
     # Getters and Setters #

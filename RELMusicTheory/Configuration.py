@@ -1,8 +1,9 @@
-from Components.Interval import Interval
-from Components.Tone import Tone
-from Components.Key import Key
-from Components.Note import Note
-from MusicCollections.ScalesDictionary import *
+from TheoryComponents.Interval import Interval
+from TheoryComponents.Tone import Tone
+from TheoryComponents.Key import Key
+from TheoryComponents.Note import Note
+
+from TheoryCollections.ScalesDictionary import *
 
 # Configuration System
 DEFAULT_SYSTEM = "western"
@@ -30,7 +31,12 @@ SUSPENDED_NOTATION = {"western": "sus"}
 ADDITION_NOTATION = {"western": "add"}
 OMISSION_NOTATION = {"western": "no"}
 
-RHYTHM_TREE = {"western": {1: "Breve", 2: "Minim", 4: "Crochet", 8: "Semi-Breve", 16: "Demi-Semi-Quaver"}}
+RHYTHM_TREE = {"western": {1: "Semi-breve", 
+                            2: "minim", 
+                            4: "crotchet", 
+                            8: "quaver", 
+                            16: "semi-quaver", 
+                            32: "demi-semi-quaver"}}
 
 Interval.unaltered_intervals = UNALTERED_INTERVALS[DEFAULT_SYSTEM]
 Interval.accidentals = ACCIDENTALS[DEFAULT_SYSTEM]

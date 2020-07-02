@@ -101,14 +101,17 @@ class Interval:
 	# Transformation Methods #
 	##########################
 
-	def transform(self, p_accidental):
+	@staticmethod
+	def stringToAccidental(p_accidental):
+		return list(Interval.accidentals.keys())[list(Interval.accidentals.values()).index(p_accidental)]
 
-		try:
-			new_semitones = self.getSemitones() + list(Interval.accidentals.keys())[list(Interval.accidentals.values()).index(p_accidental)]
-			new_numeral = self.getNumeral()
-			return Interval(new_semitones, new_numeral)
-			
-		except: print("Error: Trying to apply " + p_accidental + " to " + str(self) + "")
+	def transform(self, p_accidental):
+		if isinstance(p_accidental, str): 
+			new_semitones = self.getSemitones() + Interval.stringToAccidental(p_accidental)
+			return Interval(new_semitones, self.getNumeral())
+
+		elif isinstance(p_accidental, int): 
+			return Interval(self.getSemitones() + p_accidental, self.getNumeral())
 
 	##################
 	# STATIC Methods #

@@ -1,15 +1,16 @@
-from Components.IPitchedObject import *
-from Components.Interval import *
-from Components.Key import *
+from TheoryComponents.IPitchedObject import *
+from TheoryComponents.Interval import *
+from TheoryComponents.Key import *
 
 from IMusicObject import *
 
 class Note(IPitchedObject, IMusicObject):
     
-    def __init__(self, p_key, p_duration, p_velocity = 127):
+    def __init__(self, p_key, p_duration, p_velocity = 127, p_dotted = False):
         self.key = p_key
-        self.duration = p_duration
+        self.duration = Note.findClosestDuration(p_duration)
         self.velocity = p_velocity
+        self.dotted = self.duration in [6 / 2**i for i in range(0, 34)]
 
     def __eq__(self, p_other): return (type(self) == type(p_other)) and (self.getKey() == p_other.getKey()) and (self.getDuration() == p_other.getDuration())
 
@@ -19,7 +20,8 @@ class Note(IPitchedObject, IMusicObject):
     # Representation #
     ##################
 
-    def __str__(self): return str(self.getKey()) + " " + Note.rhythm_tree[self.getDuration()]
+    def __str__(self): 
+        return str(self.getKey()) + " " + (Note.rhythm_tree[4 / self.getDuration()] if not self.isDotted() else Note.rhythm_tree[4 / (self.getDuration() - (self.getDuration() / 3))] + " dotted")
     def __repr__(self): return self.__str__()
 
     ##############
@@ -51,6 +53,14 @@ class Note(IPitchedObject, IMusicObject):
     ##################
 
     @staticmethod
+    def findClosestDuration(p_duration):
+        non_dotted_rhythms = [4 / 2**i for i in range(0, 34)]
+        dotted_rhythms = [6 / 2**i for i in range(0, 34)]
+        closest_rhythms = [min(non_dotted_rhythms, key=lambda x:abs(x-p_duration)), min(dotted_rhythms, key=lambda x:abs(x-p_duration))]
+        closest_rhythm = min(closest_rhythms, key=lambda x:abs(x-p_duration))
+        return closest_rhythm
+
+    @staticmethod
     def ticksToDuration(p_ticks):
         if p_ticks == 0: return 0
         return Note.rhythm_tree[(Note.whole_note_tick_length / p_ticks)] if (Note.whole_note_tick_length / p_ticks) in Note.rhythm_tree else Note.rhythm_tree[min(Note.rhythm_tree.keys(), key=lambda k: abs(k - (Note.whole_note_tick_length / p_ticks)))]
@@ -65,7 +75,7 @@ class Note(IPitchedObject, IMusicObject):
     #################
 
     def simplify(self): return Note(self.getKey().simplify(), self.getDuration())
-    def build(self, p_object, *args): return p_object(self, *args)
+    def build(self, p_object, p_intervals, p_args): return p_object(self, p_intervals, **p_args)
 
     #######################
     # Getters and Setters #
@@ -76,3 +86,6 @@ class Note(IPitchedObject, IMusicObject):
     def getTicks(self): return self.durationToTicks(self.getDuration())
     def getDuration(self): return self.duration
     def getVelocity(self): return self.velocity
+    def isDotted(self): return self.dotted
+
+    def setDotted(self, p_dotted): self.dotted = p_dotted

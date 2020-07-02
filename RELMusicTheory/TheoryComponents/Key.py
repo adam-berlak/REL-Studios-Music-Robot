@@ -1,6 +1,6 @@
-from Components.IPitchedObject import *
-from Components.Interval import *
-from Components.Tone import *
+from TheoryComponents.IPitchedObject import *
+from TheoryComponents.Interval import *
+from TheoryComponents.Tone import *
 
 class Key(IPitchedObject):
 
@@ -70,7 +70,7 @@ class Key(IPitchedObject):
 
     def simplify(self): return Key(self.getTone().simplify(), self.getOctave())
     def toDecimal(self): return (self - Key(Tone("A", 0), 0)).getSemitones() + 21
-    def build(self, p_object, *args): return p_object(self, *args)
+    def build(self, p_object, p_intervals, p_args): return p_object(self, p_intervals, **p_args)
 
     #######################
     # Getters and Setters #

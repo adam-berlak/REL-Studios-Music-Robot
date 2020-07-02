@@ -3,16 +3,26 @@ import collections
 from Configuration import *
 from HelperMethods import *
 
-from MusicCollections.IntervalListUtilities import *
-from Components.IPitchedObject import * 
+from TheoryCollections.IntervalListUtilities import *
+from TheoryComponents.IPitchedObject import * 
 
 class IntervalList:
 
-	def __init__(self, p_parent_item, p_intervals, p_type_dict = {}):
-		self.parent_item = p_parent_item
-		self.intervals = p_intervals
-		self.type_dict = p_type_dict
-		self.buildComponents()
+	def __init__(self, p_item_1, p_intervals, p_type_dict = {}):
+
+		if issubclass(type(p_item_1), IntervalList.Item):	
+			self.parent_item = p_item_1
+			self.tonic_tone = p_parent_item.getTone()
+			self.intervals = p_intervals
+			self.type_dict = p_type_dict
+
+		elif isinstance(p_item_1, IPitchedObject):
+			self.parent_item = None
+			self.tonic_tone = p_item_1
+			self.intervals = p_intervals
+			self.type_dict = p_type_dict
+
+		self.buildItems()
 
 	#####################################
 	# Methods concerning class behavior #
@@ -28,12 +38,12 @@ class IntervalList:
 
 	def getitem_BL(self, p_index): 
 		if isinstance(p_index, slice):
-			new_interval_list = IntervalListUtilities.normalizeIntervals(self.getIntervals()[p_index.start - 1:p_index.stop])
-			new_scale = self.getitem_BL(p_index.start).findInParent().build_BL(type(self), new_interval_list)
-			return new_scale
+			new_intervals = IntervalListUtilities.normalizeIntervals(self.getIntervals()[p_index.start - 1:p_index.stop])
+			new_interval_list = self.getitem_BL(p_index.start).findInParent().build_BL(type(self), new_intervals)
+			return new_interval_list
 
 		if isinstance(p_index, tuple):
-			items = [self.getitem_BL(1).add_BL(item) for item in p_index]
+			items = [self.getItems()[0].add_BL(item) for item in p_index]
 			result = items[0]
 			
 			for item in items[1:]:
@@ -83,24 +93,24 @@ class IntervalList:
 			return str(self) + p_other
 
 		if isinstance(p_other, int): 
-			return (self.getitem_BL(1).add_BL(p_other)).build_BL(type(self), len(self.getIntervals()), 2)
+			return (self.getItems()[0].add_BL(p_other)).build_BL(type(self), len(self.getIntervals()), 2, self.getAttributes())
 
 		if isinstance(p_other, Interval): 
-			new_scale = (self.getitem_BL(1).getTone() + p_other).build(type(self), self.getIntervals())
-			if self.getParentItem() != None: new_scale.setParentItem((self.getParentItem().getParentIntervalList() + p_other)[self.getParentItem().getPosition()])
-			return new_scale
+			new_interval_list = (self.getItems()[0].getTone() + p_other).build(type(self), self.getIntervals(), self.getAttributes())
+			if self.getParentItem() != None: new_interval_list.setParentItem((self.getParentIntervalList_BL().add_BL(p_other)).getitem_BL(self.getParentItem().getPosition()))
+			return new_interval_list
 
 		if issubclass(type(p_other), IntervalList.Item):
 			new_intervals = self.getIntervals() + [self.getIntervals()[-1] + (p_other.getTone() - self.getItems()[-1].getTone())]
 			new_intervals = IntervalListUtilities.sortIntervals(new_intervals)
 			new_intervals = IntervalListUtilities.normalizeIntervals(new_intervals)
 			new_intervals = IntervalListUtilities.scaleIntervalsByOrder(new_intervals)
-			new_scale = type(self)(self.getItems()[0].getTone() if (p_other.getTone() - self.getItems()[0].getTone()) > P1 else p_other.getTone(), new_intervals, **self.getAttributes())
-			return new_scale
+			new_interval_list = type(self)(self.getItems()[0].getTone() if (p_other.getTone() - self.getItems()[0].getTone()) > P1 else p_other.getTone(), new_intervals, **self.getAttributes())
+			return new_interval_list
 		
 		if issubclass(type(p_other), IntervalList):
-			if len(p_other.getIntervals()) == 1: return self + p_other[1]
-			return self.add_BL(p_other[1]) + p_other.remove_BL(1)
+			if len(p_other.getIntervals()) == 1: return self.add_BL(p_other.getItems()[0])
+			return self.add_BL(p_other.getItems()[0]).add_BL(p_other.remove_BL(1))
 
 	def sub_BL(self, p_other):
 		if isinstance(p_other, int): 
@@ -139,9 +149,9 @@ class IntervalList:
 	def remove_BL(self, p_item_index):
 		new_intervals = self.getIntervals()[:]
 		new_intervals.pop(p_item_index - 1)
-		new_scale = type(self)(self.getitem_BL(2).getTone() if p_item_index == 1 else self.getTonicTone(), IntervalListUtilities.normalizeIntervals(new_intervals))
-		new_scale.setParentItem(self.getParentItem())
-		return new_scale
+		new_interval_list = type(self)(self.getitem_BL(2).getTone() if p_item_index == 1 else self.getTonicTone(), IntervalListUtilities.normalizeIntervals(new_intervals))
+		new_interval_list.setParentItem(self.getParentItem())
+		return new_interval_list
 
 	def addInterval_BL(self, p_interval, p_attributes = {}):
 		new_pitch_class = self.getIntervals()[:]
@@ -150,34 +160,43 @@ class IntervalList:
 			new_pitch_class.append(p_interval)
 			new_pitch_class.sort(key=lambda x: x.getSemitones())
 			
-		new_reference_point = self.getParentItem() if self.getParentItem() is not None else self.getitem_BL(1).getTone()
-		new_scale = type(self)(new_reference_point, new_pitch_class, p_type_dict = {p_interval: p_attributes})
-		return new_scale
+		new_reference_point = self.getParentItem() if self.getParentItem() is not None else self.getItems()[0].getTone()
+		new_interval_list = type(self)(new_reference_point, new_pitch_class, p_type_dict = {p_interval: p_attributes})
+		return new_interval_list
 
 	def replaceAtNumeralWith_BL(self, p_numeral, p_interval):
 		list_items = [item for item in self.getIntervals() if item.getNumeral() == p_numeral]
 
 		if len(list_items) != 0:
 			index = self.getIntervals().index(list_items[0])
-			new_scale_beginning = self.getIntervals()[:index]
-			new_scale_beginning.append(p_interval)
-			new_scale_ending = self.getIntervals()[index + 1:]
-			new_scale_intervals = new_scale_beginning + new_scale_ending
+			new_interval_list_beginning = self.getIntervals()[:index]
+			new_interval_list_beginning.append(p_interval)
+			new_interval_list_ending = self.getIntervals()[index + 1:]
+			new_interval_list_intervals = new_interval_list_beginning + new_interval_list_ending
 
 		else: return self.addInterval_BL(p_interval)
-		new_scale = type(self)(self.getitem_BL(1).getTone(), new_scale_intervals)
-		new_scale.setParentItem(self.getParentItem())
-		return new_scale
+		new_interval_list = type(self)(self.getItems()[0].getTone(), new_interval_list_intervals)
+		new_interval_list.setParentItem(self.getParentItem())
+		return new_interval_list
 
 	#################
 	# Sugar Methods #
 	#################
 
-	def getParentIntervalList_BL(self): return self.getParentItem().getParentIntervalList()
-	def getNumerals_BL(self): return [item.getNumeral() for item in self.getIntervals()]
-	def getSemitones_BL(self): return [item.getSemitones() for item in self.getIntervals()]
-	def getIntervals_BL(self): return [item.getInterval() for item in self.getItems()]
-	def getTones_BL(self): return [item.getTone() for item in self.getItems()]
+	def getParentIntervalList_BL(self): 
+		return self.getParentItem().getParentIntervalList()
+
+	def getNumerals_BL(self): 
+		return [item.getNumeral() for item in self.getIntervals()]
+
+	def getSemitones_BL(self): 
+		return [item.getSemitones() for item in self.getIntervals()]
+
+	def getIntervals_BL(self): 
+		return [item.getInterval() for item in self.getItems()]
+
+	def getTones_BL(self): 
+		return [item.getTone() for item in self.getItems()]
 
 	###################
 	# Wrapper Methods #
@@ -208,18 +227,31 @@ class IntervalList:
 	def getSemitones(self): return self.getSemitones_BL()
 	def getIntervals(self): return self.getIntervals_BL()
 	def getTones(self): return self.getTones_BL()
+	
 
 	##############################
 	# Overridable Business Logic #
 	##############################
 
-	def buildComponents(self):
+	def buildItems(self):
 		self.items = []
 
 		for i in range(len(self.intervals)): 
 			self.items.append(IntervalList.Item(self.intervals[i], self, **self.type_dict[self.intervals[i]] if self.intervals[i] in self.type_dict.keys() else {}))
 
 	def getAttributes(self): return {}
+
+	######################
+	# Derived Attributes #
+	######################
+
+	def getTypeDict(self): 
+		temp_type_dict = {}
+		
+		for item in self.getItems():
+			temp_type_dict[item.getInterval()] = item.getAttributes()
+
+		return temp_type_dict
 
 	#######################
 	# Getters and Setters #
@@ -228,17 +260,18 @@ class IntervalList:
 	def getItems(self): return self.items
 	def getTonicTone(self): return self.tonic_tone
 	def getParentItem(self): return self.parent_item
-	def getTypeDict(self): return self.type_dict
 
+	def setItems(self, p_items): self.items = p_items
+	def setTonicTone(self, p_tonic_tone): tonic_tone = p_tonic_tone
 	def setParentItem(self, p_parent_item): 
-		if p_parent_item == None: return
 		self.parent_item = p_parent_item
+		self.tonic_tone = p_parent_item.getTone()
 
 	class Item:
 		
-		def __init__(self, p_interval, p_parent_scale):
+		def __init__(self, p_interval, p_parent_interval_list):
 			self.interval = p_interval
-			self.parent_scale = p_parent_scale
+			self.parent_interval_list = p_parent_interval_list
 
 		#####################################
 		# Methods concerning class behavior #
@@ -280,30 +313,30 @@ class IntervalList:
 				new_interval = self.getInterval() + p_other
 
 				if new_interval < P1:
-					return (self.getParentIntervalList().sub_BL(P8)).getitem_BL(self.getPosition()) - (p_other - P8)
+					return (self.getParentIntervalList().sub_BL(P8)).getitem_BL(self.getPosition()).sub_BL(p_other - P8)
 				
 				if new_interval >= self.getParentIntervalList().getIntervals()[-1].roof():
-					return (self.getParentIntervalList().add_BL(P8)).getitem_BL(self.getPosition()) + (p_other - P8)
+					return (self.getParentIntervalList().add_BL(P8)).getitem_BL(self.getPosition()).add_BL(p_other - P8)
 
 				if new_interval not in self.getParentIntervalList():
 					if IntervalListUtilities.isDistinct(self.getParentIntervalList().getIntervals()):
-						if new_interval.getNumeral() == 1: return self.getParentIntervalList()[1].transform(new_interval.getAccidental())[1]
+						if new_interval.getNumeral() == 1: return self.getParentIntervalList().getItems()[0].transform(new_interval.getAccidental()).getItems()[0]
 						elif new_interval.getNumeral() in self.getParentIntervalList().getNumerals(): return self.getParentIntervalList().replaceAtNumeralWith(new_interval.getNumeral(), new_interval).getItemByInterval(new_interval)
 						else: return self.getParentIntervalList().addInterval(new_interval).getItemByInterval(new_interval)
 					else: return self.getParentIntervalList().addInterval(new_interval).getItemByInterval(new_interval)
 				else: return self.getParentIntervalList().getItemByInterval(new_interval)
 
 			if issubclass(type(p_other), IntervalList):
-				new_scale = (self.add_BL(p_other[1])) + (p_other[2:len(p_other.getIntervals())])
-				return new_scale
+				new_interval_list = (self.add_BL(p_other.getItems()[0])).add_BL(p_other.getitem_BL(slice(2, len(p_other.getIntervals()), None)))
+				return new_interval_list
 			
 			if issubclass(type(p_other), IntervalList.Item):
 				new_intervals = [P1, p_other.getTone() - self.getTone()]
 				new_intervals = IntervalListUtilities.sortIntervals(new_intervals)
 				new_intervals = IntervalListUtilities.normalizeIntervals(new_intervals)
 				new_intervals = IntervalListUtilities.scaleIntervalsByOrder(new_intervals)
-				new_scale = type(self.getParentIntervalList())(self.getTone() if (p_other.getTone() - self.getTone()) > P1 else p_other.getTone(), new_intervals)
-				return new_scale
+				new_interval_list = type(self.getParentIntervalList())(self.getTone() if (p_other.getTone() - self.getTone()) > P1 else p_other.getTone(), new_intervals)
+				return new_interval_list
 
 		def sub_BL(self, p_other):
 			if isinstance(p_other, int):
@@ -316,7 +349,8 @@ class IntervalList:
 				return self.getTone() - p_other.getTone()
 		
 		def __radd__(self, p_other):
-			if isinstance(p_other, str): return p_other + str(self)
+			if isinstance(p_other, str): 
+				return p_other + str(self)
 
 		################################
 		# Methods concerned with names #
@@ -334,17 +368,11 @@ class IntervalList:
 
 		def transform_BL(self, p_accidental):	
 			new_interval = self.getInterval().transform(p_accidental)
-			new_pitch_class = self.getParentIntervalList().getIntervals()[:]
-			new_pitch_class = [item for item in new_pitch_class if item != self.getInterval()]
-			new_pitch_class.append(new_interval)
-			new_pitch_class.sort(key=lambda x: x.getNumeral())
-
-			if self.getPosition() == 1:
-				difference = new_interval.getSemitones()
-				new_pitch_class = [Interval(item.getSemitones() - difference, item.getNumeral()) for item in new_pitch_class]
-				return type(self.getParentIntervalList())(self.getParentIntervalList()[1].getTone() + Interval(difference, 1), new_pitch_class)
-
-			return type(self.getParentIntervalList())(self.getParentIntervalList()[1].getTone(), new_pitch_class)
+			new_pitch_class = [item for item in self.getParentIntervalList().getIntervals() if item != self.getInterval()] + [new_interval]
+			new_pitch_class = IntervalListUtilities.sortIntervals(new_pitch_class)
+			new_pitch_class = IntervalListUtilities.normalizeIntervals(new_pitch_class)
+			new_tone = self.getParentIntervalList().getItems()[0].getTone() + new_interval if self.getPosition() == 1 else self.getParentIntervalList().getItems()[0].getTone()
+			return type(self.getParentIntervalList())(new_tone, new_pitch_class, **self.getParentIntervalList().getAttributes())
 
 		#############################################################
 		# Methods concerned with measuring distance between items #
@@ -364,11 +392,12 @@ class IntervalList:
 
 		def build_BL(self, object_type, p_item_1 = 4, p_item_2 = 3, p_args = {}):
 			if isinstance(p_item_1, list) and len(p_item_1) > 0 and isinstance(p_item_1[0], int):
-				child_object = object_type(self, [(self.distanceFromNext_BL(self + item)).simplify() for item in p_item_1], **p_args)
+				child_object = object_type(self, [(self.distanceFromNext_BL(self.add_BL(item))).simplify() for item in p_item_1], **p_args)
+				
 			elif isinstance(p_item_1, int) and isinstance(p_item_2, int):
 				child_object = object_type(self, self.buildPitchClass_BL(p_item_1, p_item_2)[:p_item_1], **p_args)
-			else:
-				child_object = object_type(self, p_item_1, **p_args)
+
+			else: child_object = object_type(self, p_item_1, **p_args)
 
 			return child_object
 
@@ -391,8 +420,11 @@ class IntervalList:
 		# Sugar methods #
 		#################
 
-		def getPosition_BL(self): return self.getParentIntervalList().getItems().index(self) + 1
-		def getPositionInParent_BL(self): return self.findInParent().getPosition()
+		def getPosition_BL(self): 
+			return self.getParentIntervalList().getItems().index(self) + 1
+			
+		def getPositionInParent_BL(self): 
+			return self.findInParent().getPosition()
 
 		def findInParent_BL(self):
 			if self.getParentIntervalList().getParentItem() != None: return self.getParentIntervalList().getParentItem().getParentIntervalList().__getitem__(self.getParentIntervalList().getParentItem().getInterval() + self.getInterval())
@@ -434,8 +466,6 @@ class IntervalList:
 		def distanceFrom(self, p_other): return self.distanceFrom_BL(p_other)
 		def distanceFromNext(self, p_other): return self.distanceFromNext_BL(p_other)
 		def build(self, p_object_type, p_num_tones = 4, p_leap_size = 3, p_args = {}): return self.build_BL(p_object_type, p_num_tones, p_leap_size, p_args)
-		def buildIntervalList(self): return self.buildIntervalList_BL()
-		def buildIntervalListWithIntervals(self, p_intervals): return self.buildIntervalListWithIntervals_BL(p_intervals)
 		def buildPitchClass(self, p_num_tones = -1, p_leap_size = 2, p_system = DEFAULT_SYSTEM): return self.buildPitchClass_BL(p_num_tones, p_leap_size, p_system)
 		def getPosition(self): return self.getPosition_BL()
 		def getPositionInParent(self): return self.getPositionInParent_BL()
@@ -443,10 +473,23 @@ class IntervalList:
 		def next(self):	return self.next_BL()
 		def previous(self): return self.previous_BL()
 
+		##############################
+		# Overridable Business Logic #
+		##############################
+
+		def getAttributes(self): 
+			return {}
+
+		######################
+		# Derived Attributes #
+		######################
+
+		def getTone(self): 
+			return self.getParentIntervalList().getTonicTone() + self.getInterval()
+
 		#######################
 		# Getters and Setters #
 		#######################
 
-		def getTone(self): return self.getParentIntervalList().getTonicTone() + self.getInterval()
 		def getInterval(self): return self.interval
-		def getParentIntervalList(self): return self.parent_scale
+		def getParentIntervalList(self): return self.parent_interval_list
