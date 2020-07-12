@@ -211,35 +211,49 @@
 # [Done] Make sure whenever we check instance of lists we check length first in Scale (Check if all references of 0 check len first)
 
 # Optional Features and Bug Fixes that can be delayed
+# Interval / Tone :: next and previous logic in interval and tone wont work for items with accidental greater than 2
+# Interval / Tone :: ACCIDENTAL_LIMIT should limit the accidentals users can use in Interval and Tone
+# Tone :: fix D_flat.getRelatives()
+# Tone :: Tone + Semtiones arithmetic doest work for intervals where the next interval has less semitones than the current interval
+# Interval :: Intervals with 0 numeral print incorrectly
+# Interval :: Fix printing of aug1
+# Interval :: Add Interval - Semtiones 
+# Interval :: Interval + Semitones arithmetic doesnt work for intervals where the next interval has less semitones than the current interval
+# IntervalList :: getAttributes type_dict is incorrect when you add an interval thats below P1 since all intervals above get changed
+# IntervalList :: type_dict is incorrect when using transform if we are transforming the first item
+# Unalterted Tones and Tone Names should be combined
+# IntervalList :: fix Contains logic
+# IntervalList :: Need to test new version of transform method for both Chord and IntervalList
+# IntervalList :: Issue, if we specify type_dict in getAttributes but we use a modified interval list then the assignments in type dict will not make sense, one solution is to add logic for updating the type dict and generate a new one
+# IntervalList :: Check that transform for Chord and Scale work as intended
+# IntervalList :: Adding an interval that has same numeral as the tonic of a scale or chord will modulate the tonic, it should be chromatic
+# IntervalListUtilities :: binaryToIntervalListUtilitiesSteps Should have the name fixed
+# Chord / Scale :: We don't need a reference to the Intervals list aswell as the individual Intervals with the Degree objects in both Chord and Scale
+# Chord / Scale :: Remove all instances of setParentDegree()
+# Scale :: Scale Degree arithmetic does not retain parentItem if set
+# Scale :: Update Scale so all new Scale objects pass the attributes of the current Scale and Scale.Degrees as parameters
+# Scale :: Create a method for deriving omitted intervals
+# Scale :: Remove wrappers for the Scale class
+# Scale	:: Add logic in Scale.Degree shouldn't modulate the parent Scale
+# Chord :: Chord slice should use generic intervals
+# Chord :: Printing of negative interval are wrong when running through resolve chord
+# Chord :: Chord(C4, "dom7b3")[1].move(3) is wrong
+# Chord :: When the abs in new_accidental = (abs(p_other.getSemitones()) - (semitones_count - 1)) * sign is removed in Tone __add__ method there is an error in move()
+# Chord :: getItem_BL logic is flawed when used in Chord because it calls the build_BL method which is flawed, build_BL needs to build on the parent Scales degree
+# Chord :: When we were overridding build_BL methods in chord the indexing logic in IntervalList would call it causing an error, this was fixed but I should revisit this to figure out why the exception occured
+# Chord :: GetInversion() only gets the inversion of the current chord not the parentChord()
+# Chord :: Fix getFiguredBass()
+# Chord :: getSecondaryDominant() in chord should be using the transform() method
+# Chord :: Instead of passing a chords getAttributes() results we should be overriding this
+# Chord :: Update transform in Chord.Degree
+# Chord :: Update Chord so all new Chord objects pass the attributes of the current chord as parameters
+# Chord :: root attribute of Chords should be an Interval instead of a TonedObject
+# Chord :: Parent Chord should contain omitted intervals that are associated with a degree. The degree should have an omitted boolean
+# Chord :: next() and previous() in Chord should not return parent scale degrees
+# [Done] Chord(C4, "dom7")[9] is wrong
 # [Done] when specifying a fixed invert parameter in chord it must be greater than the last interval otherwise we will use the roof of the last interval
 # [Done] when using setParentItem() in IntervalList it should also update the tone
 # [Done] getTypeDict() should be generated based on items
-# Unalterted Tones and Tone Names should be combined
-# When the abs in new_accidental = (abs(p_other.getSemitones()) - (semitones_count - 1)) * sign is removed in Tone __add__ method there is an error in move()
-# Need to test new version of transform method for both Chord and IntervalList
-# Issue, if we specify type_dict in getAttributes but we use a modified interval list then the assignments in type dict will not make sense, one solution is to add logic for updating the type dict and generate a new one
-# Check that transform for Chord and Scale work as intended
-# binaryToIntervalListUtilitiesSteps Should have the name fixed
-# getItem_BL logic is flawed when used in Chord because it calls the build_BL method which is flawed, build_BL needs to build on the parent Scales degree
-# When we were overridding build_BL methods in chord the indexing logic in IntervalList would call it causing an error, this was fixed but I should revisit this to figure out why the exception occured
-# Adding an interval that has same numeral as the tonic of a scale or chord will modulate the tonic, it should be chromatic
-# GetInversion() only gets the inversion of the current chord not the parentChord()
-# Scale Degree arithmetic does not retain parentItem if set
-# Fix getFiguredBass()
-# Intervals with 0 numeral print incorrectly
-# getSecondaryDominant() in chord should be using the transform() method
-# Instead of passing a chords getAttributes() results we should be overriding this
-# Update transform in Chord.Degree
-# Update Chord so all new Chord objects pass the attributes of the current chord as parameters
-# Update Scale so all new Scale objects pass the attributes of the current Scale and Scale.Degrees as parameters
-# root attribute of Chords should be an Interval instead of a TonedObject
-# Create a method for deriving omitted intervals
-# Parent Chord should contain omitted intervals that are associated with a degree. The degree should have an omitted boolean
-# Remove wrappers for the Scale class
-# next() and previous() in Chord should not return parent scale degrees
-# We don't need a reference to the Intervals list aswell as the individual Intervals with the Degree objects in both Chord and Scale
-# Remove all instances of setParentDegree()
-# Add logic in Scale.Degree shouldn't modulate the parent Scale
 # [Done] we dont need an add and sub method, we can merge them into one method for IntervalList
 # [Done] get rid of buildIntervalList() method
 # [Done] Create get logic for interval, integer and degree in one method
@@ -255,6 +269,7 @@ import sys
 # Internal Dependancies
 from Configuration import *
 
+from AITheoryAnalyser.Analyser import *
 from TheoryCollections.IntervalList import *
 from TheoryCollections.Scale import *
 from TheoryCollections.Chord import *
@@ -265,8 +280,13 @@ from TheoryComponents.Note import *
 from IOMidi.Sequencer import *
 
 def main():
-	local_dir = "C:\\Users\\adamb\\github\\REL-Studios-Music-Robot\\RELMusicTheory\\IOMidi\\MidiFiles\\"
 
+	#Chord(C4, "dom7")[-2]
+
+	P1 + 2
+	
+	local_dir = "C:\\Users\\adamb\\github\\REL-Studios-Music-Robot\\RELMusicTheory\\IOMidi\\MidiFiles\\"
+	'''
 	sequencer = Sequencer()
 	sequencer.add(Note(C4, quarter_note), 1)
 	sequencer.add(Note(D4, quarter_note), 2)
@@ -280,10 +300,20 @@ def main():
 	sequencer.add(Chord(Note(A4, quarter_note), "min5").invert(), 10)
 	sequencer.add(Chord(Note(G4, quarter_note), "min7b5"), 11)
 	sequencer.toMidi(local_dir + "file-generated.mid")
-	
+
+	C in Scale(C4, major)
+	P1.transform(2) + 2
+	Scale(C, major).addInterval(dim1)
 	sequencer = Sequencer()
 	sequencer.fromMidi(local_dir + "untitled.mid")
+	Sequencer.toDict(sequencer)
+	print(Sequencer.toDict(sequencer)[4][0][1])
+	analyser = Analyser(sequencer, 20)
 	
+	D_flat.getRelatives()
+	C - 4
+	C + 1
+	'''
 	# Ways to build a Scale object
 	C_Major_Scale = Scale(C, major)
 	C_Major_Scale_2 = Scale(C, [P1, M2, M3, P4, P5, M6, M7])

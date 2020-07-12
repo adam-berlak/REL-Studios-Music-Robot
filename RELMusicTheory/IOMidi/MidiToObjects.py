@@ -7,11 +7,10 @@ class MidiToObjects(MidiToCode):
     def __init__(self):
         self.notes = {}
         self.active_notes = []
-        self.division = (1920/4)
 
-    def header(self, format=0, nTracks=1, division=int(1920/4)):
-        super().header(format, nTracks, division)
-        self.setDivision(division)
+    def header(self, format=0, nTracks=1, time_division=480):
+        super().header(format, nTracks, time_division)
+        self.setDivision(time_division)
 
     def note_on(self, channel=0, note=0x40, velocity=0x40, use_running_status=False):
         super().note_on(channel, note, velocity, use_running_status)
@@ -46,8 +45,8 @@ class MidiToObjects(MidiToCode):
 
     def getNotes(self): return self.notes
     def getActiveNotes(self): return self.active_notes
-    def getDivision(self): return self.division
+    def getDivision(self): return self.time_division
 
     def setNotes(self, p_notes): self.notes = p_notes
     def setActiveNotes(self, p_active_notes): self.active_notes = p_active_notes
-    def setDivision(self, p_division): self.division = p_division
+    def setDivision(self, p_time_division): self.time_division = p_time_division

@@ -67,6 +67,9 @@ class Key(IPitchedObject):
     #################
     # Sugar Methods #
     #################
+    
+    def getRelatives(self):
+        return [Key(tone, self.getOctave()) for tone in self.getTone().getRelatives()]
 
     def simplify(self): return Key(self.getTone().simplify(), self.getOctave())
     def toDecimal(self): return (self - Key(Tone("A", 0), 0)).getSemitones() + 21

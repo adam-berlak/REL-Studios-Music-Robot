@@ -23,6 +23,17 @@ class Tone(IPitchedObject):
         return str(self)
 
     def __add__(self, p_other):
+        if (isinstance(p_other, int)):
+            if p_other == 0: return self
+            index = Tone.tone_names.index(self.getToneName()) + self.getAccidental() + 12
+            sign = int(p_other / abs(p_other))
+            tone_names = (Tone.tone_names * 3)
+            
+            if tone_names[index + sign] is None:
+                return Tone(self.getToneName(), self.getAccidental() + sign).__add__(p_other - sign)
+            
+            else: return Tone(tone_names[index + sign], 0).__add__(p_other - sign)
+
         if (isinstance(p_other, Interval)):
             if p_other.getNumeral() == 0: return self
             if abs(p_other.getNumeral()) == 1: return Tone(self.getToneName(), self.getAccidental() + p_other.getSemitones())
@@ -44,6 +55,9 @@ class Tone(IPitchedObject):
             
 
     def __sub__(self, p_other):
+        if (isinstance(p_other, int)):
+            return self.__add__(-p_other)
+
         if (isinstance(p_other, Interval)):
             return self.__add__(-p_other)
 
@@ -64,6 +78,39 @@ class Tone(IPitchedObject):
     #################
     # Sugar Methods #
     #################
+
+    def getRelatives(self):
+        relatives = []
+
+        for i in range(Tone.accidental_limit + 1):
+            new_tone = self.removeAccidental()
+            while (new_tone - self).getSemitones() < i: new_tone = new_tone.next().removeAccidental()
+            new_accidental = ((self - new_tone) if self.getToneName() == new_tone.getToneName() and self.getAccidental() > new_tone.getAccidental() else -(new_tone - self)).getSemitones()
+            new_tone = Tone(new_tone.getToneName(), new_accidental)
+            if new_tone not in relatives and abs(new_tone.getAccidental()) < Tone.accidental_limit + 1: relatives.append(new_tone)
+
+            new_tone = self.removeAccidental()
+            while (self - new_tone).getSemitones() < i: new_tone = new_tone.previous().removeAccidental()
+            new_accidental = (-(new_tone - self) if self.getToneName() == new_tone.getToneName() and new_tone.getAccidental() > self.getAccidental() else (self - new_tone)).getSemitones()
+            new_tone = Tone(new_tone.getToneName(), new_accidental)
+            if new_tone not in relatives and abs(new_tone.getAccidental()) < Tone.accidental_limit + 1: relatives.append(new_tone) 
+
+        return relatives
+
+    def removeAccidental(self): 
+        return Tone(self.getToneName(), 0)
+
+    def next(self):
+        index = Tone.tone_names.index(self.getToneName()) + 12 + 1
+        tone_names = (Tone.tone_names * 3)
+        while tone_names[index] is None or tone_names[index] == self.getToneName(): index += 1
+        return Tone(tone_names[index], self.getAccidental())
+
+    def previous(self):
+        index = Tone.tone_names.index(self.getToneName()) + 12 - 1
+        tone_names = (Tone.tone_names * 3)
+        while tone_names[index] is None or tone_names[index] == self.getToneName(): index -= 1
+        return Tone(tone_names[index], self.getAccidental())
 
     def simplify(self):
         index = Tone.tone_names.index(self.getToneName()) + 12

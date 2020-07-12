@@ -2,26 +2,34 @@ from TheoryComponents.Interval import Interval
 from TheoryComponents.Tone import Tone
 from TheoryComponents.Key import Key
 from TheoryComponents.Note import Note
-
 from TheoryCollections.ScalesDictionary import *
 
 # Configuration System
 DEFAULT_SYSTEM = "western"
 
-ACCIDENTAL_LIMIT = 1
+ACCIDENTAL_LIMIT = 2
 
 DEGREE_SIMPLE_REPRESENTATION = False
 
-TONE_NAMES = {"western": ["C", None, "D", None, "E", "F", None, "G", None, "A", None, "B"]}
+# Configuration Unaltered Tones
+UNALTERED_TONES = {
+    0: "C",
+    2: "D",
+    4: "E",
+    5: "F",
+    7: "G",
+    9: "A",
+    11: "B"
+}
+
+UNALTERED_INTERVALS = {"western": list(UNALTERED_TONES.keys())}
+TONE_NAMES = {"western": [UNALTERED_TONES[item] if item in UNALTERED_TONES.keys() else None for item in range(0, 12)]}
 
 # Configuration Interval Spectrum Systems
 INTERVAL_SPECTRUM = {"western": {1: "D", 2: "S", 3: "N", 4: "M", 5: "P", 6: "T", 7: "P", 8: "M", 9: "N", 10: "S", 11: "D"}}
 
 # Configuration Cardinality Systems
 CARDINALITY = {"western": {1: "monotonic", 2: "ditonic", 3: "tritonic", 4: "tetratonic", 5: "pentatonic", 6: "hexatonic", 7: "heptatonic", 8: "octatonic", 12: "chromatic"}}
-
-# Configure Unaltered Intervals
-UNALTERED_INTERVALS = {"western": [0, 2, 4, 5, 7, 9, 11]}
 
 RESOLUTION_SYSTEM = {"western": -5}
 
@@ -41,13 +49,14 @@ RHYTHM_TREE = {"western": {1: "Semi-breve",
 Interval.unaltered_intervals = UNALTERED_INTERVALS[DEFAULT_SYSTEM]
 Interval.accidentals = ACCIDENTALS[DEFAULT_SYSTEM]
 
+Tone.accidental_limit = ACCIDENTAL_LIMIT
 Tone.tone_names = TONE_NAMES[DEFAULT_SYSTEM]
 Tone.accidentals = ACCIDENTALS[DEFAULT_SYSTEM]
 
 # Configuration Note Constants Systems
-whole_note_tick_length = 1920
+TIME_DIVISION = 480
 
-Note.whole_note_tick_length = whole_note_tick_length
+Note.time_division = TIME_DIVISION
 Note.rhythm_tree = RHYTHM_TREE[DEFAULT_SYSTEM]
 
 # Variables #

@@ -1,9 +1,67 @@
 import itertools
 import statistics
+import re
 
 from Configuration import *
 
 class IntervalListUtilities:
+
+    @staticmethod
+    def normalizeTypeDict(p_type_dict, p_bass_interval):
+        new_type_dict = {}
+
+        for item in p_type_dict.keys():
+            new_type_dict[item - p_bass_interval] = p_type_dict[item]
+
+        return new_type_dict
+
+    @staticmethod
+    def getPossiblePitchClasses(p_semitones_list, p_variability = ACCIDENTAL_LIMIT, p_system = DEFAULT_SYSTEM):
+        possible_intervals = [item.getIntervalsForSemitones(p_semitones) for item in p_semitones_list]
+        all_combinations = list(itertools.product(*possible_intervals))
+        return all_combinations
+
+    @staticmethod
+    def getIntervalsForSemitones(p_semitones, p_variability = ACCIDENTAL_LIMIT, p_system = DEFAULT_SYSTEM):
+        previous_list = IntervalListUtilities.getPossibleIntervals(IntervalListUtilities.getChromaticIntervals(), p_system, p_variability)
+        octaves = 1
+
+        while(previous_list[-1].getSemitones() <= p_semitones + 12):
+            temp_list = previous_list[:]
+            for intervals in previous_list[:12]: temp_list.append([item + (Interval(12, 8) * octaves) for item in intervals])
+            previous_list = temp_list[:]
+            octaves += 1
+
+        return [item for item in previous_list if item.semitones() == p_semitones]
+
+    @staticmethod
+    def getPossibleIntervals(p_intervals = None, p_variability = ACCIDENTAL_LIMIT):
+        result = []
+        intervals = IntervalListUtilities.getUnalteredIntervals(p_system) if p_intervals is None else p_intervals
+
+        for item in intervals:
+            sublist = []
+
+            for i in range(p_variability):
+                sublist.add(item)
+                sublist.add(Interval(item.getSemitones() - (i + 1), item.getNumeral()))
+                sublist.add(Interval(item.getSemitones() + (i + 1), item.getNumeral()))
+
+            result.append(sublist)
+
+        result = IntervalListUtilities.sortIntervals(result)
+        return result
+
+    @staticmethod
+    def getChromaticIntervals(p_system = DEFAULT_SYSTEM):
+        unaltered_intervals = IntervalListUtilities.getUnalteredIntervals(p_system)
+        result = [item for item in IntervalListUtilities.getPossibleIntervals(unaltered_intervals, 1) if item.getSemitones() not in UNALTERED_INTERVALS[p_system]] + unaltered_intervals
+        result = IntervalListUtilities.sortIntervals(result)
+        return result
+
+    @staticmethod
+    def getUnalteredIntervals(p_system = DEFAULT_SYSTEM):
+        return [Interval(UNALTERED_INTERVALS[p_system][i], i + 1) for i in range(len(UNALTERED_INTERVALS[p_system]))]
 
     ########################
     # Scale Static Methods #
@@ -12,10 +70,6 @@ class IntervalListUtilities:
     @staticmethod
     def isDistinct(p_intervals): 
         return (len([item.simplify().getNumeral() for item in p_intervals]) == len(set([item.simplify().getNumeral() for item in p_intervals])))
-
-    @staticmethod
-    def fromInt(p_int): 
-        return IntervalListUtilities.decimalToPitchClass(p_int)
 
     @staticmethod
     def pitchClassToScaleSteps(p_intervals):
@@ -51,7 +105,6 @@ class IntervalListUtilities:
 
     @staticmethod
     def binaryToIntervalListUtilitiesSteps(p_binary):
-        
         binary = p_binary[len(p_binary)::-1]
         binary = (binary + binary[0])[1:]
         scale_steps = []
@@ -114,7 +167,9 @@ class IntervalListUtilities:
 
     @staticmethod
     def simplifyIntervals(p_intervals):
-        return [item.simplify() for item in p_intervals]
+        new_intervals = [item.simplify() for item in p_intervals]
+        new_intervals = IntervalListUtilities.sortIntervals(new_intervals)
+        return new_intervals
 
     @staticmethod
     def scaleIntervalsByOrder(p_intervals):
@@ -145,6 +200,147 @@ class IntervalListUtilities:
     ########################
     # Chord Static Methods #
     ########################
+
+    @staticmethod
+    def intervalsToQuality(p_intervals, p_bass_triad_quality = None, p_extensions_quality = None, p_system = DEFAULT_SYSTEM):
+        bass_triad_qualities = IntervalListUtilities.evaluateQualityAssignments(p_intervals, slice(None, 3, None), p_bass_triad_quality, p_system)
+        extensions_qualities = IntervalListUtilities.evaluateQualityAssignments(p_intervals, slice(3, None, None), p_extensions_quality, p_system)
+        possible_qualities = []
+
+        for extensions_quality_data in extensions_qualities:
+            for triad_quality_data in bass_triad_qualities:
+
+                data = {
+                    "Bass Triad Quality": triad_quality_data["Quality"], 
+                    "Bass Triad Accidentals": triad_quality_data["Accidentals"], 
+                    "Bass Triad Omissions": [item for item in triad_quality_data["Omissions"] if item[1].getNumeral() < max([x.getNumeral() for x in p_intervals if x])],
+                    "Extensions Quality": extensions_quality_data["Quality"],                 
+                    "Extensions Accidentals" : extensions_quality_data["Accidentals"], 
+                    "Extensions Omissions": [item for item in extensions_quality_data["Omissions"] if item[1].getNumeral() < max([x.getNumeral() for x in p_intervals if x])],
+                    "Extensions Size": max([x.getNumeral() for x in p_intervals if x])
+                }
+
+                evaluation = triad_quality_data["Evaluation"] + extensions_quality_data["Evaluation"]
+                possible_qualities.append((data, evaluation))
+
+        return min(possible_qualities, key=lambda x: x[1])[0]
+
+    @staticmethod
+    def evaluateQualityAssignments(p_chord_intervals, p_slice, p_quality = None, p_system = DEFAULT_SYSTEM):
+        chord_qualities = []
+        in_qualities = [item for item in CHORD_QUALITIES[p_system].keys() if p_quality in item] if p_quality is not None else CHORD_QUALITIES[p_system].keys() 
+
+        for key in in_qualities:
+            temp_in_chord_intervals = p_chord_intervals[p_slice]
+            temp_chord_quality_chord = [item for item in CHORD_QUALITIES[p_system][key] if item is not None][p_slice]
+
+            evaluation = 0
+            temp_accidentals = []
+            omitted_intervals = []
+
+            for interval in temp_chord_quality_chord:
+                if (interval.getNumeral() not in [item.getNumeral() for item in temp_in_chord_intervals]): 
+                    omitted_intervals += [(OMISSION_NOTATION[p_system], interval)]
+                    evaluation += 1
+                else:
+                    for item in [item for item in temp_in_chord_intervals if item.getNumeral() == interval.getNumeral()]:
+                        if (item != interval):
+                            temp_accidentals += [("", item)]
+                            evaluation += 1
+
+            chord_qualities.append({
+                    "Quality": key, 
+                    "Accidentals": temp_accidentals, 
+                    "Omissions": omitted_intervals, 
+                    "Evaluation": evaluation}
+                )
+
+        return chord_qualities
+
+    @staticmethod
+    def stringQualityToData(p_quality, p_system = DEFAULT_SYSTEM):
+        regex = (("(" + str([item for representations in CHORD_QUALITIES[p_system] for item in representations]).replace('\'', "").replace(" ", "").replace(',', "|").replace('+', "\+")[1:][:-1] + ")") * 2) + "*(\d+)"
+        quality_contents = re.search(re.compile(regex), p_quality)
+
+        bass_triad_quality = quality_contents.group(1)
+        extensions_quality = quality_contents.group(2)
+        extensions_numeral = quality_contents.group(3)
+
+        extensions_quality = bass_triad_quality if extensions_quality is None else extensions_quality
+
+        regex_accidentals = str([item for item in ACCIDENTALS[p_system].values()]).replace('\'', "").replace(' ', "").replace(',', "")[1:][:-1]
+        regex_optional_accidentals = "[" + regex_accidentals + "]*\d+"
+
+        regex_alt = "[" + regex_accidentals + "]\d+"
+        altered_intervals = [Interval.stringToInterval(item) for item in re.findall(re.compile(regex_alt), p_quality)]
+
+        regex_sus = SUSPENDED_NOTATION[p_system] + regex_optional_accidentals
+        sus_intervals = [Interval.stringToInterval(item) for item in re.findall(re.compile(regex_sus), p_quality)]
+
+        regex_add = ADDITION_NOTATION[p_system] + regex_optional_accidentals
+        add_intervals = [Interval.stringToInterval(item) for item in re.findall(re.compile(regex_add), p_quality)]
+
+        regex_omit = OMISSION_NOTATION[p_system] + regex_optional_accidentals
+        omitted_intervals = [Interval.stringToInterval(item) for item in re.findall(re.compile(regex_omit), p_quality)]
+
+        data = {
+                "Bass Triad Quality": bass_triad_quality, 
+                "Bass Triad Accidentals": [item for item in altered_intervals if item.getNumeral() <= 5], 
+                "Bass Triad Added": [item for item in add_intervals if item.getNumeral() <= 5],
+                "Bass Triad Omissions": [item for item in omitted_intervals if item.getNumeral() <= 5], 
+                "Extensions Quality": extensions_quality,                 
+                "Extensions Accidentals" : [item for item in altered_intervals if item.getNumeral() > 5], 
+                "Extensions Added" : [item for item in add_intervals if item.getNumeral() > 5], 
+                "Extensions Omissions": [item for item in omitted_intervals if item.getNumeral() > 5], 
+                "Suspended" : sus_intervals, 
+                "Extensions Size": extensions_numeral
+            }
+
+        return data
+
+    @staticmethod
+    def stringToPitchClass(p_quality, p_system = DEFAULT_SYSTEM):
+        data = IntervalListUtilities.stringQualityToData(p_quality, p_system)
+
+        bass_triad_quality = data["Bass Triad Quality"]
+        extensions_quality = data["Extensions Quality"]
+        list_of_alt_intervals = data["Bass Triad Accidentals"] + data["Extensions Accidentals"]
+        list_of_sus_intervals = data["Suspended"]
+        list_of_add_intervals = data["Bass Triad Added"] + data["Extensions Added"]
+        list_of_omi_intervals = data["Bass Triad Omissions"] + data["Extensions Omissions"]
+        extensions_numeral = data["Extensions Size"]
+
+        for quality_tuple in CHORD_QUALITIES[p_system].keys():
+            if bass_triad_quality in quality_tuple: bass_triad_pitch_class = CHORD_QUALITIES[p_system][quality_tuple][:3]
+            if extensions_quality in quality_tuple: extensions_pitch_class = CHORD_QUALITIES[p_system][quality_tuple][3:]
+
+        result = (bass_triad_pitch_class + extensions_pitch_class)[:int((int(extensions_numeral) + 1) / 2)]
+
+        for altered_interval in list_of_alt_intervals:
+            match = [item for item in result if item.getNumeral() == altered_interval.getNumeral()]
+            if len(match) > 0: result[result.index(match[0])] = altered_interval
+
+        result = result + list_of_sus_intervals
+        if (len(list_of_sus_intervals) > 0 and 3 in [item.getNumeral() for item in result]): result.pop(result.index([item for item in result if item.getNumeral() == 3][0]))
+
+        result = result + list_of_add_intervals
+        result.sort(key=lambda x: x.getSemitones())
+        
+        for omitted_interval in list_of_omi_intervals:
+            if omitted_interval in result: result.pop(result.index(omitted_interval)) 
+
+        return result
+
+    @staticmethod
+    def identifyParentScale(p_bass_triad_quality, p_extensions_quality):
+        result_scale = [item for item in IntervalListUtilities.simplifyIntervals(IntervalListUtilities.stringToPitchClassFast(p_bass_triad_quality)) if item.getNumeral() in (1, 3, 5)]
+        result_scale += [item for item in IntervalListUtilities.simplifyIntervals(IntervalListUtilities.stringToPitchClassFast(p_extensions_quality)) if item.getNumeral() in (2, 4, 6, 7)]
+        return IntervalListUtilities.sortIntervals(result_scale)
+
+    @staticmethod
+    def stringToPitchClassFast(p_quality):
+        results = [item for item in CHORD_QUALITIES[DEFAULT_SYSTEM].keys() if p_quality in item]
+        return [item for item in CHORD_QUALITIES[DEFAULT_SYSTEM][results[0]] if item is not None] if len(results) > 0 else None
 
     @staticmethod
     def findRoot(p_intervals):
@@ -205,6 +401,16 @@ class IntervalListUtilities:
     @staticmethod
     def buildOnThirdsStatic(p_intervals):
         return [item for item in IntervalListUtilities.rearrangeIntervalsAsThirds(p_intervals) if item != None]
+
+    @staticmethod
+    def getItemRepetitionCount(p_intervals): 
+        result = 0
+
+        for interval in p_intervals:
+            repeats = len([item for item in p_intervals if item.simplify().getSemitones() == interval.simplify().getSemitones()])
+            if (repeats > 1): result = result + repeats
+
+        return result
 
     @staticmethod
     def rearrangeIntervalsAsThirds(p_intervals, p_system = DEFAULT_SYSTEM):

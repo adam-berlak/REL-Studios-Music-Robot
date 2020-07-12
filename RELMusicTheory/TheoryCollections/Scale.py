@@ -4,7 +4,6 @@ import itertools
 import statistics
 
 from Configuration import *
-from HelperMethods import *
 
 from TheoryCollections.IntervalList import *
 from TheoryCollections.IntervalListUtilities import *
@@ -16,7 +15,7 @@ class Scale(IntervalList, IMusicObject):
 	def __init__(self, p_item_1, p_item_2 = None, p_type_dict = {}):
 
 		if isinstance(p_item_1, Scale): 
-			self.tonic_tone = p_item_1[1].getTone()
+			self.tonic_tone = p_item_1[1].getReferencePoint_BL()
 			self.intervals = p_item_1.getIntervals()
 			self.parent_item = p_item_1.getParentItem()
 			self.type_dict = p_type_dict 
@@ -28,19 +27,19 @@ class Scale(IntervalList, IMusicObject):
 			self.type_dict = p_type_dict
 
 		elif isinstance(p_item_2, list) and len(p_item_2) > 0 and isinstance(p_item_2[0], Interval):
-			self.tonic_tone = p_item_1.getTone() if isinstance(p_item_1, Scale.Degree) else p_item_1
+			self.tonic_tone = p_item_1.getReferencePoint_BL() if isinstance(p_item_1, Scale.Degree) else p_item_1
 			self.intervals = p_item_2
 			self.parent_item = p_item_1 if isinstance(p_item_1, Scale.Degree) else None
 			self.type_dict = p_type_dict
 		
 		elif isinstance(p_item_2, list) and len(p_item_2) > 0 and isinstance(p_item_2[0], int):
-			self.tonic_tone = p_item_1.getTone() if isinstance(p_item_1, Scale.Degree) else p_item_1
+			self.tonic_tone = p_item_1.getReferencePoint_BL() if isinstance(p_item_1, Scale.Degree) else p_item_1
 			self.intervals = IntervalListUtilities.scaleStepsToPitchClass(p_item_2)
 			self.parent_item = p_item_1 if isinstance(p_item_1, Scale.Degree) else None
 			self.type_dict = p_type_dict
 
 		elif isinstance(p_item_2, int):
-			self.tonic_tone = p_item_1.getTone() if isinstance(p_item_1, Scale.Degree) else p_item_1
+			self.tonic_tone = p_item_1.getReferencePoint_BL() if isinstance(p_item_1, Scale.Degree) else p_item_1
 			self.intervals = IntervalListUtilities.decimalToPitchClass(p_item_2)
 			self.parent_item = p_item_1 if isinstance(p_item_1, Scale.Degree) else None
 			self.type_dict = p_type_dict
@@ -57,7 +56,7 @@ class Scale(IntervalList, IMusicObject):
 		return
 
 	def __toMidiData__(self): 
-		try: return self.getTones()
+		try: return self.getItems()
 		except: print("Error: Unable to convert object to midi data as it does not contain playable objects")
 
 	################################
@@ -97,7 +96,7 @@ class Scale(IntervalList, IMusicObject):
 
 	def getNegativeScale(self, p_reflection_point = 5): 
 		if (IntervalListUtilities.isDistinct(self.getIntervals()) and self.__contains__(p_reflection_point)): 
-			new_reference_point = self.getitem_BL(p_reflection_point).findInParent() if self.getParentItem() is not None else self.getitem_BL(p_reflection_point).getTone()
+			new_reference_point = self.getitem_BL(p_reflection_point).findInParent() if self.getParentItem() is not None else self.getitem_BL(p_reflection_point).getReferencePoint_BL()
 			new_scale = Scale(new_reference_point, IntervalListUtilities.scaleStepsToPitchClass(IntervalListUtilities.pitchClassToScaleSteps(self.getitem_BL(p_reflection_point).getParentIntervalList().getItems()[0].buildPitchClass())[::-1]))
 			return new_scale
 		else: 
@@ -136,131 +135,97 @@ class Scale(IntervalList, IMusicObject):
 		return (self.getPrimeMode() == self)
 
 	def countIntervals(self, p_interval_size):
+		counter = 0
+		next_scale = self
 
-		try:
-			counter = 0
-			next_scale = self
+		for i in range(len(self.getIntervals())):
+			if (p_interval_size in next_scale.getSemitones()): counter = counter + 1
+			next_scale = next_scale.rotate()
 
-			for i in range(len(self.getIntervals())):
-				if (p_interval_size in next_scale.getSemitones()): counter = counter + 1
-				next_scale = next_scale.rotate()
-
-			if (p_interval_size == 6): counter = counter / 2
-			return counter
-
-		except: print("Error: Failed to count intervals for scale: " + str(self))
+		if (p_interval_size == 6): counter = counter / 2
+		return counter
 
 	def getImperfections(self):
+		counter = 0
 
-		try:
-			counter = 0
+		for degree in self.getItems(): 
+			if (P5 not in degree.buildPitchClass()): counter = counter + 1
 
-			for degree in self.getItems(): 
-				if (P5 not in degree.buildPitchClass()): counter = counter + 1
-
-			return counter
-
-		except: print("Error: Failed to get imperfections for scale: " + str(self))
+		return counter
 	
 	def getRotationalSymmetry(self):
+		parent_pitch_class = self.pitchClassToScaleSteps(self.getIntervals())
+		result = []
 
-		try:
-			parent_pitch_class = self.pitchClassToScaleSteps(self.getIntervals())
-			result = []
+		for degree in self.getItems():
+			if (degree == self.getItems()[0]): continue
+			child_pitch_class = IntervalListUtilities.pitchClassToScaleSteps(degree.buildPitchClass())
+			if (parent_pitch_class == child_pitch_class): result.append(degree.getPosition())
 
-			for degree in self.getItems():
-				if (degree == self.getItems()[0]): continue
-				child_pitch_class = IntervalListUtilities.pitchClassToScaleSteps(degree.buildPitchClass())
-				if (parent_pitch_class == child_pitch_class): result.append(degree.getPosition())
-
-			return result
-
-		except: print("Error: Failed to get rotational symmetry for scale: " + str(self))
+		return result
 
 	def getReflectionAxes(self):
+		result = []
 
-		try:
-			result = []
+		for degree in self.getItems():
+			scale_steps = IntervalListUtilities.pitchClassToScaleSteps(degree.buildPitchClass())
+			if (scale_steps == scale_steps[::-1]): result.append(degree.getPosition())
 
-			for degree in self.getItems():
-				scale_steps = IntervalListUtilities.pitchClassToScaleSteps(degree.buildPitchClass())
-				if (scale_steps == scale_steps[::-1]): result.append(degree.getPosition())
-
-			return result 
-
-		except: print("Error: Failed to get reflection axes for scale: " + str(self))
+		return result 
 
 	def getIntervalVector(self, p_system = DEFAULT_SYSTEM):
+		all_intervals = []
+		for degree in self.getItems(): all_intervals = all_intervals + degree.buildPitchClass()[1:]
+		all_pitch_classes = []
 
-		try: 
-			all_intervals = []
-			for degree in self.getItems(): all_intervals = all_intervals + degree.buildPitchClass()[1:]
-			all_pitch_classes = []
+		for interval in all_intervals:
+			semitones = interval.getSemitones()
+			if (semitones > 11): semitones = semitones - 12
+			all_pitch_classes.append(INTERVAL_SPECTRUM[p_system][semitones])
 
-			for interval in all_intervals:
-				semitones = interval.getSemitones()
-				if (semitones > 11): semitones = semitones - 12
-				all_pitch_classes.append(INTERVAL_SPECTRUM[p_system][semitones])
-
-			counter = collections.Counter(all_pitch_classes)
-			result = {}
-			for key in counter.keys(): result[key] = int(counter[key]/2)
-			return result
-
-		except: print("Error: Failed to retrieve interval vector for scale: " + str(self))
+		counter = collections.Counter(all_pitch_classes)
+		result = {}
+		for key in counter.keys(): result[key] = int(counter[key]/2)
+		return result
 
 	def isChiral(self, p_intervals):
+		reflection_scale_steps = IntervalListUtilities.pitchClassToScaleSteps(p_intervals)[::-1]
+		result = []
 
-		try:
-			reflection_scale_steps = IntervalListUtilities.pitchClassToScaleSteps(p_intervals)[::-1]
-			result = []
+		for rotation_ammount in len(p_intervals):
+			rotation_pitch_class = IntervalListUtilities.invertStatic(p_intervals, rotation_ammount + 1)
+			rotation_scale_steps = IntervalListUtilities.pitchClassToScaleSteps(rotation_pitch_class)
+			if (rotation_scale_steps == reflection_scale_steps): return False
 
-			for rotation_ammount in len(p_intervals):
-				rotation_pitch_class = IntervalListUtilities.invertStatic(p_intervals, rotation_ammount + 1)
-				rotation_scale_steps = IntervalListUtilities.pitchClassToScaleSteps(rotation_pitch_class)
-				if (rotation_scale_steps == reflection_scale_steps): return False
-
-			return True
-
-		except: print("Error: Failed to check chirality for scale: " + str(self))
+		return True
 
 	def getCohemitonic(self, p_intervals):
+		result = []
+		scale_steps = IntervalListUtilities.pitchClassToScaleSteps(p_intervals) * 2
 
-		try:
-			result = []
-			scale_steps = IntervalListUtilities.pitchClassToScaleSteps(p_intervals) * 2
+		for i in range(int(len(scale_steps) / 2)):
+			if (scale_steps[i] == 1 and scale_steps[i + 1] == 1): result.append(i + 1)
 
-			for i in range(int(len(scale_steps) / 2)):
-				if (scale_steps[i] == 1 and scale_steps[i + 1] == 1): result.append(i + 1)
-
-			return result
-
-		except: print("Error: Failed to retrieve cohemitonic tone")
+		return result
 
 	def getPrimeMode(self, p_consider_negative_modes = False):
+		min_count = 1000
 
-		try: 
-			min_count = 1000
+		for degree in self.getItems():
+			new_scale = degree.buildScale()
+			temp_sum = sum([item.getSemitones() for item in new_scale.getIntervals()])
 
-			for degree in self.getItems():
-				new_scale = degree.buildScale()
+			if (temp_sum < min_count):
+				prime_mode = new_scale
+				min_count = temp_sum
+			
+			if (p_consider_negative_modes):
+				new_scale = new_scale.getNegative()
 				temp_sum = sum([item.getSemitones() for item in new_scale.getIntervals()])
 
 				if (temp_sum < min_count):
 					prime_mode = new_scale
 					min_count = temp_sum
-				
-				if (p_consider_negative_modes):
-					new_scale = new_scale.getNegative()
-					temp_sum = sum([item.getSemitones() for item in new_scale.getIntervals()])
-
-					if (temp_sum < min_count):
-						prime_mode = new_scale
-						min_count = temp_sum
-				
-			return prime_mode
-
-		except: print("Error: Failed to get prime mode of scale: " + str(self))
 
 	###################
 	# Wrapper Methods #
@@ -322,14 +287,18 @@ class Scale(IntervalList, IMusicObject):
 		def add_BL(self, p_other):
 			if isinstance(p_other, int):	
 				if abs(p_other) == 1: return self
-				return self.next_BL().add_BL((p_other - 1) if not self.next_BL().isChromatic() else p_other) if p_other > 0 else self.previous_BL().add_BL((p_other + 1) if not self.previous_BL().isChromatic() else p_other)
 
+				if p_other > 0:
+					return self.next_BL().add_BL((p_other - 1) if not self.next_BL().isChromatic() else p_other)
+				else:
+					return self.previous_BL().add_BL((p_other + 1) if not self.previous_BL().isChromatic() else p_other)
+				
 			if isinstance(p_other, Interval):
 				if abs(p_other) == P1: return self
 				new_interval = self.getInterval() + p_other
 
 				if new_interval < P1:
-					return (self.getParentIntervalList().sub_BL(P8)).getitem_BL(self.getPosition()).sub_BL(p_other - P8)
+					return (self.getParentIntervalList().sub_BL(P8)).getitem_BL(self.getPosition()).add_BL(p_other + P8)
 				
 				if new_interval >= self.getParentIntervalList().getIntervals()[-1].roof():
 					return (self.getParentIntervalList().add_BL(P8)).getitem_BL(self.getPosition()).add_BL(p_other - P8)

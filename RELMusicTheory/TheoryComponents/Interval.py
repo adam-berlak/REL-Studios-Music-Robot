@@ -12,7 +12,7 @@ class Interval:
 	def __str__(self): 
 		prefix = ""
 		if (self.getNumeral() < 0): prefix = "-"
-		return prefix + abs(self).getAccidental() + str(abs(self).getNumeral())
+		return prefix + (abs(self).getAccidental() + str(abs(self).getNumeral()) if abs(self.getNumeral()) != 1 else str(self.getAccidental()) + str(self.getNumeral()))
 
 	def __repr__(self): 
 		return str(self)
@@ -59,8 +59,9 @@ class Interval:
 			else: return Interval(self.getSemitones() + p_other.getSemitones(), self.getNumeral() + p_other.getNumeral() - 1)
 
 		if (isinstance(p_other, int)): 
-			if (p_other == 1): return self
-			return self.next().__add__(p_other - 1)
+			if (p_other == 0): return self
+			elif self.next().removeAccidental().getSemitones() == self.getSemitones() + 1: return Interval(self.getSemitones() + 1, self.next().getNumeral()).__add__(p_other - 1)
+			else: return Interval(self.getSemitones() + 1, self.getNumeral()).__add__(p_other - 1)
 
 		if (isinstance(p_other, str)): 
 			return str(self) + p_other
@@ -100,6 +101,32 @@ class Interval:
 	##########################
 	# Transformation Methods #
 	##########################
+
+	@staticmethod
+	def intToRoman(p_integer):
+		val = [
+			1000, 900, 500, 400,
+			100, 90, 50, 40,
+			10, 9, 5, 4,
+			1
+			]
+
+		syb = [
+			"M", "CM", "D", "CD",
+			"C", "XC", "L", "XL",
+			"X", "IX", "V", "IV",
+			"I"
+			]
+
+		roman_num = ''
+		i = 0
+		while  p_integer > 0:
+			for _ in range(p_integer // val[i]):
+				roman_num += syb[i]
+				p_integer -= val[i]
+			i += 1
+
+		return roman_num
 
 	@staticmethod
 	def stringToAccidental(p_accidental):
@@ -200,6 +227,9 @@ class Interval:
 	#################
 	# Sugar Methods #
 	#################
+
+	def removeAccidental(self):
+		return Interval(self.getSemitones() - self.getAccidentalAsSemitones(), self.getNumeral())
 
 	def getOctaveRange(self): 
 		if self < Interval(0, 0): return -int(abs(self.getSemitones()) / 12) - 1
