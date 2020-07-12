@@ -17,6 +17,7 @@ Use Machine learning to produce new music. The algorithm will take a collection 
 all the information of the piece the AI can understand. The Neural Network will try and build the Songs structure from scratch until the error is small enough when comparing it to the actual song. We will then run the algorithm ona large set of music until it builds a strong enough network of possible ways to construct a piece. 
 
 <br>
+
 ## 0. Table of Contents
 - [**1 - About this project**](#about)<br>
 - [**2 - Usage**](#usage)<br>
