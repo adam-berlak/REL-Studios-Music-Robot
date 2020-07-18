@@ -154,7 +154,13 @@
 # 06/13/2020 - Tone		     :: [BUG] Fixed subtraction issue
 # 06/13/2020 - Scale		 :: [BUG] Fixed issue in findInParent(), we now add to the degree instead of using getDegreeByInterval()
 # 06/27/2020 - Scale		 :: [BUG] Fixed issue where Degree attributes are not maintained when transposing a Scale
-
+# 07/16/2020 - IntervalList	 :: [FTR] Updated build so it now uses indexing to build sub-lists and degree arithmetic, now supports lists that mix generic and specific intervals
+# 07/16/2020 - IntervalList	 :: [BUG] Item arithmetic now retains parent item
+# 07/16/2020 - IntervalList	 :: [BUG] Transform and addInterval method now retains attributes for items
+# 07/16/2020 - IntervalList	 :: [FTR] Updated Typcasting for IntervalList objects
+# 07/16/2020 - Interval		 :: [FTR] Adding Interval + Semtiones logic
+# 07/16/2020 - Interval		 :: [FTR] Added getParentIntervalList() method that references an item it belongs to, useful for interval arithmetic, also added intervalToTypeDict() in IntervalListUtilities() that utilises this
+ 
 # GOALS AND MILESTONES IN ORDER:
 # Need to add logic to Chord Build logic where you can choose whether a new note should be considered Chromatic or Diatonic. IE secondary dominants/chromatic chords.
 # The above change should be accompanied by a change in how the Scale add logic works aswell
@@ -179,6 +185,8 @@
 # Updating getitem and add has an issue, when we sub identical tones we get difference of 8
 
 # Code Cleanliness
+# Add IntervalList Item in degree uses remove to remove first item in list but in intervallist we do this manually
+# all use of in should be replaced with contains_BL in IntervalList, Scale and Chord
 # Sub should replicate add logic in Key
 # Ensure consistant use of temp in variable names
 # Create a new assert equals for every outlier bug I fix
@@ -211,6 +219,14 @@
 # [Done] Make sure whenever we check instance of lists we check length first in Scale (Check if all references of 0 check len first)
 
 # Optional Features and Bug Fixes that can be delayed
+# Need to fix build method so it just puts all the parameters specified into the new object instead of creating a sublist
+# Secondary Scales should behave similarly to Chords built of scale degrees, IE they should call configure parent degree and generic intervals should refer to the parent
+# Right now build method first parameter is the max numeral not, the amount of numerals ie 4, 3 = [1, 3] instead of [1, 3, 5, 7]
+# Remove if isinstance(p_item_1, Tone): p_item_1 = Key(p_item_1, 4)
+# By default maybe Scale should always use the same method for converting semitones to Intervals instead of varying depending on the accidental limit
+# What happens when you submit a list of tones into an IntervalList object? Since we set a tone to be a key with octave 4
+# For some reason getQuality of Dominant Chords returns Mm7
+# [Done] Still need to fix degree attribute logic getting lost when calling getParallelChord() and related methods
 # Interval / Tone :: next and previous logic in interval and tone wont work for items with accidental greater than 2
 # Interval / Tone :: ACCIDENTAL_LIMIT should limit the accidentals users can use in Interval and Tone
 # Tone :: fix D_flat.getRelatives()
@@ -219,9 +235,11 @@
 # Interval :: Fix printing of aug1
 # Interval :: Add Interval - Semtiones 
 # Interval :: Interval + Semitones arithmetic doesnt work for intervals where the next interval has less semitones than the current interval
+# IntervalList :: What happens if you sub a IntervalList.Item by another IntervalList.Item that is higher than itself, also should we retain the subbed items attributes? What differentiates this from add? 
 # IntervalList :: getAttributes type_dict is incorrect when you add an interval thats below P1 since all intervals above get changed
 # IntervalList :: type_dict is incorrect when using transform if we are transforming the first item
 # Unalterted Tones and Tone Names should be combined
+# IntervalList :: In the console if we add an interval to the parent degree it returns none within add interval method
 # IntervalList :: fix Contains logic
 # IntervalList :: Need to test new version of transform method for both Chord and IntervalList
 # IntervalList :: Issue, if we specify type_dict in getAttributes but we use a modified interval list then the assignments in type dict will not make sense, one solution is to add logic for updating the type dict and generate a new one
@@ -280,11 +298,19 @@ from TheoryComponents.Note import *
 from IOMidi.Sequencer import *
 
 def main():
-
-	#Chord(C4, "dom7")[-2]
-
-	P1 + 2
-	
+	Scale(C, major, {P4: {"p_omitted": True}})[3].build(Chord, [P1, M3, P5, m7])
+	Scale(C, major, {P4: {"p_omitted": True}})[1].build(Chord, 4, 3)
+	Scale(C, major)[1,2,3].getParentItem()
+	Scale(C, major, {P4: {"p_omitted": True}}).getParallelScale()
+	#test = {1: "a", 2: "b", 3: "c"}
+	#test.keys = [3,4,5]
+	#IntervalListUtilities.normalizeIntervals(Scale(C, major).getItems())
+	Scale(C, major)[2].build(Scale)
+	P1 - m3
+	Scale(C, major, {Interval(5, 4): {"p_omitted": True}}).getNegativeScale().getAttributes()
+	IntervalListUtilities.invertIntervals([P1, M2, M3, P4, P5, M6, M7])
+	Scale(C, major)[1,2,3,4,5][6]
+	Scale(C4, major)[1].build(Chord, "min7")[P4]
 	local_dir = "C:\\Users\\adamb\\github\\REL-Studios-Music-Robot\\RELMusicTheory\\IOMidi\\MidiFiles\\"
 	'''
 	sequencer = Sequencer()
@@ -314,14 +340,12 @@ def main():
 	C - 4
 	C + 1
 	'''
+	Scale(C, major, {P4: {"p_omitted": True}}).getParallelScale()
 	# Ways to build a Scale object
 	C_Major_Scale = Scale(C, major)
 	C_Major_Scale_2 = Scale(C, [P1, M2, M3, P4, P5, M6, M7])
 	C_Major_Scale_3 = Scale(C, [2, 2, 1, 2, 2, 2, 1])
 	C_Major_Scale_4 = Scale([C, D, E, F, G, A, B])
-
-	Chord(C4, "maj7")[2, 4, 6]
-	Chord(C4, "maj9b9")[9].findInParent()
 	
 	# Ways to build a Chord object with a Parent Scale
 	C_M7 = C_Major_Scale[1].build(Chord, "maj7")
@@ -375,11 +399,11 @@ def main():
 	G_643 = C_M7.resolveChordInto(C_Major_Scale[5].build(Chord))															# Returns the result of resolving the Chord in question into a specific Chord
 	G_643.getInversion()
 	
-	# Transformations
-	A_m7 = C_M7.getRelativeChord()																							# Returns the Relative-Chord of the Chord in question => <Chord i=A, biii=C, V=E, bVII=G>
-	C_m7 = C_M7.getParallelChord()																							# Returns the Parallel-Chord of the Chord in question => <Chord i=C, biii=Eb, V=G, bVII=Bb>
+	# Transformations7
 	Ab_M7 = C_M7.getNegativeChord()																							# Returns the Negative-Chord of the Chord in question => <Chord I=Ab, iii=C, V=Eb, bvii=G>
-	
+	C_m7 = C_M7.getParallelChord()																							# Returns the Parallel-Chord of the Chord in question => <Chord i=C, biii=Eb, V=G, bVII=Bb>
+	A_m7 = C_M7.getRelativeChord()																							# Returns the Relative-Chord of the Chord in question => <Chord i=A, biii=C, V=E, bVII=G>
+																								
 	# Finding alternative Scales
 	#C_M7.getPossibleParentScales()
 	
@@ -395,175 +419,6 @@ def main():
 	Chord(C, "mM11b5no9")
 	Chord(C, "m9b5add6")
 	Chord(C, "half-dim9sus4b9")
-	'''
-	
-	C_Minor_Scale = Scale(C, lydian)
-	
-	C_Diminished_Scale = Scale(C, diminished)
-	C_Chromatic_Scale = Scale(C, chromatic)
-	A_Minor_Scale = C_Major_Scale + 6
-	
-	A_Melodic_Minor = Scale(A, melodic_minor_ascending)
-
-	test = Scale(C, diminished_seventh)
-	print(test.getIntervals())
-	
-	Cdim7 = C_Diminished_Scale[1].build(Chord, [1, 3, 4, 6])
-	Bm7b5 = C_Major_Scale[7].build(Chord)
-	G7 = C_Major_Scale[5].build(Chord)
-	CM7 = C_Major_Scale[1].build(Chord)
-	FM7 = C_Major_Scale[1].build(Chord, [1, 3, 4, 7])
-	
-
-	AmM7 = A_Melodic_Minor[1].build(Chord)
-
-	test_chord = C_Major_Scale[7].build(Chord, [1, 3, 5, 6, 7, 11])
-
-	print(Cdim7.getNegativeChord())
-
-	print(Chord([E, B, F, C, G]).invert(5).getIntervals())
-
-
-
-	#print(C_Major_Scale[3].build(Chord, diminished_seventh))
-
-	#print(Cdim7.getNegativeChord())
-
-	# Create a C Major Scale
-	CMajorScale = Scale(C, Scale.decimalToPitchClass(major))
-
-	print("Got Here" + CMajorScale[1].build(Chord).getSecondaryAugmentedSix())
-
-	print(Chord(C, [P1, m3, P5, m7])[2])
-
-	print(CMajorScale.printTones())
-
-	print(Scale.scaleIntervalsByOrder([P1, M3, P5, M7, M2, P4, m6]))
-
-	print(CMajorScale[2].buildScale()[2].findInParent().getInterval())
-
-	print(Scale(C, Scale.decimalToPitchClass(diminished_seventh)))
-
-	print("herere" + (CMajorScale[1].build(Chord)[1] + m3).getParentScale())
-	
-	CChromaticScale = Scale(G, [P1, m2, M2, m3, M3, P4, aug4, P5, m6, M6, m7, M7])
-	
-	print(CMajorScale[7] + CChromaticScale[3])
-
-	print("result: " + Chord(C, [P1, M3, P5, M7])[2].build(Chord).getParentScale())
-
-	Dorian = CMajorScale + 2
-	print(CMajorScale[7].build(Chord).getSecondaryDominant())
-	
-	CM7 = CMajorScale[1].build(Chord, [P1, M3, aug5, m7, m9, P11])
-	print(CM7.getParentChordQuality())
-	
-	print(Scale(B, Scale.scaleStepsToPitchClass([2, 2, 1, 2, 2, 2, 1])))
-
-	print(Tone("G", 3).simplify())
-
-	print(Scale(C, [P1, m2, m3, M3, aug4, P5, M6, m7]).getModeNames())
-	
-	Eb = CMajorScale[1] + m3
-	print("The first degree of the C Major Scale + m3 is: " + Eb)
-
-	print("The major scale converted to Decimal is: " + str(Scale.pitchClassToDecimal([P1, M2, M3, P4, P5, M6, M7])))
-	
-	print("The string dom7sus9no5b5 produces the pitch class " + str(Chord.stringToPitchClass("dom7sus9no5b5")))
-	
-	result = CMajorScale[1] - 4
-	print("The root of the major scale - 4 is " + result)
-
-	print(Chord(C, Chord.stringToPitchClass("min7")).printTones())
-	print(CMajorScale[1].build(Chord)[2].buildPitchClass(-1, 2))
-	
-	# Build a scale off of a scale degree
-	DDorianScale = CMajorScale[2].buildScale()
-	print("The D Dorian Scale is: " + DDorianScale.printTones())
-
-	# Build a chord off of a scale degree
-	G9 = DDorianScale[4].build(Chord)
-	print("The G Dominant chord is: " + G9.printTones())
-
-	print("Converting the string #3 to an interval produces: " + Interval.stringToInterval("#3"))
-
-	print("G7 with a flat third is: " + G9[2].transform("b").printTones())
-
-	print("The roman numeral notation of the G9 chord is " + G9.getNumeralWithContext(True, 2))
-
-	# Resolve the chord using a specific rule
-	# CM7 = G9.resolveChord(circleOfFifths)
-	# print("The result of resolving G9 is: " + CM7)
-
-	# Find the relative chord of a chord
-	Em7 = G9.getRelativeChord()
-	print("The relative chord of G9 is Em7: " + Em7.printTones())
-
-	# Get secondary dominant of a chord
-	D7 = G9.getSecondaryDominant()
-	print("The secondary dominant of G9 is D7: " + D7.printTones())
-	
-	# Transpose a scale up by semitones
-	DMajorScale = CMajorScale + M2
-	print("The D Major Scale is: " + DMajorScale.printTones())
-
-	# Print the quality of a subset of a chord
-	print("The chord resulting from subsetting G9 by 2-5 are: " + G9[2:3].printTones())
-
-	# Properly print quality of a chord with accidentals
-	Bhalfdim9 = CMajorScale[7].build(Chord)
-	print("The quality of the 7th chord of the C major scale is: " + Bhalfdim9.getParentChordQuality())
-
-	# Properly assign notes to non-major heptatonic scales
-	AMelodicMinor = Scale(A, Scale.decimalToPitchClass(melodic_minor_ascending))
-	print("The A Melodic Minor Scale is: " + AMelodicMinor.printTones())
-
-	# Build a chord on a non-major heptatonic scale
-	AM11b3 = AMelodicMinor[1].build(Chord)
-	print("The first chord of the melodic minor scale is: " + AM11b3.printTones())
-
-	# Properly print the quality of non-major diatonic chord
-	print("The quality of this chord is: " + AM11b3.getParentChordQuality())
-
-	# Print Roman Numerals with the Correct quality
-	print("The jazz numeral notation of the 6th chord of A minor, with 7 notes is: " + Scale(A, Scale.decimalToPitchClass(minor))[6].build(Chord, 7).getNumeral(True, 2))
-
-	print(CMajorScale[1].build(Chord, Chord.stringToPitchClass("half-dimmaj7")).getParentDegree().getParentScale().printTones())
-
-	# Get properties of scale
-	print("The number of imperfections in the C Major Scale is: " + str(CMajorScale.getImperfections()))
-	print("The reflection axes of the C Major scale are: " + str(CMajorScale.getReflectionAxes()))
-
-	# Build non-heptatonic scales
-	CChromaticScale = Scale(C, [P1, m2, M2, m3, M3, P4, aug4, P5, m6, M6, m7, M7])
-	print("The Chromatic Scale is: " + CChromaticScale.printTones())
-
-	# build a chord on the chromatic scale
-	chord = CChromaticScale[1].build(Chord, 5)
-	print("the quality of the first chord in the C chromatic scale is: " + chord.getParentChordQuality() + chord)
-
-	print(Chord.stringToPitchClass("half-dimmaj7"))
-
-	# Build chord on non-heptatonic scales
-	CDimScale = Scale(C, [P1, M2, m3, P4, dim5, m6, m7.transform("b"), M7])
-	print("The first chord of the C Diminished Scale is: " + CDimScale[1].build(Chord).printTones())
-
-	# build a chord on the c dim scale
-	chord = CDimScale[1].build(Chord, 5)
-	print("the quality of the first chord in the C Dim scale is: " + chord.getParentChordQuality() + chord)
-
-	# Check if chord exists in a scale
-	if G9 in CMajorScale:
-		print("Check if G9 in C Major Scale: True")
-
-	# Check if scale exists in a scale
-	if DDorianScale in CMajorScale:
-		print("Check if D Dorian Scale in C Major Scale: True")
-
-	# Check if intervals exist in a scale
-	if [P1, M3, P5] in CMajorScale:
-		print("Check if [P1, M3, P5] in C Major Scale: True")
-'''
 
 if __name__ == "__main__":
 	main()

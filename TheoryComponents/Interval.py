@@ -5,9 +5,10 @@ class Interval:
 	unaltered_intervals = []
 	accidentals = []
 
-	def __init__(self, p_semitones, p_numeral):
+	def __init__(self, p_semitones, p_numeral, p_parent_interval_list_item = None):
 		self.semitones = p_semitones
 		self.numeral = p_numeral
+		self.parent_interval_list_item = p_parent_interval_list_item
 
 	def __str__(self): 
 		prefix = ""
@@ -47,21 +48,30 @@ class Interval:
 	##############
 
 	def __abs__(self):
-		return Interval(abs(self.getSemitones()), abs(self.getNumeral()))
+		return Interval(abs(self.getSemitones()), abs(self.getNumeral()), self.getParentIntervalListItem())
 
 	def __neg__(self):
-		return Interval(-self.getSemitones(), -self.getNumeral())
+		return Interval(-self.getSemitones(), -self.getNumeral(), self.getParentIntervalListItem())
 
 	def __add__(self, p_other):
 		if (isinstance(p_other, Interval)): 
-			if (p_other < Interval(0, 0)): return self - abs(p_other)
-			elif (self < Interval(0, 0)): return p_other - abs(self)
-			else: return Interval(self.getSemitones() + p_other.getSemitones(), self.getNumeral() + p_other.getNumeral() - 1)
+			new_semitones = self.getSemitones() + p_other.getSemitones()
+			new_numeral = self.getNumeral() + p_other.getNumeral()
+
+			sign_self = self.getNumeral() / abs(self.getNumeral())
+			sign_other = p_other.getNumeral() / abs(p_other.getNumeral())
+			sign_new_numeral = new_numeral / abs(new_numeral) if new_numeral != 0 else -sign_self
+
+			if sign_self != sign_new_numeral: new_numeral -= sign_self
+			elif sign_self != sign_other: new_numeral += sign_self
+			else: new_numeral -= sign_self
+
+			return Interval(new_semitones, int(new_numeral) if new_numeral != -1 else 1, self.getParentIntervalListItem())
 
 		if (isinstance(p_other, int)): 
 			if (p_other == 0): return self
-			elif self.next().removeAccidental().getSemitones() == self.getSemitones() + 1: return Interval(self.getSemitones() + 1, self.next().getNumeral()).__add__(p_other - 1)
-			else: return Interval(self.getSemitones() + 1, self.getNumeral()).__add__(p_other - 1)
+			elif self.next().removeAccidental().getSemitones() == self.getSemitones() + 1: return Interval(self.getSemitones() + 1, self.next().getNumeral(), self.getParentIntervalListItem()).__add__(p_other - 1)
+			else: return Interval(self.getSemitones() + 1, self.getNumeral(), self.getParentIntervalListItem()).__add__(p_other - 1)
 
 		if (isinstance(p_other, str)): 
 			return str(self) + p_other
@@ -72,13 +82,11 @@ class Interval:
 
 	def __sub__(self, p_other):
 		if (isinstance(p_other, Interval)): 
-			if (p_other < Interval(0, 0)): return self + abs(p_other)
-			elif (self > Interval(0, 0) and p_other > self): return Interval(self.getSemitones() - p_other.getSemitones(), self.getNumeral() - (p_other.getNumeral() + 1))
-			else: return Interval(self.getSemitones() - p_other.getSemitones(), (self.getNumeral() + 1) - p_other.getNumeral())
+			return self.__add__(-p_other)
 
 	def __mul__(self, p_other):
 		if (isinstance(p_other, int)): 
-			return Interval(self.getSemitones() * p_other, ((self.getNumeral() * p_other) - (1 * (p_other - 1))))
+			return Interval(self.getSemitones() * p_other, ((self.getNumeral() * p_other) - (1 * (p_other - 1))), self.getParentIntervalListItem())
 
 	##########################
 	# Representation Methods #
@@ -135,10 +143,10 @@ class Interval:
 	def transform(self, p_accidental):
 		if isinstance(p_accidental, str): 
 			new_semitones = self.getSemitones() + Interval.stringToAccidental(p_accidental)
-			return Interval(new_semitones, self.getNumeral())
+			return Interval(new_semitones, self.getNumeral(), self.getParentIntervalListItem())
 
 		elif isinstance(p_accidental, int): 
-			return Interval(self.getSemitones() + p_accidental, self.getNumeral())
+			return Interval(self.getSemitones() + p_accidental, self.getNumeral(), self.getParentIntervalListItem())
 
 	##################
 	# STATIC Methods #
@@ -229,7 +237,7 @@ class Interval:
 	#################
 
 	def removeAccidental(self):
-		return Interval(self.getSemitones() - self.getAccidentalAsSemitones(), self.getNumeral())
+		return Interval(self.getSemitones() - self.getAccidentalAsSemitones(), self.getNumeral(), self.getParentIntervalListItem())
 
 	def getOctaveRange(self): 
 		if self < Interval(0, 0): return -int(abs(self.getSemitones()) / 12) - 1
@@ -247,14 +255,14 @@ class Interval:
 		return self - (self.simplify())
 
 	def simplify(self): 
-		return Interval(Interval.getSimpleSemitones(self.getSemitones()), Interval.getSimpleNumeral(self.getNumeral()))
+		return Interval(Interval.getSimpleSemitones(self.getSemitones()), Interval.getSimpleNumeral(self.getNumeral()), self.getParentIntervalListItem())
 
 	def next(self):
 		if (self.getNumeral() == len(Interval.unaltered_intervals)): 
-			new_interval = Interval(Interval.unaltered_intervals[0] + self.getAccidentalAsSemitones(), 1)
+			new_interval = Interval(Interval.unaltered_intervals[0] + self.getAccidentalAsSemitones(), 1, self.getParentIntervalListItem())
 			shift = Interval(12, 8) * (self.getOctaveRange() + 1)
 		else:
-			new_interval = Interval(Interval.unaltered_intervals[(self.simplify().getNumeral() - 1) + 1] + self.getAccidentalAsSemitones(), self.simplify().getNumeral() + 1)
+			new_interval = Interval(Interval.unaltered_intervals[(self.simplify().getNumeral() - 1) + 1] + self.getAccidentalAsSemitones(), self.simplify().getNumeral() + 1, self.getParentIntervalListItem())
 			shift = Interval(12, 8) * self.getOctaveRange()
 
 		return new_interval + shift
@@ -277,6 +285,8 @@ class Interval:
 		
 	def setSemitones(self, p_semitones): self.semitones = p_semitones
 	def setNumeral(self, p_numeral): self.numeral = p_numeral
+	def setParentIntervalListItem(self, p_parent_interval_list_item): self.parent_interval_list_item = p_parent_interval_list_item
 		
 	def getSemitones(self): return self.semitones
 	def getNumeral(self): return self.numeral
+	def getParentIntervalListItem(self): return self.parent_interval_list_item

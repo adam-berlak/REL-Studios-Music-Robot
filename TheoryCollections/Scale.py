@@ -4,7 +4,6 @@ import itertools
 import statistics
 
 from Configuration import *
-
 from TheoryCollections.IntervalList import *
 from TheoryCollections.IntervalListUtilities import *
 from TheoryComponents.IPitchedObject import * 
@@ -14,11 +13,13 @@ class Scale(IntervalList, IMusicObject):
 
 	def __init__(self, p_item_1, p_item_2 = None, p_type_dict = {}):
 
-		if isinstance(p_item_1, Scale): 
-			self.tonic_tone = p_item_1[1].getReferencePoint_BL()
+		if isinstance(p_item_1, Tone): p_item_1 = Key(p_item_1, 4)
+
+		if issubclass(type(p_item_1), IntervalList):	
+			self.tonic_tone = p_item_1.getItems()[0].getReferencePoint_BL()
 			self.intervals = p_item_1.getIntervals()
-			self.parent_item = p_item_1.getParentItem()
-			self.type_dict = p_type_dict 
+			self.parent_item = p_item_1.getParentItem() if p_item_1.getParentItem() is not None else None
+			self.type_dict = p_item_1.getAttributes()["p_type_dict"] if p_type_dict == {} and type(self) == type(p_item_1) else p_type_dict
 
 		elif isinstance(p_item_1, list) and len(p_item_1) > 0 and isinstance(p_item_1[0], Tone): 
 			self.tonic_tone = p_item_1[0]
@@ -47,6 +48,37 @@ class Scale(IntervalList, IMusicObject):
 		else: print("Error: Cannot build Scale object with these parameters")
 
 		self.buildItems()
+
+	def str_BL(self):
+		result = "<" + type(self).__name__ + " "
+		for item in self.getIncludedDegrees(): result += str(item) + ", "
+		return result[:-2] + ">"
+
+	def __getitem__(self, p_index): 
+		if isinstance(p_index, slice):
+			new_intervals = IntervalListUtilities.normalizeIntervals(self.getIntervals()[p_index.start - 1:p_index.stop])
+			new_interval_list = self.getitem_BL(p_index.start).findInParent().build_BL(type(self), new_intervals)
+			return new_interval_list
+
+		if isinstance(p_index, tuple):
+			new_attributes = self.getAttributes()
+			new_type_dict = self.getAttributes()["p_type_dict"]
+			tuple_intervals = [self.getItems()[0].add_BL(item).getInterval().simplify() for item in p_index]
+
+			for interval in self.getIntervals():
+				if interval.simplify() not in tuple_intervals:
+					new_type_dict[interval]["p_omitted"] = True
+
+			new_attributes["p_type_dict"] = new_type_dict
+			new_reference_point = self.getitem_BL(p_index[0])
+			new_scale = type(self)(new_reference_point, self.getIntervals(), **new_attributes)
+
+			for item in p_index:
+				new_scale = new_scale.getItems()[0].add_BL(item).getParentIntervalList()
+
+			return new_scale
+
+		else: return super().__getitem__(p_index)
 
 	###########################
 	# Playable Object Methods #
@@ -88,7 +120,7 @@ class Scale(IntervalList, IMusicObject):
 
 	def getParallelScale(self, p_experimental = True, p_reflection_point = 5):
 		if (p_experimental and IntervalListUtilities.isDistinct(self.getIntervals()) and self.__contains__(p_reflection_point)): 
-			return self.getNegativeScale(p_reflection_point).getitem_BL(-p_reflection_point).buildScale()
+			return self.getNegativeScale(p_reflection_point).add_BL(-p_reflection_point)
 		else: 
 			if (self.getItems()[0].buildPitchClass(2, 3) == [P1, m3]): return self.getItems()[0].buildScaleWithIntervals((self.sub(6)).getIntervals())
 			elif (self.getItems()[0].buildPitchClass(2, 3) == [P1, M3]): return self.getItems()[0].buildScaleWithIntervals((self.add(6)).getIntervals())
@@ -96,8 +128,12 @@ class Scale(IntervalList, IMusicObject):
 
 	def getNegativeScale(self, p_reflection_point = 5): 
 		if (IntervalListUtilities.isDistinct(self.getIntervals()) and self.__contains__(p_reflection_point)): 
-			new_reference_point = self.getitem_BL(p_reflection_point).findInParent() if self.getParentItem() is not None else self.getitem_BL(p_reflection_point).getReferencePoint_BL()
-			new_scale = Scale(new_reference_point, IntervalListUtilities.scaleStepsToPitchClass(IntervalListUtilities.pitchClassToScaleSteps(self.getitem_BL(p_reflection_point).getParentIntervalList().getItems()[0].buildPitchClass())[::-1]))
+			new_reference_point = self.getitem_BL(p_reflection_point).findInParent() if self.getParentItem() is not None else self.getitem_BL(p_reflection_point).getReferencePoint_BL()	
+			new_intervals = IntervalListUtilities.invertIntervals(self.getIntervals())
+			new_type_dict = IntervalListUtilities.intervalsToTypeDict(new_intervals)
+			new_attributes = self.getAttributes()
+			new_attributes["p_type_dict"] = new_type_dict
+			new_scale = Scale(new_reference_point, new_intervals, **new_attributes)
 			return new_scale
 		else: 
 			print("Error: Unable to get Negative of Scale")
@@ -290,8 +326,8 @@ class Scale(IntervalList, IMusicObject):
 
 				if p_other > 0:
 					return self.next_BL().add_BL((p_other - 1) if not self.next_BL().isChromatic() else p_other)
-				else:
-					return self.previous_BL().add_BL((p_other + 1) if not self.previous_BL().isChromatic() else p_other)
+					
+				else: return self.previous_BL().add_BL((p_other + 1) if not self.previous_BL().isChromatic() else p_other)
 				
 			if isinstance(p_other, Interval):
 				if abs(p_other) == P1: return self
@@ -303,7 +339,7 @@ class Scale(IntervalList, IMusicObject):
 				if new_interval >= self.getParentIntervalList().getIntervals()[-1].roof():
 					return (self.getParentIntervalList().add_BL(P8)).getitem_BL(self.getPosition()).add_BL(p_other - P8)
 
-				if new_interval not in self.getParentIntervalList():
+				if new_interval not in self.getParentIntervalList().getIntervals():
 					return self.getParentIntervalList().addInterval(new_interval, {"p_chromatic": True}).getItemByInterval(new_interval)
 				
 				else: return self.getParentIntervalList().getItemByInterval(new_interval)
@@ -321,7 +357,7 @@ class Scale(IntervalList, IMusicObject):
 		######################################################
 
 		def buildScale_BL(self):
-			new_scale = Scale(self, self.buildPitchClass())
+			new_scale = self.build_BL(Scale)
 			return new_scale
 
 		def buildScaleWithIntervals_BL(self, p_intervals):

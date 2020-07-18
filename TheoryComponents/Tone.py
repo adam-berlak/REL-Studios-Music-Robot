@@ -1,7 +1,7 @@
 from TheoryComponents.IPitchedObject import *
 from TheoryComponents.Interval import *
 
-class Tone(IPitchedObject):
+class Tone:
     
     def __init__(self, p_tone_name, p_accidental = 0):
         self.tone_name = p_tone_name

@@ -1,5 +1,6 @@
 import random
 import operator
+
 from collections import Counter
 from TheoryCollections.IntervalListUtilities import *
 from IOMidi.Sequencer import *
@@ -25,7 +26,7 @@ class Analyser:
         new_sequencer = Sequencer()
 
         for beat in Sequencer.toDict(old_sequencer)().keys():
-            random_tone = random.choice(notes[0].geRelatives())
+            random_tone = random.choice(notes[0].getRelatives())
             random_intervals = random.choice(IntervalListUtilities.getPossibleIntervalList([item - notes[beat][0] for item in notes[beat]]))
             random_root = random.choice(Analyser.getKeyForBeat(beat).getDegrees())
             random_bass_triad_quality = random.choice([item[0] for item in CHORD_QUALITIES[DEFAULT_SYSTEM].keys()])
@@ -102,4 +103,3 @@ class Analyser:
 
     def setKeyChanges(self, p_key_changes): key_changes = p_key_changes
     def setSequencer(self, p_sequencer): self.sequencer = p_sequencer
-

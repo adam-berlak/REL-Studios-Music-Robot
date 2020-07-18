@@ -7,6 +7,24 @@ from Configuration import *
 class IntervalListUtilities:
 
     @staticmethod
+    def intervalsToTypeDict(p_intervals):
+        new_type_dict = {}
+
+        for item in p_intervals:
+            new_type_dict[item] = item.getParentIntervalListItem().getAttributes()
+
+        return new_type_dict
+
+    @staticmethod
+    def invertIntervals(p_intervals):
+        new_intervals = [-item for item in p_intervals][::-1]
+        start_interval = new_intervals[-1]
+        while start_interval >= new_intervals[0]: start_interval -= P8
+        new_intervals = [start_interval] + new_intervals[:-1]
+        new_intervals = IntervalListUtilities.normalizeIntervals(new_intervals)
+        return new_intervals
+
+    @staticmethod
     def normalizeTypeDict(p_type_dict, p_bass_interval):
         new_type_dict = {}
 
