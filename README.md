@@ -66,7 +66,7 @@ when they should be derived using logical formulas within a Scale object. As a r
   - Notes: C_Major_Scale = Scale([C,D,E,F,G,A,B])
   - Name: 
   
-<!--- (C_Major_Scale = Scale(C, major))
+<!--- (C_Major_Scale = Scale(C, major)) --->
 
 <a name="intervals"/>
 
