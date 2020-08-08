@@ -59,6 +59,13 @@ when they should be derived using logical formulas within a Scale object. As a r
 
 ## 2. Usage:
 
+- Build Scales by/using: 
+  - Specific Intervals: C_Major_Scale = Scale(C, [P1,M2,M3,P4,P5,M6,M7])
+  - Generic Intervals: C_Pentatonic_Scale = C_Major_Scale[1,2,3,5,6]
+  - Semitones: C_Major_Scale = Scale(C, [2,2,1,2,2,2,1])
+  - Notes: C_Major_Scale = Scale([C,D,E,F,G,A,B])
+  - Name: <!--- C_Major_Scale = Scale(C, major) --->
+
 <a name="intervals"/>
 
 ### 2.0. Intervals
