@@ -64,7 +64,7 @@ when they should be derived using logical formulas within a Scale object. As a r
   - Generic Intervals: C_Pentatonic_Scale = C_Major_Scale[1,2,3,5,6]
   - Semitones: C_Major_Scale = Scale(C, [2,2,1,2,2,2,1])
   - Notes: C_Major_Scale = Scale([C,D,E,F,G,A,B])
-  - Name: <!-- C_Major_Scale = Scale(C, major) -->
+  - Name: <!--- C_Major_Scale = Scale(C, major) --->
 
 <a name="intervals"/>
 
