@@ -66,7 +66,7 @@ when they should be derived using logical formulas within a Scale object. As a r
   - Notes: ```>>> C_Major_Scale = Scale([C,D,E,F,G,A,B])```
   - Name: ```>>> C_Major_Scale = Scale(C, major)``` (Uses complex decimal to pitch-class algorithm and dictionary of numbers -> Scale names, support for thousands of Scales)
   
- - Build Chords by/using:
+- Build Chords by/using:
   - Specific Intervals: ```>>> C_maj_7 = Chord(C, [P1,M3,P5,M7])```
   - Generic Intervals: ```>>> C_Major_Scale[1].build(Chord, [1,3,5,7])```
   - Notes: ```>>> C_maj_7 = Chord([C,E,G,B])```
