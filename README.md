@@ -16,6 +16,12 @@ Create an algorithm that parses a midi file and converts it into a more logical 
 Use Machine learning to produce new music. The algorithm will take a collection of midi files as a data set and convert it into a knowledge representation it can understand, in this case Music Theory. Each midi file corresponds to a Song Object that contains
 all the information of the piece the AI can understand. The Neural Network will try and build the Songs structure from scratch until the error is small enough when comparing it to the actual song. We will then run the algorithm ona large set of music until it builds a strong enough network of possible ways to construct a piece. 
 
+One question that remains unanswered in the world of Neural Networks and training Machines to write music concerns whether we can isolate new rules and patterns identified by
+a Neural Network and represent it in a way thats easy to understand for Humans. In laymens terms, if we train a Neural Network to write music in a style of a specific composer
+how can we represent the styles and habits of a composer in terms we can understand? One issue I have identified with the standard approach of training Neural Networks on music is that for each composer, a Neural Network must learn the concepts of Music theory over and over again when a lot of these concepts are universal between each composer, IE the concept of Scales. My knowledge base allows us to take what would be a node within the Neural Network and transform into into input data, in other words, separating the list of unknowns from the knowns. This has three benifits, firstly, a Neural Network will no longer have to designate an Internal Node for a concept that it already represents as an Input Node, which would reduce the amount of information a Neural Network would have to learn. Secondly, we are able to isolate the list of knowns from the unknowns. We are filtering out standard music theory concepts from the Internal Nodes and the Internal Nodes better represent the traits unqiue to the composer we are training on. Lastly, the more nodes we identify and translate over to Input Nodes, the easier it is to identify what the Internal Nodes represent. 
+
+Beyond this, I plan to utilize a Transformer to help with memory when analyzing music.
+
 <br>
 
 ## 0. Table of Contents
