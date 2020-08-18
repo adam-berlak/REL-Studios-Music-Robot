@@ -201,35 +201,78 @@
 # Get rid of unnecessary methods in Scale
 # Get rid of unnecessary methods in Chord
 # Chord should not be using __add__ in its business logic. If we cant override of add_BL with the new logic we have created we need to go in IntervalList and make sure we can
-# [Done] Sub should replicate add logic in Tone
-# [Done] In Scale, we shouldnt be referencing Part, but instead Item and use method names with Part as wrappers
-# [Done] In Chord, we shouldnt be referencing Part, but instead Item and use method names with Part as wrappers
-# [Done] In IntervalList, getitem_BL/__getitem__(1) should be replaced with getItems()[0]
-# [Done] In Scale, getitem_BL/__getitem__(1) should be replaced with getItems()[0]
-# [Done] In Chord, getitem_BL/__getitem__(1) should be replaced with getItems()[0]
-# [Done] getComponents() should be getItems()
-# [Done] Ensure consistant use of getitem_BL over [] in Scale 
-# [Done] Ensure consistant use of getitem_BL over [] in Chord 
-# [Done] Ensure consistant use of getitem_BL over [] in IntervalList 
-# [Done] Ensure consistant use of add_BL and sub_BL over +/- in Scale 
-# [Done] Ensure consistant use of add_BL and sub_BL over +/- in Chord (If we want to use the overriden add logic in the Chord BL I am now using __add__, in the future if I want to update this add logic I need to go through and replace any references of add_Bl that I might need to) Might need to rethink how we do this, should be referencing either __add__ or add_BL consistantly, we need to be able to change how numeral arithmetic works dynamically, or dont use add when accessing degrees
-# [Done] Ensure consistant use of add_BL and sub_BL over +/- in IntervalList 
-# [Done] Make sure whenever we check instance of lists we check length first in IntervalList (Check if all references of 0 check len first)
-# [Done] Make sure whenever we check instance of lists we check length first in Chord (Check if all references of 0 check len first)
-# [Done] Make sure whenever we check instance of lists we check length first in Scale (Check if all references of 0 check len first)
 
 # Optional Features and Bug Fixes that can be delayed
+
+# Functionality Issues:
+	# - [Functionality Issue] When we decide whether a Chord Part is enharmonic we need to check whether its altered in the quality not the parent
+	# - [Functionality Issue] Unaltered Intervals in Chord might not need to be based of the quality, just the parent, however in this case it might be confusing when we try to determine whether a Part is altered in the sense that it is Chromatic or not in the parent and whether we want to know whether its altered in the Chord
+	# - [Functionality Issue] Should Rotate input numbers be treated as generic intervals? Right now they are treated as whatever the user specified for the parameters but what if we want the input number to be treated like a generic interval but not ignore the altered intervals when building?
+	# - [Functionality Issue] Shouldnt the get negative in Chord and related methods just use the same logic as the getNegativeScale() method in Scale?
+	# - [Functionality Issue] When we are building a Chord object off of a Scale Degree we need to check if the parent scales unaltered intervals match the child Chords unaltered intervals (Assuming they specified a quality like major) but we should only check if the unaltered intervals in the chord which are included in the chord, for example if we build a major chord off of the fourth scale degree of C major, even the the corresponding scale has a raised fourth in the parent, since we are only build a 7th chord all the unaltered intervals match and we dont need to create a new parant, however we need to decide how to handle cases where a user references the fourth of the chord and wants to check if its altered or unaltered, in this case what do we say?
+	# - [Functionality Issue] For the algorithm that tries to assign scales to a list of notes we must simplify all the notes
+	# - [Functionality Issue] For the algorithm that tries to assign scales to a list of notes if the subset of notes doesnt have 7 distinct notes then we should see whether its closest to the previous or next scale and assign it based off that
+	# - [Functionality Issue] Issue with adding an interval greater than a Childs roof and how it affects the parent IntervalList, does my fix work?
+	# - [Functionality Issue] Right now build doesnt pass through whether something is a subset or not, need to fix this
+	# - [Functionality Issue] Right now in getParallelScale() it will get rid of temp items when we add a generic interval or index it / Need to fix issue where indexing via generic interval erases other temporary items, also right now if we do not ignore the parent in next or previous then it wont erase temp items, need to make this consistant
+	# - [Functionality Issue] Right now slicing an intervallist object doesnt really use those special parameters, IE ignore parent and ignore altered, only for the reference point
+	# - [Functionality Issue] Right now if an IntervalList is a sublist, if an item is chromatic in the parent it wont be in the child, should this be the case? / If sublist we just grab the type dict of the parent, need to update logic for determining if un altered
+
+# Bugs:
+	# - [BUG] Right now invert in chord does not retain the unaltered intervals
+	# - [BUG] Just realised that when getting parallel intervallist the unaltered intervals does not change, so we need to find a way to grab the current unaltered intervals when building a new intervallist
+	# - [BUG] Right now we dont print whether a numeral is lowercase or not correctly because we use a cap of 2 which will only include one interval
+	# - [BUG] Get parrallel is broken, last thing I changed is how we add to the parent item when we add an interval to an intervallist and I updated the unaltered intervals logic in Scale
+	# - [BUG] Right now the key assignment algorithm references -1 and -2, this might cause errors
+	# - [BUG] If the Unaltered Intervals of a Chord and its Parent Scale are different than we need to build a Scale off of the Parent Degree that contains the required unaltered Intervals
+	# - [BUG] Right now transpose in the item object calls getItems() instead shouldnt we use getitems_BL?
+	# - [BUG] Need to fix rotate in Scale, this references transpose right now
+	# - [BUG] Also the configure parent item method assumes that the parent is not greater than a P8 but this is not always the case
+	# - [BUG] When you add an interval to an intervalist we should check if a compound or simplified version of the same exists and is un-altered and in this case we should also make the new interval un-altered
+	# - [BUG] How does an IntervalList behave relative to its P8 limit when we have a dim8, since we only transpose the parent intervallist when we add something greater than a P8, a dim8 is less than a P8 so it will not transpose the intervallist
+
+# New Features:
+	# - [Feature] Instead of having a Parent Voice with a Position we should have a list of Input Parts and Output Parts that a Part ties to and we can call a getParentVoices() method that will return a list of possible Voice objects
+	# - [Feature] Need to add ability to put the quality into the find root method as a parameter to get more the more likely root position in case a user specified a quality but not a root
+	# - [Feature] We should also add the ability for a Chord Part to have multiple parant voice for the rare case where voices overlap
+	# - [Feature] When dealing with the logic behind Suspension and Retardando, the fact that our Chord parts have both Horizontal and Vertical context in the form of a Parent Chord and a Parent Voice allows us to check if the immediate predecessor to a Part is actually harmonic, this can help us to decide whether a Chord Part is a Suspension, Retardando or whether its neither. I also think it is important to point out that there is a distinction between the suspension in Chord Quality music notation and the one mentioned here since Chord qualities dont have any Horizontal context
+	# - [Feature] We dont need to add a harmonic_intervals list, since right now we assume all intervals with a numeral greater than a M7 or are chromatic are non harmonic
+	# - [Feature] Because of the below concept we must also add a harmonic intervals that behaves similarly to the unaltered intervals, unlike a chromatic interval however an Appoggiatura can resolve into an interval with a different numeral if an Appoggiatura is above a missing harmonic interval it is a suspension however if it is below one it is a retardando, it could be both, there are some other conditions however that should also be considered, like whether the previous voice note is tied (optional) to it and it is harmonic in that previous chord
+	# - [Feature] Some theory I learned today, the distinction between a Chromatic note and an Appoggiatura is that a Chromatic note resolves into an item with the same numeral, however Appoggiaturas can resolve by step into a different numeral IE 4 into a 3, this is similar to a suspension or a retardation except in a suspension the note is usually borrowed from a previous chord 
+
+# Code Cleanliness:
+	# - [Code Cleanliness] Chord Constructor references Scale.Item and Scale.Degree
+	# - [Code Cleanliness] In Chord Constructor we should be using the tonesToPitchClass() method
+	# - [Code Cleanliness] Start point for Key Object in Config should be its own Constant
+	# - [Code Cleanliness] Worth pointing out that it doesnt make sense to call super next in scale and then omit of chromatic assuming we arent ignoring the parent
+	# - [Code Cleanliness] Maybe we should rename getAccidentalAsSemitones() to getAlteration()
+	# - [Code Cleanliness] Change references to p_args into *p_args
+	# - [Code Cleanliness] Logic in replaceAtNumeralWith_BL is outdated, we dont seem to be using this method in IntervalList
+	# - [Code Cleanliness] Right now when we generate the possible prefixes in string to pitch class we double these, why?
+
+# Completed Tasks/Issues:
+
+# Error happens when we use new_generic_intervals = [i + 1 for i in range(0, (Interval(1, p_item_2 - 1) * p_item_1).getNumeral() + 2, p_item_2 - 1)] in buildPitchClass
+# Resolve Chord is wrong right now
+# We should be using a change intervals method that does all the type dict method instead of doing this everytime we change intervals
+# Chord doesnt have correct integer addition right now, we need to put the parent integer addition into intervallist
+# After implementing BL for each object we should get rid of references to super
+# All methods that override business logic methods should be there own BL methods with the class name as a prefix, they will then use wrapper methods that call these
+# sortIntervals() wont work if you input something like [aug2.transform(2), M3], aug2 should still be first but M3 is first in our result
+# Verify if build on thirds still works as it should since I changed the code
+# In Chord Constructor self.parent_item.add_BL() might not be compatible with the return result of get inversion
+# len(self.getIntervals()) does not work when using build if some intervals in the parent are Chromatic
+# Just like how parent scales have chromatic notes to reference notes in subscales, we should have omitted notes in subscales that refer to notes in the parent
+# Right now we are passing ignore parent interval list as a param for any method that uses add, i think it would be easier if this sublist using parant lists generic intervals functionality should only be applied to scale and chord exluding intervallist just so we can use super if we dont want to interact with parant
+# getPosition() should add 1
+# Make sure getitem and add logic is sound and up to date for IntervalList objects, aswell as add logic and addInterval/Transform
+# Make sure decimal works for build in IntervalList
+# Make sure Add logic and all intervalList.item objects is up to date and the logic is sound, aswell as next(), ignore parent needs to be applied
 # Need to fix build method so it just puts all the parameters specified into the new object instead of creating a sublist
-# Secondary Scales should behave similarly to Chords built of scale degrees, IE they should call configure parent degree and generic intervals should refer to the parent
 # Right now build method first parameter is the max numeral not, the amount of numerals ie 4, 3 = [1, 3] instead of [1, 3, 5, 7]
-# Remove if isinstance(p_item_1, Tone): p_item_1 = Key(p_item_1, 4)
 # By default maybe Scale should always use the same method for converting semitones to Intervals instead of varying depending on the accidental limit
-# What happens when you submit a list of tones into an IntervalList object? Since we set a tone to be a key with octave 4
-# For some reason getQuality of Dominant Chords returns Mm7
-# [Done] Still need to fix degree attribute logic getting lost when calling getParallelChord() and related methods
 # Interval / Tone :: next and previous logic in interval and tone wont work for items with accidental greater than 2
 # Interval / Tone :: ACCIDENTAL_LIMIT should limit the accidentals users can use in Interval and Tone
-# Tone :: fix D_flat.getRelatives()
 # Tone :: Tone + Semtiones arithmetic doest work for intervals where the next interval has less semitones than the current interval
 # Interval :: Intervals with 0 numeral print incorrectly
 # Interval :: Fix printing of aug1
@@ -245,7 +288,6 @@
 # IntervalList :: Issue, if we specify type_dict in getAttributes but we use a modified interval list then the assignments in type dict will not make sense, one solution is to add logic for updating the type dict and generate a new one
 # IntervalList :: Check that transform for Chord and Scale work as intended
 # IntervalList :: Adding an interval that has same numeral as the tonic of a scale or chord will modulate the tonic, it should be chromatic
-# IntervalListUtilities :: binaryToIntervalListUtilitiesSteps Should have the name fixed
 # Chord / Scale :: We don't need a reference to the Intervals list aswell as the individual Intervals with the Degree objects in both Chord and Scale
 # Chord / Scale :: Remove all instances of setParentDegree()
 # Scale :: Scale Degree arithmetic does not retain parentItem if set
@@ -255,7 +297,7 @@
 # Scale	:: Add logic in Scale.Degree shouldn't modulate the parent Scale
 # Chord :: Chord slice should use generic intervals
 # Chord :: Printing of negative interval are wrong when running through resolve chord
-# Chord :: Chord(C4, "dom7b3")[1].move(3) is wrong
+# Chord :: Chord(C4, "dom7b3")[1].move(3) is wrong, there is an error in one of the unaltered intervals methods
 # Chord :: When the abs in new_accidental = (abs(p_other.getSemitones()) - (semitones_count - 1)) * sign is removed in Tone __add__ method there is an error in move()
 # Chord :: getItem_BL logic is flawed when used in Chord because it calls the build_BL method which is flawed, build_BL needs to build on the parent Scales degree
 # Chord :: When we were overridding build_BL methods in chord the indexing logic in IntervalList would call it causing an error, this was fixed but I should revisit this to figure out why the exception occured
@@ -263,11 +305,64 @@
 # Chord :: Fix getFiguredBass()
 # Chord :: getSecondaryDominant() in chord should be using the transform() method
 # Chord :: Instead of passing a chords getAttributes() results we should be overriding this
-# Chord :: Update transform in Chord.Degree
 # Chord :: Update Chord so all new Chord objects pass the attributes of the current chord as parameters
 # Chord :: root attribute of Chords should be an Interval instead of a TonedObject
 # Chord :: Parent Chord should contain omitted intervals that are associated with a degree. The degree should have an omitted boolean
-# Chord :: next() and previous() in Chord should not return parent scale degrees
+
+# [Revised] Every interval list has a parent which is the interval list based off the unaltered intervals
+# [Done] Tone :: fix D_flat.getRelatives()
+# [Done] IntervalListUtilities :: binaryToIntervalListUtilitiesSteps Should have the name fixed
+# [Done] Scale(C, major)[1].build(Chord, 7, 3)[3].move(-3) is wrong
+# [Done] We need to replace all instances of P8 in the IntervalList object aswell as the subclasses, and methods in IntervalListUtilities with a reference to fixed invert, also in build we must pass this parameter into the child object if the childs roof decreases, however if the childs roof increases, say if we build a Chord off a Scale, then the object will have a new fixed invert, in IntervalListUtilities we will also need to add parameters for fixed invert in methods like scaleIntervalsByOrder
+# [Done] Update Chord Build_BL method
+# [Done] Scale(C, major)[2].build(Scale, [P1,M2,M3,P4,P5,M6,M7])[3] is wrong
+# [Done] Scale(C, major)[1,2,3,5,6].rotate()[3] is wrong
+# [Done] Right now when we do Scale(C, major)[5].build(Chord, "dom7addb3") we get an incorrect result, this is because it thinks b3 is an alteration, we need to somehow ignore alterations that are prefixed by add or sus, might be able to do this with a negative look-behind but we cant use negative look-behinds with wildcards, could do a positive look-ahead (\d+[#b]*(?![#b]*(dda|sus))) but this only grabs one correct item at a time. The closest RegEx I could create is (\d+[b#]*(?!((?<![b#])\d*)|([b#]*)(dda|sus))). To use this we must invert the input string and also the add/sus strings
+# [Done] need to create two getIntervals(), one that always returns the intervals of the current intervallist and another that has the logic of the new getIntervals method
+# [Done] Remove references to chromatic in Scale
+# [Done] Instead of each item having an attribute altered, we should be consistant and have a list of un-altered intervals in the parent interval list, also the unaltered intervals list in the config should be renamed to unaltered semitones
+# [Done] For some reason I think we had a Parent that was greater than a P8, this should not be possible right now, need to add a check in the constructor and find out why this occurs
+# [Done] This caused an error reference_point = reference_point.add_BL(counter, p_ignore_parent, p_cascade_args, p_ignore_altered, *p_args)
+# [Done] Need to add configureTypeDict() method that makes sure that multiple intervals with the same numeral arent unaltered unless they are the same simplified, need to add a check for this in getUnalteredIntervalsTypeDict() to right now it will only make one of them unaltered
+# [Done] We should then create a transpose method, we should also be able to transpose individual items. The behavior in this case is similar to the next logic in Interval currently. Next should always resolve into the closest un-altered object, while transpose should retain the accidental
+# [Done] It is also important that we make a distinction between altered/temp intervals, instead of assuming that all altered intervals are temp. Intervals are only temp when we perfom interval addition on an intervallist and retreive an item with an interval not in the parent intervallist, this could be an omitted interval (IE doesn't share it's numeral with any other items in the intervallist) or a altered interval (Which does)
+# [Done] Just like how Intervals have reference to un-altered intervals when deciding whether intervals are flat or not, intervallists should also identify which items are un-altered or altered. The difference here however is that with intervals this is constant and is typically the major diatonic scale and with intervallists this varies intervallist to intervallist. If somebody creates an intervallist object with intervals that share a numeral, and they have not specified whether it is altered or not we can create an algorithm that asigns un-altered status to the interval with the least accidentals with respect to the interval item. However its important to note that just because an interval is altered doesnt mean the item itself is altered, take for example the minor scale, this scale has a m3 interval but in this case it is diatonic, and playing a M3 is chromatic/altered.
+# [Done] New Chromatic logic, only items that have a numeral that already exist in the intervallist will be considered Chromatic, otherwise they will be omitted since every scale object is a subset of the major scale. For chords chromatic items are instead called appogaturas 
+# [Done] Instead of omitting items from next by checking if chromatic there should be a boolean called temp. Omitted and Chromatic items are by default temporary, also this temp attribute should be in intervallist instead of one of the subclasses, this allows us to remove the overriden next method in scale.
+# [Done] Need to fix how we generate the size of a new interval list when we build on an item
+# [Done] Need to create a transpose method, this is called when you add to an interval list object. Unlike build, instead of rotating the interval list, chromatic items move with each rotation
+# [Done] Need to add a parameter to build called preserve parant that dictates whether building on an item should make that item the parent of the new object
+# [Done] Get Parallel has a problem where it needs to get an item using generic intervals that reference the parent interval list but it needs to build an interval list ingoring the parent and including the chromatic items, this is a case where we need to do seperate calls to add and build instead of just adding to the interval list object
+# [Done] If the ignore parent is false in the next and previous logic we shouldnt be checking if the result is chromatic or not, and just return the result
+# [Done] Need to add logic in item where an item that has an interval which includes a numeral that exists in the interval list object is considered chromatic and can reference the interval that it alters, you can also derive by how much its altered. In addition to this, when we reference an interval that does not occur in the parent interval list and the numeral does not either it is considered omitted? (Should this be the case)
+# [Done] [Code Cleanliness] Sub should replicate add logic in Tone
+# [Done] [Code Cleanliness] In Scale, we shouldnt be referencing Part, but instead Item and use method names with Part as wrappers
+# [Done] [Code Cleanliness] In Chord, we shouldnt be referencing Part, but instead Item and use method names with Part as wrappers
+# [Done] [Code Cleanliness] In IntervalList, getitem_BL/__getitem__(1) should be replaced with getItems()[0]
+# [Done] [Code Cleanliness] In Scale, getitem_BL/__getitem__(1) should be replaced with getItems()[0]
+# [Done] [Code Cleanliness] In Chord, getitem_BL/__getitem__(1) should be replaced with getItems()[0]
+# [Done] [Code Cleanliness] getComponents() should be getItems()
+# [Done] [Code Cleanliness] Ensure consistant use of getitem_BL over [] in Scale 
+# [Done] [Code Cleanliness] Ensure consistant use of getitem_BL over [] in Chord 
+# [Done] [Code Cleanliness] Ensure consistant use of getitem_BL over [] in IntervalList 
+# [Done] [Code Cleanliness] Ensure consistant use of add_BL and sub_BL over +/- in Scale 
+# [Done] [Code Cleanliness] Ensure consistant use of add_BL and sub_BL over +/- in Chord (If we want to use the overriden add logic in the Chord BL I am now using __add__, in the future if I want to update this add logic I need to go through and replace any references of add_Bl that I might need to) Might need to rethink how we do this, should be referencing either __add__ or add_BL consistantly, we need to be able to change how numeral arithmetic works dynamically, or dont use add when accessing degrees
+# [Done] [Code Cleanliness] Ensure consistant use of add_BL and sub_BL over +/- in IntervalList 
+# [Done] [Code Cleanliness] Make sure whenever we check instance of lists we check length first in IntervalList (Check if all references of 0 check len first)
+# [Done] [Code Cleanliness] Make sure whenever we check instance of lists we check length first in Chord (Check if all references of 0 check len first)
+# [Done] [Code Cleanliness] Make sure whenever we check instance of lists we check length first in Scale (Check if all references of 0 check len first)
+# [Done] Right now its printing that we cant find the generic interval when it should be finding it
+# [Done] need to create a getGenericIntervals() method for sublists, this is used when transposing diatonically in the intervallist add method
+# [Done] Chord next and previous does not work correctly, we shouldnt be overriding add logic methods we should be overriding next, the one in intervallist should have a parameter that allows us to decide whether we do or do not ignore the parent, in the scale class we can override this to also include a param that decides whether we do or do not ignore chromatic notes
+# [Done] Fix generic interval addition in build, we need to add a getGenericInterval() method
+# [Done] Scale(C, major)[1,m3,4,aug4,5,m7] is wrong
+# [Done] Remove if isinstance(p_item_1, Tone): p_item_1 = Key(p_item_1, 4)
+# [Done] Secondary Scales should behave similarly to Chords built of scale degrees, IE they should call configure parent degree and generic intervals should refer to the parent
+# [Done] What happens when you submit a list of tones into an IntervalList object? Since we set a tone to be a key with octave 4
+# [Done] For some reason getQuality of Dominant Chords returns Mm7, Fix: In this case Mm7 has same evaluation as dom7, now if the qualities of the bass and extensions arent the same then we add an eval
+# [Done] Still need to fix degree attribute logic getting lost when calling getParallelChord() and related methods
+# [Done] Chord :: Update transform in Chord.Degree
+# [Done] Chord :: next() and previous() in Chord should not return parent scale degrees
 # [Done] Chord(C4, "dom7")[9] is wrong
 # [Done] when specifying a fixed invert parameter in chord it must be greater than the last interval otherwise we will use the roof of the last interval
 # [Done] when using setParentItem() in IntervalList it should also update the tone
@@ -297,20 +392,34 @@ from TheoryComponents.Key import *
 from TheoryComponents.Note import *
 from IOMidi.Sequencer import *
 
-def main():
-	Scale(C, major, {P4: {"p_omitted": True}})[3].build(Chord, [P1, M3, P5, m7])
-	Scale(C, major, {P4: {"p_omitted": True}})[1].build(Chord, 4, 3)
-	Scale(C, major)[1,2,3].getParentItem()
-	Scale(C, major, {P4: {"p_omitted": True}}).getParallelScale()
-	#test = {1: "a", 2: "b", 3: "c"}
-	#test.keys = [3,4,5]
-	#IntervalListUtilities.normalizeIntervals(Scale(C, major).getItems())
-	Scale(C, major)[2].build(Scale)
-	P1 - m3
-	Scale(C, major, {Interval(5, 4): {"p_omitted": True}}).getNegativeScale().getAttributes()
-	IntervalListUtilities.invertIntervals([P1, M2, M3, P4, P5, M6, M7])
-	Scale(C, major)[1,2,3,4,5][6]
-	Scale(C4, major)[1].build(Chord, "min7")[P4]
+def main():	
+	Scale(C, major)[1].build(Chord, 5, 3)
+	#print(Chord(C4, "dom7b3")[1].move(3))
+	Scale(C, major)[1].build(Chord, 7, 3)[3].move(-3)
+	Scale(C, major)[1,2,3,5,6].rotate()
+	Scale(C, major)[1,2,3,5,6].getRelativeScale()
+	Scale(C, major)[2].build(Chord, [1, 10, 12])
+	Scale(C, major)[2].build(Scale, [P1,M2,M3,P4,P5,M6,M7])
+	Scale(C, major)[1].build(Chord, 7, 3).invert(2)
+	print(Scale(C, major)[1].build(Chord, 7, 3)[0])
+	Scale(C, major)[1].build(Chord, 7, 3).transpose(p_ignore_parent = True)
+	Scale(C, major)[1].build(Chord, 7, 3).rotate(p_ignore_parent = True)
+	Chord(C, "dom9b9")
+	Scale(C, major)[1].build(Chord, "maj7addb3b4")
+	Scale(C, major)[1,2,3,5,6][m3].getGenericInterval_BL()
+	Scale(C, major)[1,2,m3,4,5].getIntervalsWhere_BL(p_ignore_parent = False)
+	Scale(C, major).getIntervals()
+	Scale(C, major)[m3].getParentScale().transpose_BL(2)
+	Scale(C, major)[1,2,3,5,6][m3].getGenericInterval_BL()
+	Scale(C, [P1, M2, m3, M3, P4, P5, M6, M7])[m3].getAlteration_BL()
+	Scale(C, major)[m3].isTemp()
+	Scale(C, major).remove(1).getTonicTone()
+	Scale(C, major)[1,2,3,5,6][4]
+	args = {"test": 123}
+	Scale(C, major).getParallelScale()
+	print(Scale(C, major)[1,2,m3,5,6][m3].buildPitchClass_BL(2, 3))
+	Scale(C, major)[1,2,m3,5,6].getParallelScale()
+	Scale(C, major)[1,2,m3,5,6].getParallelScale()[2]
 	local_dir = "C:\\Users\\adamb\\github\\REL-Studios-Music-Robot\\RELMusicTheory\\IOMidi\\MidiFiles\\"
 	'''
 	sequencer = Sequencer()
@@ -326,22 +435,8 @@ def main():
 	sequencer.add(Chord(Note(A4, quarter_note), "min5").invert(), 10)
 	sequencer.add(Chord(Note(G4, quarter_note), "min7b5"), 11)
 	sequencer.toMidi(local_dir + "file-generated.mid")
-
-	C in Scale(C4, major)
-	P1.transform(2) + 2
-	Scale(C, major).addInterval(dim1)
-	sequencer = Sequencer()
-	sequencer.fromMidi(local_dir + "untitled.mid")
-	Sequencer.toDict(sequencer)
-	print(Sequencer.toDict(sequencer)[4][0][1])
-	analyser = Analyser(sequencer, 20)
-	
-	D_flat.getRelatives()
-	C - 4
-	C + 1
 	'''
-	Scale(C, major, {P4: {"p_omitted": True}}).getParallelScale()
-	# Ways to build a Scale object
+	(Scale(C, major)[1].build(Chord, 7, 3)[2] + 2).getParentChord()
 	C_Major_Scale = Scale(C, major)
 	C_Major_Scale_2 = Scale(C, [P1, M2, M3, P4, P5, M6, M7])
 	C_Major_Scale_3 = Scale(C, [2, 2, 1, 2, 2, 2, 1])
@@ -411,9 +506,9 @@ def main():
 	D_m7 = C_M7 + 2
 	A_7 = D_m7.getSecondaryDominant()
 	E_o7 = D_m7.getSecondarySubDominant()
-	D_m7.getSecondaryTonic()
-	D_m7.getSecondaryAugmentedSix()
-	D_m7.getSecondaryTritoneSubstitution()
+	D_m5 = D_m7.getSecondaryTonic()
+	E_dom7_b5 = D_m7.getSecondaryAugmentedSix()
+	A_dom7_b5 = D_m7.getSecondaryTritoneSubstitution()
 	
 	# Complex Chord Building
 	Chord(C, "mM11b5no9")

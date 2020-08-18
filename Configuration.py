@@ -7,6 +7,7 @@ from TheoryCollections.ScalesDictionary import *
 # Configuration System
 DEFAULT_SYSTEM = "western"
 
+IGNORE_PARENT_INTERVAL_LIST = False
 ACCIDENTAL_LIMIT = 1
 
 DEGREE_SIMPLE_REPRESENTATION = False

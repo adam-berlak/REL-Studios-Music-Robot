@@ -1,80 +1,99 @@
 import itertools
 
-from TheoryCollections.Scale import *
 from TheoryCollections.IntervalList import *
+from TheoryCollections.Scale import *
 from IMusicObject import *
 
 class Chord(IntervalList, IMusicObject):
 	
 	def __init__(self,  
-			p_item_1, 
-			p_item_2 = None, 
-			p_root = None, 
-			p_bass_triad_quality = None,
-			p_extensions_quality = None, 
-			p_fixed_invert = None, 
-			p_modulate_parent = False, 
-			p_type_dict = {}): 
-
-		if isinstance(p_item_1, Tone): p_item_1 = Key(p_item_1, 4)
+		p_item_1, 
+		p_item_2 = None, 
+		p_unaltered_intervals = [],
+		p_type_dict = {},
+		p_sublist = True,
+		p_altered = True,
+		p_root = None, 
+		p_bass_triad_quality = None,
+		p_extensions_quality = None, 
+		p_fixed_invert = None, 
+		p_modulate_parent = False): 
 		
 		if issubclass(type(p_item_1), IntervalList):	
-			self.type_dict = p_item_1.getAttributes()["p_type_dict"] if p_type_dict == {} and type(self) == type(p_item_1) else p_type_dict
+			self.sublist = p_sublist
+			self.altered = p_altered
 			self.intervals = p_item_1.getIntervals()
 			self.fixed_invert = p_fixed_invert if p_fixed_invert is not None and p_fixed_invert > self.intervals[-1] else self.intervals[-1].roof()
 			self.bass_triad_quality = IntervalListUtilities.intervalsToQuality(IntervalListUtilities.getParentChordStatic(self.intervals))["Bass Triad Quality"][2] if (p_bass_triad_quality is None or p_extensions_quality is None) else p_bass_triad_quality
 			self.extensions_quality = IntervalListUtilities.intervalsToQuality(IntervalListUtilities.getParentChordStatic(self.intervals))["Extensions Quality"][2] if (p_bass_triad_quality is None or p_extensions_quality is None) else p_extensions_quality
 			self.parent_item = self.configureParentItem(p_item_1.getParentItem() if p_item_1.getParentItem() is not None else Scale(p_item_1, IntervalListUtilities.identifyParentScale(self.bass_triad_quality, self.extensions_quality)).getItems()[0], self.intervals, p_modulate_parent)
+			self.unaltered_intervals = IntervalListUtilities.deriveUnalteredIntervalsFromParent(self.parent_item)
+			self.type_dict = self.parent_item.getParentIntervalList().getTypeDict()
 			self.tonic_tone = self.parent_item.getReferencePoint_BL()
 			self.root = p_root if p_root is not None else self.parent_item.add_BL(IntervalListUtilities.findRoot(self.intervals))
 		
 		elif isinstance(p_item_1, list) and len(p_item_1) > 0 and (isinstance(p_item_1[0], IPitchedObject) or isinstance(p_item_1[0], Tone)):
-			self.type_dict = p_type_dict
-			self.intervals = [item - p_item_1[0] for item in p_item_1]	
+			self.sublist = p_sublist
+			self.altered = p_altered
+			self.intervals = [item - p_item_1[0] for item in p_item_1]
 			self.fixed_invert = p_fixed_invert if p_fixed_invert is not None and p_fixed_invert > self.intervals[-1] else self.intervals[-1].roof()
 			self.bass_triad_quality = IntervalListUtilities.intervalsToQuality(IntervalListUtilities.getParentChordStatic(self.intervals))["Bass Triad Quality"][2] if (p_bass_triad_quality is None or p_extensions_quality is None) else p_bass_triad_quality
 			self.extensions_quality = IntervalListUtilities.intervalsToQuality(IntervalListUtilities.getParentChordStatic(self.intervals))["Extensions Quality"][2] if (p_bass_triad_quality is None or p_extensions_quality is None) else p_extensions_quality
 			self.parent_item = self.configureParentItem(Scale(p_item_1, IntervalListUtilities.identifyParentScale(self.bass_triad_quality, self.extensions_quality)).getItems()[0], self.intervals, p_modulate_parent)
+			self.unaltered_intervals = IntervalListUtilities.deriveUnalteredIntervalsFromParent(self.parent_item)
+			self.type_dict = self.parent_item.getParentIntervalList().getTypeDict()
 			self.tonic_tone = self.parent_item.getReferencePoint_BL()
 			self.root = p_root if p_root is not None else self.parent_item.add_BL(IntervalListUtilities.findRoot(self.intervals))
 		
-		elif isinstance(p_item_1, Scale.Degree) and isinstance(p_item_2, list) and len(p_item_2) > 0 and (isinstance(p_item_2[0], int) or isinstance(p_item_2[0], Interval)):
-			self.type_dict = p_type_dict
-			self.intervals = p_item_2 
+		elif isinstance(p_item_1, IntervalList.Item) and isinstance(p_item_2, list) and len(p_item_2) > 0 and (isinstance(p_item_2[0], int) or isinstance(p_item_2[0], Interval)):
+			self.sublist = p_sublist
+			self.altered = p_altered
+			self.intervals = p_item_2
 			self.fixed_invert = p_fixed_invert if p_fixed_invert is not None and p_fixed_invert > self.intervals[-1] else self.intervals[-1].roof()
 			self.bass_triad_quality = IntervalListUtilities.intervalsToQuality(IntervalListUtilities.getParentChordStatic(self.intervals))["Bass Triad Quality"][2] if (p_bass_triad_quality is None or p_extensions_quality is None) else p_bass_triad_quality
 			self.extensions_quality = IntervalListUtilities.intervalsToQuality(IntervalListUtilities.getParentChordStatic(self.intervals))["Extensions Quality"][2] if (p_bass_triad_quality is None or p_extensions_quality is None) else p_extensions_quality
 			self.parent_item = self.configureParentItem(p_item_1, self.intervals, p_modulate_parent)
+			self.unaltered_intervals = IntervalListUtilities.deriveUnalteredIntervalsFromParent(self.parent_item)
+			self.type_dict = self.parent_item.getParentIntervalList().getTypeDict()
 			self.tonic_tone = self.parent_item.getReferencePoint_BL()
 			self.root = p_root if p_root is not None else self.parent_item.add_BL(IntervalListUtilities.findRoot(self.intervals))
 
 		elif (isinstance(p_item_1, IPitchedObject) or isinstance(p_item_1, Tone)) and isinstance(p_item_2, list) and len(p_item_2) > 0 and (isinstance(p_item_2[0], int) or isinstance(p_item_2[0], Interval)):
-			self.type_dict = p_type_dict
-			self.intervals = p_item_2 	
+			self.sublist = p_sublist
+			self.altered = p_altered
+			self.intervals = p_item_2
 			self.fixed_invert = p_fixed_invert if p_fixed_invert is not None and p_fixed_invert > self.intervals[-1] else self.intervals[-1].roof()
 			self.bass_triad_quality = IntervalListUtilities.intervalsToQuality(IntervalListUtilities.getParentChordStatic(self.intervals))["Bass Triad Quality"][2] if (p_bass_triad_quality is None or p_extensions_quality is None) else p_bass_triad_quality
 			self.extensions_quality = IntervalListUtilities.intervalsToQuality(IntervalListUtilities.getParentChordStatic(self.intervals))["Extensions Quality"][2] if (p_bass_triad_quality is None or p_extensions_quality is None) else p_extensions_quality
 			self.parent_item = self.configureParentItem(Scale(p_item_1, IntervalListUtilities.identifyParentScale(self.bass_triad_quality, self.extensions_quality)).getItems()[0], self.intervals, p_modulate_parent)
+			self.unaltered_intervals = IntervalListUtilities.deriveUnalteredIntervalsFromParent(self.parent_item)
+			self.type_dict = self.parent_item.getParentIntervalList().getTypeDict()
 			self.tonic_tone = self.parent_item.getReferencePoint_BL()
 			self.root = p_root if p_root is not None else self.parent_item.add_BL(IntervalListUtilities.findRoot(self.intervals))
 		
 		elif (isinstance(p_item_1, IPitchedObject) or isinstance(p_item_1, Tone)) and isinstance(p_item_2, str):
-			self.type_dict = p_type_dict
+			self.sublist = p_sublist
+			self.altered = p_altered
 			self.intervals = IntervalListUtilities.stringToPitchClass(p_item_2)
 			self.fixed_invert = p_fixed_invert if p_fixed_invert is not None and p_fixed_invert > self.intervals[-1] else self.intervals[-1].roof()
 			self.bass_triad_quality = IntervalListUtilities.stringQualityToData(p_item_2)["Bass Triad Quality"]
 			self.extensions_quality = IntervalListUtilities.stringQualityToData(p_item_2)["Extensions Quality"]
 			self.parent_item = self.configureParentItem(Scale(p_item_1, IntervalListUtilities.identifyParentScale(self.bass_triad_quality, self.extensions_quality)).getItems()[0], self.intervals, p_modulate_parent)
+			self.unaltered_intervals = IntervalListUtilities.deriveUnalteredIntervalsFromParent(self.parent_item)
+			self.type_dict = self.parent_item.getParentIntervalList().getTypeDict()
 			self.tonic_tone = self.parent_item.getReferencePoint_BL()
 			self.root = self.parent_item
 
 		elif isinstance(p_item_1, Scale.Item) and isinstance(p_item_2, str):
-			self.type_dict = p_type_dict
+			self.sublist = p_sublist
+			self.altered = p_altered
 			self.intervals = IntervalListUtilities.stringToPitchClass(p_item_2)
 			self.fixed_invert = p_fixed_invert if p_fixed_invert is not None and p_fixed_invert > self.intervals[-1] else self.intervals[-1].roof()
 			self.bass_triad_quality = IntervalListUtilities.stringQualityToData(p_item_2)["Bass Triad Quality"]
 			self.extensions_quality = IntervalListUtilities.stringQualityToData(p_item_2)["Extensions Quality"]
 			self.parent_item = self.configureParentItem(p_item_1, self.intervals, p_modulate_parent)
+			self.unaltered_intervals = IntervalListUtilities.deriveUnalteredIntervalsFromParent(self.parent_item)
+			self.type_dict = self.parent_item.getParentIntervalList().getTypeDict()
 			self.tonic_tone = self.parent_item.getReferencePoint_BL()
 			self.root = self.parent_item
 	
@@ -83,25 +102,6 @@ class Chord(IntervalList, IMusicObject):
 			return
 
 		self.buildItems()
-
-	#####################################
-	# Methods concerning class behavior #
-	#####################################
-
-	def __getitem__(self, p_index): 
-		if isinstance(p_index, tuple):
-			items = [self.getItems()[0].__add__(item) for item in p_index]
-			result = items[0]
-
-			for item in items[1:]:
-				result = result.add_BL(item)
-
-			return result
-		
-		elif isinstance(p_index, int): 
-			return self.getItems()[0].__add__(p_index)
-
-		else: return super().__getitem__(p_index)
 
 	##############
 	# Arithmetic #
@@ -117,10 +117,10 @@ class Chord(IntervalList, IMusicObject):
 		else: return super().add_BL(p_other)
 
 	def __sub__(self, p_other):
-		if (isinstance(p_other, Interval)): 
+		if (isinstance(p_other, int)): 
 			self.__add__(-p_other)
 
-		if (isinstance(p_other, int)): 
+		if (isinstance(p_other, Interval)): 
 			self.__add__(-p_other)	
 			
 		else: return super().sub_BL(p_other)
@@ -248,7 +248,7 @@ class Chord(IntervalList, IMusicObject):
 			index = 1
 
 			for move in combination:
-				new_chord = super(type(new_chord), new_chord).__getitem__(index).move(move)
+				new_chord = new_chord.getItems()[index - 1].move(move)
 
 				if (len(new_chord.getIntervals()) != new_chord_size): 
 					new_chord_size = len(new_chord.getIntervals())
@@ -286,10 +286,18 @@ class Chord(IntervalList, IMusicObject):
 		return scale_list
 
 	def invert(self, p_inversion_number = 1):
+		sign = int(p_inversion_number / abs(p_inversion_number) if p_inversion_number != 0 else 1)
+		p_inversion_number += sign
+		return self.rotate_BL(p_inversion_number, p_ignore_parent = True)
+	'''
+	def invert(self, p_inversion_number = 1):
 		if p_inversion_number == 0: return self
-		temp_new_chord = Chord(super().__getitem__(int(2*(p_inversion_number/abs(p_inversion_number)))).findInParent(), IntervalListUtilities.invertStatic(self.getIntervals(), (p_inversion_number/abs(p_inversion_number)), self.getFixedInvert()), self.getRoot(), self.getBassTriadQuality(), self.getExtensionsQuality(), self.getFixedInvert())
-		new_chord = temp_new_chord.invert(p_inversion_number - (p_inversion_number/abs(p_inversion_number))) if abs(p_inversion_number) != 1 else temp_new_chord
-		return new_chord
+		new_reference_point = self.getitem_BL(int(2*(p_inversion_number/abs(p_inversion_number))), p_ignore_parent = True).findInParent()
+		new_intervals = IntervalListUtilities.invertStatic(self.getIntervals(), (p_inversion_number/abs(p_inversion_number)), self.getFixedInvert())
+		new_attributes = self.getAttributes()
+		new_chord = type(self)(new_reference_point, new_intervals, **new_attributes)
+		return new_chord.invert(p_inversion_number - (p_inversion_number/abs(p_inversion_number))) if abs(p_inversion_number) != 1 else new_chord
+	'''
 
 	def getInversion(self):
 		if not self.isRootless():
@@ -331,7 +339,7 @@ class Chord(IntervalList, IMusicObject):
 		return new_chord
 
 	def getSecondaryTritoneSubstitution(self):
-		new_chord = self.getSecondaryDominant().getitem_BL(3).transform(-1)
+		new_chord = self.getSecondaryDominant().getItems()[2].transform(-1)
 		return new_chord
 
 	#################
@@ -374,7 +382,8 @@ class Chord(IntervalList, IMusicObject):
 			"p_type_dict": self.getTypeDict(),
 			"p_root": self.getRoot(),
 			"p_bass_triad_quality": self.getBassTriadQuality(),
-			"p_extensions_quality": self.getExtensionsQuality()
+			"p_extensions_quality": self.getExtensionsQuality(),
+			"p_fixed_invert": self.getFixedInvert()
 		}
 
 	#################
@@ -385,6 +394,10 @@ class Chord(IntervalList, IMusicObject):
 		if p_item == None: return
 		self.parent_item = self.configureParentItem(p_item, self.getIntervals())
 
+	#################
+	# Configuration #
+	#################
+	'''
 	def configureParentItem(self, p_item, p_intervals, p_modulate_parent = False):
 		result_scale = p_item.getParentIntervalList()
 		root_altered = False
@@ -403,7 +416,7 @@ class Chord(IntervalList, IMusicObject):
 					
 		if (root_altered): return result_scale.getItemByNumeral(p_item.getInterval().getNumeral())
 		return result_scale.getItemByInterval(p_item.getInterval())
-
+	'''
 	###################
 	# Wrapper Methods #
 	###################
@@ -440,8 +453,8 @@ class Chord(IntervalList, IMusicObject):
 
 	class Part(IntervalList.Item):
 
-		def __init__(self, p_interval, p_parent_scale, p_position_in_parent_voice = None, p_parent_voice = None):
-			super().__init__(p_interval, p_parent_scale)
+		def __init__(self, p_interval, p_parent_scale, p_position_in_parent_voice = None, p_parent_voice = None, p_temp = False):
+			super().__init__(p_interval, p_parent_scale, p_temp)
 			self.position_in_parent_voice = p_position_in_parent_voice
 			self.parent_voice = p_parent_voice
 
@@ -472,11 +485,6 @@ class Chord(IntervalList, IMusicObject):
 			return getattr(self.findInParent(), p_attr)
 		
 		def __add__(self, p_other):
-			if isinstance(p_other, int):
-				if abs(p_other) == 1: return self
-				new_interval = (self.findInParent().add_BL(p_other)).sub_BL(self.getParentIntervalList().getItems()[0].findInParent()).getInterval()
-				return self.__add__(new_interval)
-
 			if isinstance(p_other, Interval):
 				if abs(p_other) == P1: return self
 				new_interval = self.getInterval() + p_other
@@ -486,24 +494,9 @@ class Chord(IntervalList, IMusicObject):
 
 				else: return self.getParentIntervalList().getItemByInterval(new_interval)
 			else: return super().add_BL(p_other)
-
-		def next(self):
-			return self.findInParent().next()
-
-		def previous(self):
-			return self.findInParent().previous()
 		
-		def build_BL(self, object_type, p_num_tones = 4, p_leap_size = 3, p_args = {}):
-			return self.findInParent().build(object_type, p_num_tones, p_leap_size, p_args)
-
-		def buildScale_BL(self):
-			return self.findInParent().buildScale()
-
-		def buildScaleWithIntervals_BL(self, p_intervals):
-			return self.findInParent().buildScaleWithIntervals(p_intervals)
-
-		def buildPitchClass_BL(self, p_num_tones = -1, p_leap_size = 2, p_system = DEFAULT_SYSTEM):
-			return self.findInParent().buildPitchClass(p_num_tones, p_leap_size, p_system)
+		def build_BL(self, object_type, p_num_tones = 4, p_leap_size = 3, p_ignore_parent = None, p_cascade_args = False, p_ignore_altered = True, p_remove_temp = True, p_preserve_parent = False, p_sublist = True, p_args = {}):
+			return super().build_BL(object_type, p_num_tones, p_leap_size, p_ignore_parent, p_cascade_args, p_ignore_altered, p_remove_temp, True, p_sublist, p_args)
 
 		###################
 		# Wrapper Methods #
@@ -517,7 +510,7 @@ class Chord(IntervalList, IMusicObject):
 		###############
 
 		def isNonHarmonic(self):
-			return self.findInParentChord().getInterval().getNumeral() > 7
+			return self.findInParentChord().getInterval().getNumeral() > 7 or self.isChromatic()
 
 		def findInParentChord(self):
 			temp_delta_to_root = self.getParentIntervalList().getRoot().sub_BL(self.getParentIntervalList().getParentItem())
@@ -528,16 +521,23 @@ class Chord(IntervalList, IMusicObject):
 
 		def move(self, p_interval):
 			new_chord = (self.__add__(p_interval)).build(Chord, 1, p_args = self.getParentIntervalList().getAttributes())
+			attr = {"p_ignore_parent": True, "p_ignore_altered": False}
 
 			if (self.getPosition() != 1): 
-				new_chord_start = self.getParentIntervalList().getitem_BL(slice(1, self.getPosition() - 1, None))
-				if (new_chord_start.getitem_BL(len(new_chord_start.getIntervals())).getReferencePoint_BL() != new_chord.getItems()[0].getReferencePoint_BL()): new_chord = new_chord_start.add_BL(new_chord)
+				new_chord_start = self.getParentIntervalList().getitem_BL(slice(1, self.getPosition() - 1, None), **attr)
+
+				if (new_chord_start.getitem_BL(len(new_chord_start.getIntervals()), **attr).getReferencePoint_BL() != new_chord.getItems()[0].getReferencePoint_BL()): 
+					new_chord = new_chord_start.add_BL(new_chord, **attr)
+
 				else: new_chord = new_chord_start
 				
 			if (self.getPosition() != len(self.getParentIntervalList().getIntervals())): 
-				new_chord_end = self.getParentIntervalList().getitem_BL(slice(self.getPosition() + 1, len(self.getParentIntervalList().getIntervals()), None))
-				if (new_chord_end.getItems()[0].getReferencePoint_BL() != new_chord.getitem_BL(len(new_chord.getIntervals())).getReferencePoint_BL()): new_chord = new_chord.add_BL(new_chord_end)
-				else: new_chord = new_chord.getitem_BL(slice(1, len(new_chord.getIntervals()) - 1, None)).add_BL(new_chord_end) if len(new_chord.getIntervals()) > 1 else new_chord_end
+				new_chord_end = self.getParentIntervalList().getitem_BL(slice(self.getPosition() + 1, len(self.getParentIntervalList().getIntervals()), None), **attr)
+				
+				if (new_chord_end.getItems()[0].getReferencePoint_BL() != new_chord.getitem_BL(len(new_chord.getIntervals()), **attr).getReferencePoint_BL()): 
+					new_chord = new_chord.add_BL(new_chord_end, **attr)
+
+				else: new_chord = new_chord.getitem_BL(slice(1, len(new_chord.getIntervals()) - 1, None), **attr).add_BL(new_chord_end, **attr) if len(new_chord.getIntervals()) > 1 else new_chord_end
 				
 			return new_chord
 
@@ -545,6 +545,17 @@ class Chord(IntervalList, IMusicObject):
 			min_positive_distance = min([(tone.getTone() - self.getReferencePoint_BL().getTone()).simplify() for tone in p_next_chord.getReferencePoints_BL()])
 			min_negative_distance = min([(self.getReferencePoint_BL().getTone() - tone.getTone()).simplify() for tone in p_next_chord.getReferencePoints_BL()])
 			return [min_positive_distance, -min_negative_distance]
+
+		##############################
+		# Overridable Business Logic #
+		##############################
+
+		def getAttributes(self): 
+			return {
+				"p_temp": self.isTemp(),
+				"p_position_in_parent_voice": self.getPositionInParentVoice(),
+				"p_parent_voice": self.getParentVoice()
+			}
 
 		#######################
 		# Getters and Setters #

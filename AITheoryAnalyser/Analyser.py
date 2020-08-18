@@ -71,13 +71,27 @@ class Analyser:
         for start_beat in range(0, max_beat + p_range, p_range):
             notes_in_range = dict((beat, p_notes[beat]) for beat in p_notes.keys() if beat >= start_beat and beat < start_beat + p_range)
             key_counter = Analyser.approximateKey(notes_in_range)
-            prevalent_keys = list(dict(sorted(key_counter.iteritems(), key=operator.itemgetter(1), reverse=True)[:7]).keys())
+            prevalent_keys = sorted(key_counter.iteritems(), key=operator.itemgetter(1), reverse=True)
+            prevalent_keys = list(dict(prevalent_keys[:7]).keys()) if len(prevalent_keys) >= 7 else list(dict(prevalent_keys).keys())
             
             for key in prevalent_keys:
                 assigned_scale = Scale(key, major)
+
                 if all(item.simplify() in [item2.simplify() for item2 in assigned_scale.getReferencePoints()] for item in prevalent_keys): break
 
-            if assigned_scale != key_dict.values()[-1]["scale"]:
+            if len(prevalent_keys) < 7:
+                key_dict[start_beat] = {"scale": "unknown", "notes": notes_in_range, "range": p_range}
+                
+            elif key_dict.values()[-1]["scale"] == "unknown":
+                after_key_eval = len([item for item in key_dict.values()[-1]["scale"].getReferencePoints() if item not in assigned_scale.getReferencePoints()] + [item for item in assigned_scale.getReferencePoints() if item not in key_dict.values()[-1]["scale"].getReferencePoints()])
+                before_key_eval = len([item for item in key_dict.values()[-2]["scale"].getReferencePoints() if item not in key_dict.values()[-1]["scale"].getReferencePoints()] + [item for item in key_dict.values()[-1]["scale"].getReferencePoints() if item not in key_dict.values()[-2]["scale"].getReferencePoints()])
+
+                if after_key_eval > before_key_eval:
+                    key_dict[key_dict.values()[-1].key()].update({"scale": key_dict.values()[-2]["scale"]})
+
+                else: key_dict[key_dict.values()[-1].key()].update({"scale": assigned_scale})
+            
+            elif assigned_scale != key_dict.values()[-1]["scale"]:
                 key_dict.update(Analyser.approximateKeyChanges(key_dict.keys()[-1]["notes"], key_dict.keys()[-1]["range"] / 2))
                 key_dict.update(Analyser.approximateKeyChanges(notes_in_range, p_range / 2))
             else:
@@ -87,7 +101,7 @@ class Analyser:
 
     @staticmethod
     def approximateKey(p_notes):
-        return Counter(list(p_notes.values()))
+        return Counter([item.simplify() for item in p_notes.values()])
 
     @staticmethod
     def normalizeBeats(p_notes):

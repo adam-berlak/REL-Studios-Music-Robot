@@ -11,39 +11,64 @@ from IMusicObject import *
 
 class Scale(IntervalList, IMusicObject):
 
-	def __init__(self, p_item_1, p_item_2 = None, p_type_dict = {}):
-
-		if isinstance(p_item_1, Tone): p_item_1 = Key(p_item_1, 4)
+	def __init__(self, 
+		p_item_1, 
+		p_item_2 = None, 
+		p_unaltered_intervals = [], 
+		p_type_dict = {}, 
+		p_sublist = False, 
+		p_altered = True,
+		p_fixed_invert = None):
 
 		if issubclass(type(p_item_1), IntervalList):	
 			self.tonic_tone = p_item_1.getItems()[0].getReferencePoint_BL()
 			self.intervals = p_item_1.getIntervals()
 			self.parent_item = p_item_1.getParentItem() if p_item_1.getParentItem() is not None else None
-			self.type_dict = p_item_1.getAttributes()["p_type_dict"] if p_type_dict == {} and type(self) == type(p_item_1) else p_type_dict
+			self.type_dict = IntervalListUtilities.getUnalteredIntervalsTypeDict(self.intervals, p_item_1.getAttributes()["p_type_dict"] if p_type_dict == {} and type(self) == type(p_item_1) else p_type_dict)
+			self.sublist = p_sublist
+			self.altered = p_altered
+			self.unaltered_intervals = IntervalListUtilities.deriveUnalteredIntervalsFromParent(self.parent_item) if self.sublist else IntervalListUtilities.getValidUnalteredIntervals(self.intervals, p_unaltered_intervals)
+			self.fixed_invert = p_fixed_invert if p_fixed_invert is not None and p_fixed_invert > self.intervals[-1] else self.intervals[-1].roof()
 
-		elif isinstance(p_item_1, list) and len(p_item_1) > 0 and isinstance(p_item_1[0], Tone): 
-			self.tonic_tone = p_item_1[0]
+		elif isinstance(p_item_1, list) and len(p_item_1) > 0 and (isinstance(p_item_1[0], IPitchedObject) or isinstance(p_item_1[0], Tone)): 
+			self.tonic_tone = Key(p_item_1[0], 4) if isinstance(p_item_1[0], Tone) else p_item_1[0]
 			self.intervals = IntervalListUtilities.tonesToPitchClass(p_item_1)
 			self.parent_item = None
 			self.type_dict = p_type_dict
+			self.sublist = p_sublist
+			self.altered = p_altered
+			self.unaltered_intervals = IntervalListUtilities.deriveUnalteredIntervalsFromParent(self.parent_item) if self.sublist else IntervalListUtilities.getValidUnalteredIntervals(self.intervals, p_unaltered_intervals)
+			self.fixed_invert = p_fixed_invert if p_fixed_invert is not None and p_fixed_invert > self.intervals[-1] else self.intervals[-1].roof()
 
 		elif isinstance(p_item_2, list) and len(p_item_2) > 0 and isinstance(p_item_2[0], Interval):
-			self.tonic_tone = p_item_1.getReferencePoint_BL() if isinstance(p_item_1, Scale.Degree) else p_item_1
+			self.tonic_tone = p_item_1.getReferencePoint_BL() if isinstance(p_item_1, Scale.Degree) else (Key(p_item_1, 4) if isinstance(p_item_1, Tone) else p_item_1)
 			self.intervals = p_item_2
-			self.parent_item = p_item_1 if isinstance(p_item_1, Scale.Degree) else None
+			self.parent_item = self.configureParentItem(p_item_1, self.intervals) if isinstance(p_item_1, Scale.Degree) else None
 			self.type_dict = p_type_dict
+			self.sublist = p_sublist
+			self.altered = p_altered
+			self.unaltered_intervals = IntervalListUtilities.deriveUnalteredIntervalsFromParent(self.parent_item) if self.sublist else IntervalListUtilities.getValidUnalteredIntervals(self.intervals, p_unaltered_intervals)
+			self.fixed_invert = p_fixed_invert if p_fixed_invert is not None and p_fixed_invert > self.intervals[-1] else self.intervals[-1].roof()
 		
 		elif isinstance(p_item_2, list) and len(p_item_2) > 0 and isinstance(p_item_2[0], int):
-			self.tonic_tone = p_item_1.getReferencePoint_BL() if isinstance(p_item_1, Scale.Degree) else p_item_1
+			self.tonic_tone = p_item_1.getReferencePoint_BL() if isinstance(p_item_1, Scale.Degree) else (Key(p_item_1, 4) if isinstance(p_item_1, Tone) else p_item_1)
 			self.intervals = IntervalListUtilities.scaleStepsToPitchClass(p_item_2)
-			self.parent_item = p_item_1 if isinstance(p_item_1, Scale.Degree) else None
+			self.parent_item = self.configureParentItem(p_item_1, self.intervals) if isinstance(p_item_1, Scale.Degree) else None
 			self.type_dict = p_type_dict
+			self.sublist = p_sublist
+			self.altered = p_altered
+			self.unaltered_intervals = IntervalListUtilities.deriveUnalteredIntervalsFromParent(self.parent_item) if self.sublist else IntervalListUtilities.getValidUnalteredIntervals(self.intervals, p_unaltered_intervals)
+			self.fixed_invert = p_fixed_invert if p_fixed_invert is not None and p_fixed_invert > self.intervals[-1] else self.intervals[-1].roof()
 
 		elif isinstance(p_item_2, int):
-			self.tonic_tone = p_item_1.getReferencePoint_BL() if isinstance(p_item_1, Scale.Degree) else p_item_1
+			self.tonic_tone = p_item_1.getReferencePoint_BL() if isinstance(p_item_1, Scale.Degree) else (Key(p_item_1, 4) if isinstance(p_item_1, Tone) else p_item_1)
 			self.intervals = IntervalListUtilities.decimalToPitchClass(p_item_2)
-			self.parent_item = p_item_1 if isinstance(p_item_1, Scale.Degree) else None
+			self.parent_item = self.configureParentItem(p_item_1, self.intervals) if isinstance(p_item_1, Scale.Degree) else None
 			self.type_dict = p_type_dict
+			self.sublist = p_sublist
+			self.altered = p_altered
+			self.unaltered_intervals = IntervalListUtilities.deriveUnalteredIntervalsFromParent(self.parent_item) if self.sublist else IntervalListUtilities.getValidUnalteredIntervals(self.intervals, p_unaltered_intervals)
+			self.fixed_invert = p_fixed_invert if p_fixed_invert is not None and p_fixed_invert > self.intervals[-1] else self.intervals[-1].roof()
 
 		else: print("Error: Cannot build Scale object with these parameters")
 
@@ -51,34 +76,9 @@ class Scale(IntervalList, IMusicObject):
 
 	def str_BL(self):
 		result = "<" + type(self).__name__ + " "
-		for item in self.getIncludedDegrees(): result += str(item) + ", "
+		#for item in self.getIncludedDegrees(): result += str(item) + ", "
+		for item in self.getDegrees(): result += str(item) + ", "
 		return result[:-2] + ">"
-
-	def __getitem__(self, p_index): 
-		if isinstance(p_index, slice):
-			new_intervals = IntervalListUtilities.normalizeIntervals(self.getIntervals()[p_index.start - 1:p_index.stop])
-			new_interval_list = self.getitem_BL(p_index.start).findInParent().build_BL(type(self), new_intervals)
-			return new_interval_list
-
-		if isinstance(p_index, tuple):
-			new_attributes = self.getAttributes()
-			new_type_dict = self.getAttributes()["p_type_dict"]
-			tuple_intervals = [self.getItems()[0].add_BL(item).getInterval().simplify() for item in p_index]
-
-			for interval in self.getIntervals():
-				if interval.simplify() not in tuple_intervals:
-					new_type_dict[interval]["p_omitted"] = True
-
-			new_attributes["p_type_dict"] = new_type_dict
-			new_reference_point = self.getitem_BL(p_index[0])
-			new_scale = type(self)(new_reference_point, self.getIntervals(), **new_attributes)
-
-			for item in p_index:
-				new_scale = new_scale.getItems()[0].add_BL(item).getParentIntervalList()
-
-			return new_scale
-
-		else: return super().__getitem__(p_index)
 
 	###########################
 	# Playable Object Methods #
@@ -106,47 +106,42 @@ class Scale(IntervalList, IMusicObject):
 	#################
 
 	def getRelativeScale(self, p_experimental = True, p_reflection_point = 5):
-		if (p_experimental and IntervalListUtilities.isDistinct(self.getIntervals()) and self.__contains__(p_reflection_point)): 
-			parallel_scale = self.getParallelScale(True, p_reflection_point)
-			relative_modes = [mode for mode in self.getModes() if mode.getIntervals() == parallel_scale.getIntervals()]
-			if (len(relative_modes) > 0): return relative_modes[0]
-			else: 
-				print("Error: Scale has no reflection axis, relative Scale could not be found")
-				return -1
-		else: 
-			if (self.getItems()[0].buildPitchClass(2, 3) == [P1, m3]): return (self.sub(6))
-			elif (self.getItems()[0].buildPitchClass(2, 3) == [P1, M3]): return (self.add(6))		
-			else: return self
+		parallel_scale = self.getParallelScale(True, p_reflection_point)
+		relative_modes = [mode for mode in self.getModes() if mode.getIntervals() == parallel_scale.getIntervals()]
 
-	def getParallelScale(self, p_experimental = True, p_reflection_point = 5):
-		if (p_experimental and IntervalListUtilities.isDistinct(self.getIntervals()) and self.__contains__(p_reflection_point)): 
-			return self.getNegativeScale(p_reflection_point).add_BL(-p_reflection_point)
+		if (len(relative_modes) > 0): 
+			return relative_modes[0]
 		else: 
-			if (self.getItems()[0].buildPitchClass(2, 3) == [P1, m3]): return self.getItems()[0].buildScaleWithIntervals((self.sub(6)).getIntervals())
-			elif (self.getItems()[0].buildPitchClass(2, 3) == [P1, M3]): return self.getItems()[0].buildScaleWithIntervals((self.add(6)).getIntervals())
-			else: return self
-
-	def getNegativeScale(self, p_reflection_point = 5): 
-		if (IntervalListUtilities.isDistinct(self.getIntervals()) and self.__contains__(p_reflection_point)): 
-			new_reference_point = self.getitem_BL(p_reflection_point).findInParent() if self.getParentItem() is not None else self.getitem_BL(p_reflection_point).getReferencePoint_BL()	
-			new_intervals = IntervalListUtilities.invertIntervals(self.getIntervals())
-			new_type_dict = IntervalListUtilities.intervalsToTypeDict(new_intervals)
-			new_attributes = self.getAttributes()
-			new_attributes["p_type_dict"] = new_type_dict
-			new_scale = Scale(new_reference_point, new_intervals, **new_attributes)
-			return new_scale
-		else: 
-			print("Error: Unable to get Negative of Scale")
+			print("Error: Scale has no reflection axis, relative Scale could not be found")
 			return -1
 
-	def transpose(self, p_interval): 
-		return (self.add(p_interval))
+	def getParallelScale(self, p_experimental = True, p_reflection_point = 5): 
+		new_reference_point = self.getNegativeScale().getItems()[0].add_BL(-p_reflection_point)
+		new_scale = new_reference_point.build_BL(type(self), p_ignore_parent = True, p_ignore_altered = False, p_preserve_parent = True, p_sublist = True)
+		return new_scale
 
-	def rotate(self): 
-		return (self.transpose(2))
+	def getNegativeScale(self, p_reflection_point = 5): 
+		new_intervals = IntervalListUtilities.invertIntervals(self.getIntervals())
 
+		if self.getParentItem() is not None:
+			parent_interval_list = self.getParentItem().getParentIntervalList()
+			new_reference_point = parent_interval_list.getParallelScale().getItems()[self.getParentItem().getPosition() - 1].add_BL(p_reflection_point)
+
+		else: new_reference_point = self.getitem_BL(p_reflection_point).getReferencePoint_BL()	
+
+		new_attributes = self.getAttributes()
+		new_attributes["p_type_dict"] = IntervalListUtilities.intervalsToTypeDict(new_intervals)
+		new_attributes["p_unaltered_intervals"] = IntervalListUtilities.invertIntervals(self.getUnalteredIntervals())
+		new_scale = Scale(new_reference_point, new_intervals, **new_attributes)
+		return new_scale
+	'''
+	def rotate(self, p_other = 2, p_ignore_parent = None, p_cascade_args = False, p_ignore_altered = True, p_remove_temp = True):
+		new_reference_point = self.getItems()[0].add_BL(p_other, p_ignore_parent, p_cascade_args, p_ignore_altered, p_remove_temp)
+		new_scale = new_reference_point.build_BL(type(self), -1, 2, p_ignore_parent = True, p_ignore_altered = False, p_preserve_parent = True)
+		return new_scale
+	'''
 	def getModes(self): 
-		return [self.add_BL(integer) for integer in range(1, len(self.getIntervals()) + 1)]
+		return [self.rotate_BL(integer) for integer in range(1, len(self.getIntervals()) + 1)]
 
 	def getTonic(self): 
 		return self.getItems()[0]
@@ -307,43 +302,8 @@ class Scale(IntervalList, IMusicObject):
 
 		for i in range(len(self.intervals)): 
 			self.items.append(type(self).Degree(self.intervals[i], self, **self.type_dict[self.intervals[i]] if self.intervals[i] in self.type_dict.keys() else {}))
-
-	def getAttributes(self):
-		return {
-			"p_type_dict": self.getTypeDict()
-		}
 	
 	class Degree(IntervalList.Item):
-		
-		def __init__(self, p_interval, p_parent_scale, p_chromatic = False, p_omitted = False):
-			super().__init__(p_interval, p_parent_scale)
-			self.chromatic = p_chromatic
-			self.omitted = p_omitted
-
-		def add_BL(self, p_other):
-			if isinstance(p_other, int):	
-				if abs(p_other) == 1: return self
-
-				if p_other > 0:
-					return self.next_BL().add_BL((p_other - 1) if not self.next_BL().isChromatic() else p_other)
-					
-				else: return self.previous_BL().add_BL((p_other + 1) if not self.previous_BL().isChromatic() else p_other)
-				
-			if isinstance(p_other, Interval):
-				if abs(p_other) == P1: return self
-				new_interval = self.getInterval() + p_other
-
-				if new_interval < P1:
-					return (self.getParentIntervalList().sub_BL(P8)).getitem_BL(self.getPosition()).add_BL(p_other + P8)
-				
-				if new_interval >= self.getParentIntervalList().getIntervals()[-1].roof():
-					return (self.getParentIntervalList().add_BL(P8)).getitem_BL(self.getPosition()).add_BL(p_other - P8)
-
-				if new_interval not in self.getParentIntervalList().getIntervals():
-					return self.getParentIntervalList().addInterval(new_interval, {"p_chromatic": True}).getItemByInterval(new_interval)
-				
-				else: return self.getParentIntervalList().getItemByInterval(new_interval)
-			else: return super().add_BL(p_other)
 		
 		################################
 		# Methods concerned with names #
@@ -368,6 +328,9 @@ class Scale(IntervalList, IMusicObject):
 		# Wrapper Methods #
 		###################
 
+		def isChromatic(self): 
+			return self.isAltered()
+
 		def buildScale(self):
 			return self.buildScale_BL()
 
@@ -376,21 +339,4 @@ class Scale(IntervalList, IMusicObject):
 
 		def getParentScale(self): 
 			return self.getParentIntervalList()
-
-		##############################
-		# Overridable Business Logic #
-		##############################
-
-		def getAttributes(self): 
-			return {
-				"p_chromatic": self.isChromatic(),
-				"p_omitted": self.isOmitted()
-			}
-
-		#######################
-		# Getters and Setters #
-		#######################
-
-		def isChromatic(self): return self.chromatic
-		def isOmitted(self): return self.omitted
 		

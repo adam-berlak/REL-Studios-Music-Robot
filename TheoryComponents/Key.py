@@ -22,7 +22,6 @@ class Key(IPitchedObject):
     ##############
 
     def __add__(self, p_other):
-
         if (isinstance(p_other, Interval)):
             if (p_other < Interval(0, 0)): return self - abs(p_other)
             if (p_other >= Interval(12, 8)): return Key(self.getTone(), self.getOctave() + 1).__add__(p_other - Interval(12, 8))
@@ -37,7 +36,6 @@ class Key(IPitchedObject):
         else: return self.getTone().__add__(p_other)
 
     def __sub__(self, p_other):
-
         if (isinstance(p_other, Interval)):
             if (p_other < Interval(0, 0)): return self + abs(p_other)
             if (p_other >= Interval(12, 8)): return Key(self.getTone(), self.getOctave() - 1).__sub__(p_other - Interval(12, 8))

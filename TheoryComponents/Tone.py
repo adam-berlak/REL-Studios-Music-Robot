@@ -79,21 +79,22 @@ class Tone:
     # Sugar Methods #
     #################
 
-    def getRelatives(self):
+    def getRelatives(self, p_accidental_limit = None):
         relatives = []
+        accidental_limit = Tone.accidental_limit + 1 if p_accidental_limit is None else p_accidental_limit + 1
 
-        for i in range(Tone.accidental_limit + 1):
+        for i in range(accidental_limit):
             new_tone = self.removeAccidental()
             while (new_tone - self).getSemitones() < i: new_tone = new_tone.next().removeAccidental()
             new_accidental = ((self - new_tone) if self.getToneName() == new_tone.getToneName() and self.getAccidental() > new_tone.getAccidental() else -(new_tone - self)).getSemitones()
             new_tone = Tone(new_tone.getToneName(), new_accidental)
-            if new_tone not in relatives and abs(new_tone.getAccidental()) < Tone.accidental_limit + 1: relatives.append(new_tone)
+            if new_tone not in relatives and abs(new_tone.getAccidental()) < accidental_limit: relatives.append(new_tone)
 
             new_tone = self.removeAccidental()
             while (self - new_tone).getSemitones() < i: new_tone = new_tone.previous().removeAccidental()
             new_accidental = (-(new_tone - self) if self.getToneName() == new_tone.getToneName() and new_tone.getAccidental() > self.getAccidental() else (self - new_tone)).getSemitones()
             new_tone = Tone(new_tone.getToneName(), new_accidental)
-            if new_tone not in relatives and abs(new_tone.getAccidental()) < Tone.accidental_limit + 1: relatives.append(new_tone) 
+            if new_tone not in relatives and abs(new_tone.getAccidental()) < accidental_limit: relatives.append(new_tone) 
 
         return relatives
 

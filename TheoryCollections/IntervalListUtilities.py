@@ -7,22 +7,103 @@ from Configuration import *
 class IntervalListUtilities:
 
     @staticmethod
-    def intervalsToTypeDict(p_intervals):
-        new_type_dict = {}
+    def deriveUnalteredIntervalsFromParent(p_parent_item):
+        interval_in_parent_unaltered = p_parent_item.resolve().getInterval().simplify()
+        shifted_intervals = p_parent_item.getParentIntervalList().getUnalteredIntervals()[:]
+        index_of_parent_interval = shifted_intervals.index(interval_in_parent_unaltered)
+        shifted_intervals = IntervalListUtilities.invertStatic(shifted_intervals, index_of_parent_interval)
+        if p_parent_item.isAltered(): shifted_intervals = IntervalListUtilities.normalizeIntervals([p_parent_item.getAlteration()] + shifted_intervals)[1:]
+        return shifted_intervals
+
+    @staticmethod
+    def getNewUnalteredIntervals(p_intervals):
+        new_unaltered_intervals = []
 
         for item in p_intervals:
-            new_type_dict[item] = item.getParentIntervalListItem().getAttributes()
+            if item.getParentIntervalListItem() is not None and item.getParentIntervalListItem().getParentIntervalList() is not None:
+                if item.getParentIntervalListItem().isUnAltered():
+                    new_item = item.simplify()
+
+                elif item.getParentIntervalListItem().isAltered():
+                    new_item = item.simplify() + item.getParentIntervalListItem().getAlteration()
+                    
+                if new_item not in new_unaltered_intervals: 
+                    new_unaltered_intervals.append(new_item)
+
+        new_unaltered_intervals = IntervalListUtilities.sortIntervals(new_unaltered_intervals)
+        return new_unaltered_intervals
+
+    @staticmethod
+    def getValidUnalteredIntervals(p_intervals, p_unaltered_intervals):
+        intervals_by_numeral = {}
+        new_intervals = p_unaltered_intervals[:]
+
+        for item in p_intervals:
+            intervals_by_numeral[item.simplify().getNumeral()] = [item2 for item2 in p_intervals if item2.simplify().getNumeral() == item.simplify().getNumeral()]
+        
+        for item in intervals_by_numeral.keys():
+            has_duplicates = len(set([item2.simplify() for item2 in intervals_by_numeral[item]])) != len([item2 for item2 in intervals_by_numeral[item]])
+            needs_unaltered = len([item2 for item2 in new_intervals if item2.simplify().getNumeral() == item]) == 0
+            
+            if has_duplicates: 
+                min_interval = min(intervals_by_numeral[item], key=lambda x: abs(x.getAccidentalAsSemitones()))
+
+                for item2 in new_intervals:
+                    if item2 in intervals_by_numeral[item] and item2 != min_interval:
+                        new_intervals.remove(item2)
+
+            elif needs_unaltered:
+                min_interval = min(intervals_by_numeral[item], key=lambda x: abs(x.getAccidentalAsSemitones()))
+                new_intervals.append(min_interval.simplify())
+
+        return new_intervals
+
+    @staticmethod
+    def getUnalteredIntervalsTypeDict(p_intervals, p_type_dict):
+        intervals_by_numeral = {}
+
+        for item in p_intervals:
+            intervals_by_numeral[item.simplify().getNumeral()] = [item2 for item2 in p_intervals if item2.simplify().getNumeral() == item.simplify().getNumeral()]
+
+        new_type_dict = p_type_dict
+        
+        for item in intervals_by_numeral.keys():
+            unaltered_same_numeral = [item2 for item2 in intervals_by_numeral[item] if item2 in p_type_dict.keys() and p_type_dict[item2]["p_unaltered"] == True]
+            needs_unaltered = len(unaltered_same_numeral) == 0
+
+            if needs_unaltered: 
+                min_interval = min(intervals_by_numeral[item], key=lambda x: abs(x.getAccidentalAsSemitones()))
+
+                for item in p_intervals:
+                    if item.simplify() == min_interval:
+                        if min_interval in new_type_dict.keys():
+                            new_type_dict[min_interval]["p_unaltered"] = True
+
+                        else: new_type_dict[min_interval] = {"p_unaltered": True}
+
+            else:
+                min_interval = min(unaltered_same_numeral, key=lambda x: abs(x.getAccidentalAsSemitones()))
+
+                for item2 in intervals_by_numeral[item]:
+                    if item2 not in new_type_dict.keys(): 
+                        new_type_dict[item2] = {}
+                    
+                    if item2.simplify() == min_interval.simplify():
+                        new_type_dict[item2]["p_unaltered"] = True
+
+                    else: new_type_dict[item2]["p_unaltered"] = False
 
         return new_type_dict
 
     @staticmethod
-    def invertIntervals(p_intervals):
-        new_intervals = [-item for item in p_intervals][::-1]
-        start_interval = new_intervals[-1]
-        while start_interval >= new_intervals[0]: start_interval -= P8
-        new_intervals = [start_interval] + new_intervals[:-1]
-        new_intervals = IntervalListUtilities.normalizeIntervals(new_intervals)
-        return new_intervals
+    def intervalsToTypeDict(p_intervals):
+        new_type_dict = {}
+
+        for item in p_intervals:
+            if item.getParentIntervalListItem() is not None:
+                new_type_dict[item] = item.getParentIntervalListItem().getAttributes()
+
+        return new_type_dict
 
     @staticmethod
     def normalizeTypeDict(p_type_dict, p_bass_interval):
@@ -44,9 +125,12 @@ class IntervalListUtilities:
         previous_list = IntervalListUtilities.getPossibleIntervals(IntervalListUtilities.getChromaticIntervals(), p_system, p_variability)
         octaves = 1
 
-        while(previous_list[-1].getSemitones() <= p_semitones + 12):
+        while previous_list[-1].getSemitones() <= p_semitones + 12:
             temp_list = previous_list[:]
-            for intervals in previous_list[:12]: temp_list.append([item + (Interval(12, 8) * octaves) for item in intervals])
+
+            for intervals in previous_list[:12]: 
+                temp_list.append([item + (Interval(12, 8) * octaves) for item in intervals])
+
             previous_list = temp_list[:]
             octaves += 1
 
@@ -54,7 +138,7 @@ class IntervalListUtilities:
 
     @staticmethod
     def getPossibleIntervals(p_intervals = None, p_variability = ACCIDENTAL_LIMIT):
-        result = []
+        new_intervals = []
         intervals = IntervalListUtilities.getUnalteredIntervals(p_system) if p_intervals is None else p_intervals
 
         for item in intervals:
@@ -65,17 +149,17 @@ class IntervalListUtilities:
                 sublist.add(Interval(item.getSemitones() - (i + 1), item.getNumeral()))
                 sublist.add(Interval(item.getSemitones() + (i + 1), item.getNumeral()))
 
-            result.append(sublist)
+            new_intervals.append(sublist)
 
-        result = IntervalListUtilities.sortIntervals(result)
-        return result
+        new_intervals = IntervalListUtilities.sortIntervals(new_intervals)
+        return new_intervals
 
     @staticmethod
     def getChromaticIntervals(p_system = DEFAULT_SYSTEM):
         unaltered_intervals = IntervalListUtilities.getUnalteredIntervals(p_system)
-        result = [item for item in IntervalListUtilities.getPossibleIntervals(unaltered_intervals, 1) if item.getSemitones() not in UNALTERED_INTERVALS[p_system]] + unaltered_intervals
-        result = IntervalListUtilities.sortIntervals(result)
-        return result
+        new_intervals = [item for item in IntervalListUtilities.getPossibleIntervals(unaltered_intervals, 1) if item.getSemitones() not in UNALTERED_INTERVALS[p_system]] + unaltered_intervals
+        new_intervals = IntervalListUtilities.sortIntervals(new_intervals)
+        return new_intervals
 
     @staticmethod
     def getUnalteredIntervals(p_system = DEFAULT_SYSTEM):
@@ -110,8 +194,10 @@ class IntervalListUtilities:
         result = ""
 
         for i in range(12):
-            if (len([item for item in p_intervals if i == item.getSemitones()]) == 0): result = result + "0"
-            else: result = result + "1"
+            if len([item for item in p_intervals if i == item.getSemitones()]) == 0: 
+                result += "0"
+
+            else: result += "1"
 
         return result[::-1]
 
@@ -119,19 +205,20 @@ class IntervalListUtilities:
     def decimalToPitchClass(p_integer, p_use_distinct_intervals = False): return IntervalListUtilities.binaryToPitchClass('{0:012b}'.format(p_integer))
 
     @staticmethod
-    def binaryToPitchClass(p_binary): return IntervalListUtilities.scaleStepsToDistinctPitchClass(IntervalListUtilities.binaryToIntervalListUtilitiesSteps(p_binary))
+    def binaryToPitchClass(p_binary): return IntervalListUtilities.scaleStepsToDistinctPitchClass(IntervalListUtilities.binaryToScaleSteps(p_binary))
 
     @staticmethod
-    def binaryToIntervalListUtilitiesSteps(p_binary):
+    def binaryToScaleSteps(p_binary):
         binary = p_binary[len(p_binary)::-1]
         binary = (binary + binary[0])[1:]
         scale_steps = []
         semitones = 0
 
         for i in range(len(binary)):
-            if (binary[i] == '0'): semitones = semitones + 1
+            if binary[i] == '0': 
+                semitones += 1
             else:
-                semitones = semitones + 1
+                semitones += 1
                 scale_steps.append(semitones)
                 semitones = 0
         
@@ -148,7 +235,6 @@ class IntervalListUtilities:
             possible_intervals_collection.append(Interval.getPossibleIntervals(counter))
 
         all_combinations = list(itertools.product(*possible_intervals_collection))
-
         min_combination = None
         min_repeat_size = 1000
         min_accidental_count = 1000
@@ -159,12 +245,12 @@ class IntervalListUtilities:
             temp_accidental_count = len([item for item in combination if item.getAccidental() != ACCIDENTALS[p_system][0]])
             temp_sharp_count = len([item for item in combination if ACCIDENTALS[p_system][1] in item.getAccidental()])
 
-            if (temp_repeat_size < min_repeat_size):
+            if temp_repeat_size < min_repeat_size:
                 min_combination = combination
                 min_repeat_size = temp_repeat_size
                 min_accidental_count = temp_accidental_count
 
-            if (temp_repeat_size == min_repeat_size and (temp_accidental_count < min_accidental_count or temp_sharp_count < min_sharp_count)):
+            if temp_repeat_size == min_repeat_size and (temp_accidental_count < min_accidental_count or temp_sharp_count < min_sharp_count):
                 min_combination = combination
                 min_accidental_count = temp_accidental_count
                 min_sharp_count = temp_sharp_count
@@ -180,8 +266,22 @@ class IntervalListUtilities:
             semitones = semitones + p_scale_steps[i]
             result.append(Interval(semitones, i + 2))
 
-        if (len([item for item in result if len(item.getAccidental()) > ACCIDENTAL_LIMIT]) > 0): return IntervalListUtilities.scaleStepsToPitchClass(p_scale_steps)
+        if len([item for item in result if len(item.getAccidental()) > ACCIDENTAL_LIMIT]) > 0: 
+            return IntervalListUtilities.scaleStepsToPitchClass(p_scale_steps)
+
         return result
+
+    @staticmethod
+    def invertIntervals(p_intervals, p_fixed_invert = P8):
+        new_intervals = [-item for item in p_intervals][::-1]
+        start_interval = new_intervals[-1]
+
+        while start_interval >= new_intervals[0]: 
+            start_interval -= p_fixed_invert
+
+        new_intervals = [start_interval] + new_intervals[:-1]
+        new_intervals = IntervalListUtilities.normalizeIntervals(new_intervals)
+        return new_intervals
 
     @staticmethod
     def simplifyIntervals(p_intervals):
@@ -190,27 +290,39 @@ class IntervalListUtilities:
         return new_intervals
 
     @staticmethod
-    def scaleIntervalsByOrder(p_intervals):
+    def scaleIntervalsByOrder(p_intervals, p_fixed_invert = P8):
         result = []
         previous = -m2
 
         for interval in p_intervals:
-            while (interval <= previous): interval = interval + P8
+            while interval <= previous: 
+                interval = interval + p_fixed_invert
+
             previous = interval
             result.append(interval)
 
         return result
 
+    # Description: Takes as input a pitch-class and subtracts the first Interval in the list from the rest (Including itself)
+    # Example Input: [m2, M2, M3, aug2]
+    # Example Output: [m2, M2, aug2, M3]
     @staticmethod
     def sortIntervals(p_intervals): 
         p_intervals.sort(key=lambda x: x.getNumeral())
         p_intervals.sort(key=lambda x: x.getSemitones())
         return p_intervals
 
+    # Description: Takes as input a pitch-class and subtracts the first Interval in the list from the rest (Including itself)
+    # Example Input: [M2, M3, P4, P5, M6, M7, P8]
+    # Example Output: [P1, M2, m3, P4, P5, M6, m7]
     @staticmethod
     def normalizeIntervals(p_intervals): 
         return [item - p_intervals[0] for item in p_intervals]
 
+    # Description: Takes as input a list of Tone objects and produces a pitch-class (Also works with objects that interface IPitchedObject)
+    # Example Input: [C, D, E, F, G, A, B]
+    # Example Output: [P1, M2, M3, P4, P5, M6, M7]
+    # Use-Case: Identify the pitch-class corresponding to a list of Tones
     @staticmethod
     def tonesToPitchClass(p_tones): 
         return IntervalListUtilities.scaleIntervalsByOrder([tone - p_tones[0] for tone in p_tones])
@@ -239,6 +351,7 @@ class IntervalListUtilities:
                 }
 
                 evaluation = triad_quality_data["Evaluation"] + extensions_quality_data["Evaluation"]
+                if triad_quality_data["Quality"] != extensions_quality_data["Quality"]: evaluation += 1
                 possible_qualities.append((data, evaluation))
 
         return min(possible_qualities, key=lambda x: x[1])[0]
@@ -257,12 +370,12 @@ class IntervalListUtilities:
             omitted_intervals = []
 
             for interval in temp_chord_quality_chord:
-                if (interval.getNumeral() not in [item.getNumeral() for item in temp_in_chord_intervals]): 
+                if interval.getNumeral() not in [item.getNumeral() for item in temp_in_chord_intervals]: 
                     omitted_intervals += [(OMISSION_NOTATION[p_system], interval)]
                     evaluation += 1
                 else:
                     for item in [item for item in temp_in_chord_intervals if item.getNumeral() == interval.getNumeral()]:
-                        if (item != interval):
+                        if item != interval:
                             temp_accidentals += [("", item)]
                             evaluation += 1
 
@@ -289,8 +402,8 @@ class IntervalListUtilities:
         regex_accidentals = str([item for item in ACCIDENTALS[p_system].values()]).replace('\'', "").replace(' ', "").replace(',', "")[1:][:-1]
         regex_optional_accidentals = "[" + regex_accidentals + "]*\d+"
 
-        regex_alt = "[" + regex_accidentals + "]\d+"
-        altered_intervals = [Interval.stringToInterval(item) for item in re.findall(re.compile(regex_alt), p_quality)]
+        regex_alt = "(\d+[" + regex_accidentals + "]*(?!(?<![" + regex_accidentals + "])\d*|[" + regex_accidentals + "]*" + SUSPENDED_NOTATION[p_system][::-1] + "|" + ADDITION_NOTATION[p_system][::-1] + "|" + OMISSION_NOTATION[p_system][::-1] + "))"
+        altered_intervals = [Interval.stringToInterval(item[::-1]) for item in re.findall(re.compile(regex_alt), p_quality[::-1])]
 
         regex_sus = SUSPENDED_NOTATION[p_system] + regex_optional_accidentals
         sus_intervals = [Interval.stringToInterval(item) for item in re.findall(re.compile(regex_sus), p_quality)]
@@ -319,7 +432,6 @@ class IntervalListUtilities:
     @staticmethod
     def stringToPitchClass(p_quality, p_system = DEFAULT_SYSTEM):
         data = IntervalListUtilities.stringQualityToData(p_quality, p_system)
-
         bass_triad_quality = data["Bass Triad Quality"]
         extensions_quality = data["Extensions Quality"]
         list_of_alt_intervals = data["Bass Triad Accidentals"] + data["Extensions Accidentals"]
@@ -339,7 +451,7 @@ class IntervalListUtilities:
             if len(match) > 0: result[result.index(match[0])] = altered_interval
 
         result = result + list_of_sus_intervals
-        if (len(list_of_sus_intervals) > 0 and 3 in [item.getNumeral() for item in result]): result.pop(result.index([item for item in result if item.getNumeral() == 3][0]))
+        if len(list_of_sus_intervals) > 0 and 3 in [item.getNumeral() for item in result]: result.pop(result.index([item for item in result if item.getNumeral() == 3][0]))
 
         result = result + list_of_add_intervals
         result.sort(key=lambda x: x.getSemitones())
@@ -370,11 +482,18 @@ class IntervalListUtilities:
         return IntervalListUtilities.buildOnThirdsStatic(IntervalListUtilities.getRootPositionStatic(p_intervals))
 
     @staticmethod
-    def invertStatic(p_intervals, p_inversion_number, p_fixed_invert = None):
+    def invertStatic(p_intervals, p_inversion_number = 1, p_fixed_invert = None):
         temp_fixed_move = p_fixed_invert if p_fixed_invert is not None else p_intervals[-1].roof()
-        if p_inversion_number == 0: return p_intervals
-        if p_inversion_number > 0: temp_new_intervals = IntervalListUtilities.normalizeIntervals(p_intervals[1:] + [p_intervals[0] + temp_fixed_move]) 
-        if p_inversion_number < 0: temp_new_intervals = IntervalListUtilities.normalizeIntervals([p_intervals[-1] - temp_fixed_move] + p_intervals[:-1])
+
+        if p_inversion_number == 0: 
+            return p_intervals
+
+        if p_inversion_number > 0: 
+            temp_new_intervals = IntervalListUtilities.normalizeIntervals(p_intervals[1:] + [p_intervals[0] + temp_fixed_move])
+
+        if p_inversion_number < 0: 
+            temp_new_intervals = IntervalListUtilities.normalizeIntervals([p_intervals[-1] - temp_fixed_move] + p_intervals[:-1])
+        
         return IntervalListUtilities.invertStatic(temp_new_intervals, p_inversion_number - (p_inversion_number/abs(p_inversion_number)), temp_fixed_move) if abs(p_inversion_number) != 1 else temp_new_intervals
 
     @staticmethod
@@ -390,15 +509,15 @@ class IntervalListUtilities:
             temp_intervals_as_thirds = IntervalListUtilities.buildOnThirdsStatic(temp_intervals)
             temp_intervals_sums = sum([item.getSemitones() for item in temp_intervals_as_thirds])
             
-            if (temp_intervals_sums < min_intervals_sum):
+            if temp_intervals_sums < min_intervals_sum:
                 duplicates_found = False
                 smallest_inversion = temp_intervals
                 min_intervals_sum = temp_intervals_sums
                 
-            elif (temp_intervals_sums == min_intervals_sum): duplicates_found = True
+            elif temp_intervals_sums == min_intervals_sum: duplicates_found = True
             previous = temp_intervals
 
-        if (duplicates_found):
+        if duplicates_found:
             return smallest_inversion
 
         return smallest_inversion
@@ -410,7 +529,7 @@ class IntervalListUtilities:
         temp_first_inversion = IntervalListUtilities.getRootPositionStatic(p_intervals)
         temp_next_inversion = IntervalListUtilities.invertStatic(p_intervals, 1, temp_fixed_invert)
 
-        while(temp_next_inversion != temp_first_inversion):
+        while temp_next_inversion != temp_first_inversion:
             temp_next_inversion = IntervalListUtilities.invertStatic(temp_next_inversion, 1, temp_fixed_invert)
             temp_counter += 1
 
@@ -426,7 +545,9 @@ class IntervalListUtilities:
 
         for interval in p_intervals:
             repeats = len([item for item in p_intervals if item.simplify().getSemitones() == interval.simplify().getSemitones()])
-            if (repeats > 1): result = result + repeats
+            
+            if repeats > 1: 
+                result += repeats
 
         return result
 
@@ -437,27 +558,23 @@ class IntervalListUtilities:
         for interval in p_intervals:
             possible_intervals = []
 
-            while (((interval.getNumeral() - 1) % 2) != 0 and interval < P8): interval += P8
-            if (((interval.getNumeral() - 1) % 2) != 0 and interval < P8): new_interval = interval + P8
+            while (((interval.getNumeral() - 1) % 2) != 0 and interval < P8) or interval < P1: 
+                interval += P8
 
-            elif ((interval.getNumeral() - 1) % 2 != 0 and interval > P8 and interval < M13): 
-                new_interval = interval
-                while (new_interval > P8): new_interval -= P8
+            while (((interval.getNumeral() - 1) % 2) != 0 and interval > P8) or interval > M13: 
+                interval -= P8
 
-            elif (interval > M13):
-                new_interval = interval
-                while (new_interval > M13 or ((new_interval.getNumeral() - 1) % 2) != 0): new_interval -= P8
+            new_interval = interval
 
-            else: new_interval = interval
-            if (new_interval != P8): new_interval_list.append(new_interval)
+            if new_interval != P8: 
+                new_interval_list.append(new_interval)
 
-        new_interval_list.sort(key=lambda x: x.getSemitones())
+        new_interval_list = IntervalListUtilities.sortIntervals(new_interval_list)
         previous_numeral = -1
         i = 0
 
-        while (i < len(new_interval_list)):
-
-            if (new_interval_list[i].getNumeral() - previous_numeral != 2):
+        while i < len(new_interval_list):
+            if new_interval_list[i].getNumeral() - previous_numeral != 2:
                 difference = new_interval_list[i].getNumeral() - previous_numeral
 
                 for j in range(int((difference - 2)/2)):
@@ -471,8 +588,8 @@ class IntervalListUtilities:
 
     @staticmethod
     def getPitchClassByQuality(p_quality, p_system = DEFAULT_SYSTEM):
-
         for key in CHORD_QUALITIES[p_system].keys():
-            if p_quality in key: return CHORD_QUALITIES[p_system][key]
+            if p_quality in key: 
+                return CHORD_QUALITIES[p_system][key]
 
         return None
