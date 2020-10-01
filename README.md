@@ -66,17 +66,17 @@ when they should be derived using logical formulas within a Scale object. As a r
 ## 2. Usage:
 
 - Build Scales by/using: 
+  - Name: ```>>> C_Major_Scale = Scale(C, major)``` (Supports all 4095 Scales by mapping decmials -> Scale Name)
   - Specific Intervals: ```>>> C_Major_Scale = Scale(C, [P1,M2,M3,P4,P5,M6,M7])```
   - Generic Intervals: ```>>> C_Pentatonic_Scale = C_Major_Scale[1,2,3,5,6]```
   - Semitones: ```>>> C_Major_Scale = Scale(C, [2,2,1,2,2,2,1])```
   - Notes: ```>>> C_Major_Scale = Scale([C,D,E,F,G,A,B])```
-  - Name: ```>>> C_Major_Scale = Scale(C, major)``` (Supports all 4095 Scales by mapping decmials -> Scale Name)
   
 - Build Chords by/using:
+  - Name: ```>>> C_maj_7 = Chord(C, "maj7")``` (Uses complex RegEX, supports 'sus', 'add', and 'no' notation)
   - Specific Intervals: ```>>> C_maj_7 = Chord(C, [P1,M3,P5,M7])```
   - Generic Intervals: ```>>> C_maj_7 = C_Major_Scale[1].build(Chord, [1,3,5,7])``` / ```>>> C_maj_7 = Chord(C_Major_Scale[1,3,5,7]) ```
   - Notes: ```>>> C_maj_7 = Chord([C,E,G,B])```
-  - Name: ```>>> C_maj_7 = Chord(C, "maj7")``` (Uses complex RegEX, supports 'sus', 'add', and 'no' notation)
 
 <a name="intervals"/>
 
