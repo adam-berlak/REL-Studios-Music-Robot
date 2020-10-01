@@ -74,7 +74,7 @@ when they should be derived using logical formulas within a Scale object. As a r
   
 - Build Chords by/using:
   - Specific Intervals: ```>>> C_maj_7 = Chord(C, [P1,M3,P5,M7])```
-  - Generic Intervals: ```>>> C_Major_Scale[1].build(Chord, [1,3,5,7])```
+  - Generic Intervals: ```>>> C_Major_Scale[1].build(Chord, [1,3,5,7])``` / ```>>> Chord(C_Major_Scale[1,3,5,7]) ```
   - Notes: ```>>> C_maj_7 = Chord([C,E,G,B])```
   - Name: ```>>> C_maj_7 = Chord(C, "maj7")``` (Uses complex RegEX and pitch-class generation algorithms to assign Intervals, supports sus, add, and no notation)
 
