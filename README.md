@@ -59,13 +59,13 @@ Beyond this, I plan to utilize a Transformer to help with memory when analyzing 
 
 I haved noticed a recurring problem after looking through existing libraries for Music Theory. Most of the existing libraries rely heavily on hardcoding. Derived attributes are often hardcoded in dictionaries when they should be realised using logical formulas and algorithms. As a result, these libraries are not very extensible, they limit your inputs to the mappings described, and likely fall apart when you try to get more creative. As a goal for myself I attempted to limit all hardcoding to names, and reduce everything else that can be derived logically to methods. The result; less reliance on definitions, less constants, and greater extensibility. Some of the most notable features included in this library are:
 
-# Complex algorithm for deriving pitch-classes by name
+### Complex algorithm for deriving pitch-classes by name
 
-# Complex RegEx used to derive pitch-classes from string inputs
+### Complex RegEx used to derive pitch-classes from string inputs
 
-# Complex algorithm for deriving Relative, Parallel and even Negative pitch-classes
+### Complex algorithm for deriving Relative, Parallel and even Negative pitch-classes
 
-# Complex sub-set/super-set logic for pitch-classes with complex list operations
+### Complex sub-set/super-set logic for pitch-classes with complex list operations
 
 <a name="usage"/>
 
