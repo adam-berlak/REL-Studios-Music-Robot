@@ -1,8 +1,10 @@
-from TheoryComponents.Interval import Interval
-from TheoryComponents.Tone import Tone
-from TheoryComponents.Key import Key
-from TheoryComponents.Note import Note
-from TheoryCollections.ScalesDictionary import *
+from theory.interval import Interval
+from theory.tone import Tone
+from theory.key import Key
+from theory.note import Note
+from theory.scale_dictionary import *
+
+test_var = 0
 
 # Configuration System
 DEFAULT_SYSTEM = "western"
@@ -40,7 +42,7 @@ SUSPENDED_NOTATION = {"western": "sus"}
 ADDITION_NOTATION = {"western": "add"}
 OMISSION_NOTATION = {"western": "no"}
 
-RHYTHM_TREE = {"western": {1: "Semi-breve", 
+RHYTHM_TREE = {"western": {1: "semi-breve", 
                             2: "minim", 
                             4: "crotchet", 
                             8: "quaver", 
@@ -89,22 +91,28 @@ P15 = Interval(24, 15)
 dim1 = Interval(-1, 1)
 m2 = Interval(1, 2)
 m3 = Interval(3, 3)
+dim4 = Interval(3, 4)
 dim5 = Interval(6, 5)
 m6 = Interval(8, 6)
 m7 = Interval(10, 7)
+dim8 = Interval(11, 8)
 m9 = Interval(13, 9)
 m10 = Interval(15, 10)
+dim11 = Interval(16, 11)
 dim12 = Interval(18, 12)
 m13 = Interval(20, 13)
 m14 = Interval(22, 14)
 
 aug1 = Interval(1, 1)
 aug2 = Interval(3, 2)
+aug3 = Interval(5, 3)
 aug4 = Interval(6, 4)
 aug5 = Interval(8, 5)
 aug6 = Interval(10, 6)
 aug7 = Interval(12, 7)
+aug8 = Interval(13, 8)
 aug9 = Interval(15, 9)
+aug10 = Interval(17, 10)
 aug11 = Interval(18, 11)
 aug12 = Interval(20, 12)
 aug13 = Interval(22, 13)
@@ -118,34 +126,41 @@ CHORD_QUALITIES = {"western": {
                 ("half-diminished", "half-dim", "ø", "ø"): [P1, m3, dim5, m7, M9, P11, M13],
                 ("augmented", "aug", "+", "+"):            [P1, M3, aug5, m7, M9, P11, M13],
                 ("diminished", "dim", "o", "o"):           [P1, m3, dim5, m7.transform("b"), M9, P11, None]}}
-
+      
+major_chord = ("major", "maj", "M", "Δ")
+minor_chord = ("minor", "min", "m", "-")
+dominant_chord = ("dominant", "dom", "\"", "\"")
+half_diminished_chord = ("half-diminished", "half-dim", "ø", "ø")
+augmented_chord = ("augmented", "aug", "+", "+")
+diminished_chord = ("diminished", "dim", "o", "o")
+   
 # Configuration Scale Degree Naming Systems
 SCALE_DEGREE_NAMES = {"western": {P1: "tonic", m2: "supertonic", M2: "supertonic", m3: "mediant", M3: "mediant", P4: "subdominant", P5: "dominant", m6: "submediant", M6: "submediant", m7: "subtonic", M7: "leading tone"}}
 
 # Configuration Tone Constants
-C = Tone(TONE_NAMES[DEFAULT_SYSTEM][0])
-D = Tone(TONE_NAMES[DEFAULT_SYSTEM][2])
-E = Tone(TONE_NAMES[DEFAULT_SYSTEM][4])
-F = Tone(TONE_NAMES[DEFAULT_SYSTEM][5])
-G = Tone(TONE_NAMES[DEFAULT_SYSTEM][7])
-A = Tone(TONE_NAMES[DEFAULT_SYSTEM][9])
-B = Tone(TONE_NAMES[DEFAULT_SYSTEM][11])
+C = Tone(0)
+D = Tone(2)
+E = Tone(4)
+F = Tone(5)
+G = Tone(7)
+A = Tone(9)
+B = Tone(11)
 
-C_flat = Tone(TONE_NAMES[DEFAULT_SYSTEM][0], -1)
-D_flat = Tone(TONE_NAMES[DEFAULT_SYSTEM][2], -1)
-E_flat = Tone(TONE_NAMES[DEFAULT_SYSTEM][4], -1)
-F_flat = Tone(TONE_NAMES[DEFAULT_SYSTEM][5], -1)
-G_flat = Tone(TONE_NAMES[DEFAULT_SYSTEM][7], -1)
-A_flat = Tone(TONE_NAMES[DEFAULT_SYSTEM][9], -1)
-B_flat = Tone(TONE_NAMES[DEFAULT_SYSTEM][11], -1)
+C_flat = Tone(0, -1)
+D_flat = Tone(2, -1)
+E_flat = Tone(4, -1)
+F_flat = Tone(5, -1)
+G_flat = Tone(7, -1)
+A_flat = Tone(9, -1)
+B_flat = Tone(11, -1)
 
-C_sharp = Tone(TONE_NAMES[DEFAULT_SYSTEM][0], 1)
-D_sharp = Tone(TONE_NAMES[DEFAULT_SYSTEM][2], 1)
-E_sharp = Tone(TONE_NAMES[DEFAULT_SYSTEM][4], 1)
-F_sharp = Tone(TONE_NAMES[DEFAULT_SYSTEM][5], 1)
-G_sharp = Tone(TONE_NAMES[DEFAULT_SYSTEM][7], 1)
-A_sharp = Tone(TONE_NAMES[DEFAULT_SYSTEM][9], 1)
-B_sharp = Tone(TONE_NAMES[DEFAULT_SYSTEM][11], 1)
+C_sharp = Tone(0, 1)
+D_sharp = Tone(2, 1)
+E_sharp = Tone(4, 1)
+F_sharp = Tone(5, 1)
+G_sharp = Tone(7, 1)
+A_sharp = Tone(9, 1)
+B_sharp = Tone(11, 1)
 
 # Configuration Key Constants
 keyboard_tones = [C_flat, C, C_sharp, D_flat, D, D_sharp, E_flat, E, E_sharp, F_flat, F, F_sharp, G_flat, G, G_sharp, A_flat, A, A_sharp, B_flat, B, B_sharp]
@@ -156,12 +171,15 @@ Keyboard = {}
 for i in range(12):
 
     for tone in keyboard_tones: 
-
         temp_accidental = ''
-        if (tone.getAccidental() == 1): temp_accidental = '_sharp'
-        if (tone.getAccidental() == -1): temp_accidental = '_flat'
 
-        globals()[tone.getToneName() + temp_accidental + str(i)] = Key(tone, i)
+        if tone.get_accidental() == 1: 
+            temp_accidental = '_sharp'
+
+        if tone.get_accidental() == -1: 
+            temp_accidental = '_flat'
+
+        globals()[tone.get_tone_name() + temp_accidental + str(i)] = Key(tone, i)
 
 # Functions
 def toMidiData(p_playable_object):

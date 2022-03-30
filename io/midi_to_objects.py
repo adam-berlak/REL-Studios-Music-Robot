@@ -1,5 +1,5 @@
-from TheoryComponents.Key import *
-from TheoryComponents.Note import *
+from theory.key import *
+from theory.note import *
 from mxm.midifile import *
 
 class MidiToObjects(MidiToCode):

@@ -1,6 +1,6 @@
-from Configuration import *
-from IOMidi.Channel import *
-from IOMidi.MidiToObjects import *
+from io.channel import *
+from io.midi_to_objects import *
+from theory.config import *
 
 class Sequencer:
 
@@ -45,11 +45,16 @@ class Sequencer:
         events.sort(key=lambda x: x["time"])
         return events
 
+    @staticmethod
     def flattenDict(p_dict):
         new_beats = {}
 
         for channel in p_dict.keys():
-            new_beats += p_dict[channel]
+            for beat in p_dict[channel]:
+                if beat in new_beats.keys():
+                    new_beats[beat] += p_dict[channel][beat]
+
+                else: new_beats[beat] = p_dict[channel][beat]
         
         return new_beats
 
@@ -76,6 +81,7 @@ class Sequencer:
         event_handler = MidiToObjects()
         midi_in = MidiInFile(event_handler, p_file_name)
         midi_in.read()
+        self.setTimeDivision(event_handler.getDivision())
         self.setChannels(Sequencer.fromDict(event_handler.getNotes()))
 
     def toMidi(self, p_file_name = 'file-generated.mid'):

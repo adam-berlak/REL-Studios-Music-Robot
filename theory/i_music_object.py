@@ -7,5 +7,5 @@ class IMusicObject(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def __toMidiData__(self):
+    def __to_midi_data__(self):
         pass

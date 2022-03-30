@@ -57,7 +57,7 @@ class IPitchedObject(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def getTone(self): 
+    def get_tone(self): 
         '''
         Used for getting Tone componant of PitchedObject
         >>> Key(Tone("C", 0), 4).getTone()
